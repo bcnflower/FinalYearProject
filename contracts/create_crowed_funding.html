@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Create Crowd Funding</title>
+  <script src="./ext/web3.js"></script>
+</head>
+<body>
+	<div class="mt-2 mb-2">
+	<center>
+		<h1>Vote</h1>
+	</center>
+	<center class="containerBox">
+          <h3 id="YAHead">Your Account</h3>
+          <div id="currentAccount"><%= account %></div> 
+          <br> 
+          <a href="set_session">Change</a>
+        </center>
+</div>
+
+
+
+
+<center>
+  <div><%- images %></div>
+</center>
+
+    <script type="text/javascript">
+    function presets() {
+      accountSelectorEnabled = false;
+    };
+		function features() {
+	      init_doVote();
+        console.log("account=",account);
+    	};
+	</script>
+
+
+</body>
+</html>

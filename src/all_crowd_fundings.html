@@ -1,0 +1,58 @@
+<!-- <!DOCTYPE html>
+<html>
+<head>
+  <title>Create Crowd Funding</title>
+  <script src="./ext/web3.js"></script>
+</head>
+<body>
+  <div class="mt-2 mb-2"> -->
+    <%- include('./header'); %>
+    <center>
+      <h1>All Crowd Fundings</h1>
+    </center>
+    <center class="containerBox">
+      <h3 id="YAHead">Your Account</h3>
+      <div id="currentAccount"><%= account %></div> 
+      <br> 
+      <a href="set_session?change=1">Change</a>
+    </center>
+  </div>
+  
+  
+  <form id="getCurrentCFs" class="containerBox">
+    <h3>Current Crowd Fundings</h3>
+    <div id="currentCFs">
+    </div>
+    <table class="table table-hover" id="progress-table">
+      <thead>
+      <tr>
+        <th scope="col" class="col-md-3">Address</th>
+        <th scope="col">Raised</th>
+        <th scope="col">Goal</th>
+        <th scope="col"># Contributors</th>
+        <th scope="col">Deadline</th>
+      </tr>
+      </thead>
+      <tbody id="CFsRows"></tbody>
+    </table>
+    <button type="submit">Get Crowd Fundings</button>
+    <div id="getCurrentCFs_msg"></div>
+  </form>
+
+
+<script type="text/javascript">
+  function presets() {
+    accountSelectorEnabled = false;
+  };
+  function features() {
+    console.log("account=",account);
+    // init_getVotingStats();
+    // init_createCF();
+    init_currentCFs();
+  };
+</script>
+
+
+<!-- </body>
+</html> -->
+<%- include('./footer'); %>
