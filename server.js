@@ -144,6 +144,15 @@ app.get('/all_crowd_fundings', checkUserSession, function(req,res) {
     });
 });
 
+
+app.get('/interact_with_crowd_funding', checkUserSession, function(req,res) {  
+    var cfAddress = req.query.cfAddress;
+    res.render('interact_with_crowd_funding',{
+        account:req.session.user_id,
+        cfAddress:cfAddress
+    });
+});
+
 // create_crowd_funding.html
 
 

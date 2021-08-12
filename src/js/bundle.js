@@ -243,7 +243,7 @@ const init_currentCFs = () => {
       noOfCFs = parseInt(result);
       $currentCFs.innerHTML = 'No of CFs = ' + noOfCFs + '<br>';
       document.getElementById("CFsRows").innerHTML ="";
-      for (var i = 0; i<noOfCFs; i++) {
+      for (var i = noOfCFs-1; i>=0; i--) {
         console.log('i = ',i);
         contract.methods.cfDb(i.toString()).call()
         .then(result => {
@@ -257,13 +257,13 @@ const init_currentCFs = () => {
           // var d = result.deadline;
           // $currentCFs.innerHTML+= result.admin;
           // $currentCFs.innerHTML+='<br>';
-          tbl += "<tr class=\"table-success\">";
+          tbl += "<tr class=\""+(d>0?"table-success":"table-danger")+"\">";
           // tbl += "<th scope=\"row\">"+"</th>";
-          tbl += "<th scope=\"row\"><a href onclick=\"return copyToClipboard('"+result.admin+"');\" class=\"addr\">"+result.admin+"</a></th>";
+          tbl += "<th scope=\"row\">" + (d<0?result.admin:"<a href=\"interact_with_crowd_funding?cfAddress="+result.admin+"');\" class=\"addr\" target=\"_blank\" >" +result.admin+"</a>")+"</th>";
           tbl += "<td scope=\"row\">"+result.raisedAmount+"</td>";
           tbl += "<td scope=\"row\">"+result.goal+"</td>";
           tbl += "<td scope=\"row\">"+result.totalContributors+"</td>";
-          tbl += "<td scope=\"row\">"+d+"</td>";
+          tbl += "<td scope=\"row\">"+(d<0?"Time Over":new Date(d * 1000).toISOString().substr(11, 8))+"</td>";
           tbl += "</tr>";
           document.getElementById("CFsRows").innerHTML+= tbl;
         })

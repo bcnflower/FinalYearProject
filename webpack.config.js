@@ -56,6 +56,10 @@ module.exports = {
       filename: 'views/all_crowd_fundings.html'
     }),
     new HtmlWebpackPlugin({
+      template: 'src/interact_with_crowd_funding.html',
+      filename: 'views/interact_with_crowd_funding.html'
+    }),
+    new HtmlWebpackPlugin({
       template: 'src/test.html',
       filename: 'views/test.html' 
     }),

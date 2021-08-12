@@ -20,56 +20,69 @@
 
 
   <div id="interactWithCFs" class="containerBox">
-          <h3>Interact with Crowd Fundings</h3>
+    <h3>Interact with Crowd Fundings</h3>
 
-          <!-- <label>Crowd Funding Address: </label> -->
-          <!-- <input type="text" name="CFAddress" id="CFAddress" required> -->
+    <!-- <label>Crowd Funding Address: </label> -->
+    <!-- <input type="text" name="CFAddress" id="CFAddress" required> -->
 
-          <form id="updateCfStats">
-            <label>Crowd Funding Address: </label>
-            <input type="text" name="CFAddress" id="CFAddress" required>
-            <button type="submit">Update Stats</button><br>
-            <label>Deadline=> </label><span id="cf_deadline"></span><br>
-            <!-- <label>Now=></label><span id="cf_now"></span><br> -->
-            <!-- <label>Remaining Time=></label><span id="cf_remainingTime"></span><br> -->
-            <label>Total Contributers=></label><span id="cf_totalContributors"></span><br>
-            <label>Goal=></label><span id="cf_goal"></span><br>
-            <label>Raised Amount=></label><span id="cf_raisedAmount"></span><br>
-          </form>
+    <form id="updateCfStats">
+      <label>Crowd Funding Address: </label>
+      <input type="text" name="CFAddress" id="CFAddress" required value="<%= cfAddress %>">
+      <button type="submit">Update Stats</button><br>
+      <table>
+        <tr>
+          <td>Deadline</td> <td><span id="cf_deadline"></span></td>
+        </tr>
+        <tr>
+          <td>Total Contributers</td> <td><span id="cf_totalContributors"></span></td>
+        </tr>
+        <tr>
+          <td>Goal</td><td><span id="cf_goal"></span></td>
+        </tr>
+        <tr>
+          <td>Raised Amount</td> <td><span id="cf_raisedAmount"></span></td>
+        </tr>
+      </table>
 
-          <form id="CFcontribute" class="containerBox">
-            <input type="number" name="contributeAmount" id="CFcontributeAmount">
-            <button type="submit">Contribute</button>
-            <div id="CFcontribute_msg"></div>
-          </form>
+<!--       <label>Deadline=> </label><span id="cf_deadline"></span><br>
+      <label>Total Contributers=></label><span id="cf_totalContributors"></span><br>
+      <label>Goal=></label><span id="cf_goal"></span><br>
+      <label>Raised Amount=></label><span id="cf_raisedAmount"></span><br> -->
+    </form>
 
-          <form id="CFgetRefund" class="containerBox">
-            <button type="submit">Get Refund</button>
-            <div id="CFgetRefund_msg"></div>
-          </form>
+    <form id="CFcontribute" class="containerBox">
+      <input type="number" name="contributeAmount" id="CFcontributeAmount">
+      <button type="submit">Contribute</button>
+      <div id="CFcontribute_msg"></div>
+    </form>
 
-          <form id="CFwithdrawFunding" class="containerBox">
-            <button type="submit">Withdraw Funding</button>
-            <div id="CFwithdrawFunding_msg">...</div>
-          </form>
+    <form id="CFgetRefund" class="containerBox">
+      <button type="submit">Get Refund</button>
+      <div id="CFgetRefund_msg"></div>
+    </form>
 
-          <div id="interactWithCFs_msg"></div>
-        </div>
+    <form id="CFwithdrawFunding" class="containerBox">
+      <button type="submit">Withdraw Funding</button>
+      <div id="CFwithdrawFunding_msg">...</div>
+    </form>
+
+    <div id="interactWithCFs_msg"></div>
+  </div>
 
 
 
 
-<script type="text/javascript">
-  function presets() {
-    accountSelectorEnabled = false;
-  };
-  function features() {
-    console.log("account=",account);
-    init_interactWithCFs();
-  };
-</script>
+  <script type="text/javascript">
+    function presets() {
+      accountSelectorEnabled = false;
+    };
+    function features() {
+      console.log("account=",account);
+      init_interactWithCFs();
+    };
+  </script>
 
 
 <!-- </body>
-</html> -->
-<%- include('./footer'); %>
+  </html> -->
+  <%- include('./footer'); %>

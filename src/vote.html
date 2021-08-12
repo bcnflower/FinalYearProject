@@ -31,30 +31,6 @@
   <div id="doVote_msg"></div>
 </form>
 
-<center>
-  <form id="getVotingStatus" class="containerBox">
-    <table border="2">
-      <tr>
-        <td colspan="2">
-          <center><button type="submit" >Get Voting Status</button></center>
-        </td>
-      </tr>
-      <tr>
-        <td><b>Positve Votes</b></td>
-        <td id="positiveVotes"></td>
-      </tr>
-      <tr>
-        <td><b>Negative Votes</b></td>
-        <td id="negativeVotes"></td>
-      </tr>
-      <tr>
-        <td><b>Deadline</b></td>
-        <td id="VSDeadline"></td>
-      </tr>
-    </table>
-  </form>
-</center>
-
 
 
 <center>
@@ -67,7 +43,6 @@
     };
 		function features() {
 	      init_doVote();
-        init_getVotingStats();
         console.log("account=",account);
     	};
 	</script>
