@@ -156,6 +156,7 @@ contract mainTest{
 
     struct organization{
         address payable admin;
+        string name;
         bool acceptingZakat;
         uint balanceAmount;
     }
@@ -170,10 +171,11 @@ contract mainTest{
     
     event Deposit(address indexed _from, uint _value);
     
-    function createOrganization(bool _acceptingZakat) public {
-        require (orgIdxDb[msg.sender] == 0,"Organization Already Exists.");
+    function createOrganization(bool _acceptingZakat,string memory orgName) public {
+        require (orgIdxDb[msg.sender] == 0,"Organization Already Exists on this Account.");
         organization memory org;
         org.admin = msg.sender;
+        org.name = orgName;
         org.acceptingZakat = _acceptingZakat;
         orgDb.push(org);
         orgIdxDb[msg.sender] = orgDb.length;

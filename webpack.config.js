@@ -60,6 +60,14 @@ module.exports = {
       filename: 'views/interact_with_crowd_funding.html'
     }),
     new HtmlWebpackPlugin({
+      template: 'src/create_organization.html',
+      filename: 'views/create_organization.html'
+    }),
+    new HtmlWebpackPlugin({
+      template: 'src/all_organizations.html',
+      filename: 'views/all_organizations.html'
+    }),
+    new HtmlWebpackPlugin({
       template: 'src/test.html',
       filename: 'views/test.html' 
     }),

@@ -33,6 +33,10 @@ let accountSelectorEnabled = true;
 
   const $CFAddress = document.getElementById('CFAddress');
 
+  const $createOrg = document.getElementById('createOrg');
+
+  const $getCurrentOrgs = document.getElementById('getCurrentOrgs');
+
   const $cf_deadline = document.getElementById('cf_deadline');
   const $cf_totalContributors = document.getElementById('cf_totalContributors');
   const $cf_goal = document.getElementById('cf_goal');
@@ -207,6 +211,7 @@ const init_doVote = () => {
 const init_createCF = () => {
   $createCF.addEventListener('submit', (e) =>{
     e.preventDefault();
+    account = getSelectedAccount();
     const $msg = document.getElementById('createCF_msg');
     $msg.innerHTML = "Please wait....";
     const d = e.target.elements[0].value;
@@ -378,6 +383,86 @@ const init_interactWithCFs = () => {
 };
 
 
+const init_createOrg = () => {
+  $createOrg.addEventListener('submit', (e) =>{
+    e.preventDefault();
+    account = getSelectedAccount();
+    const $msg = document.getElementById('createOrg_msg');
+    $msg.innerHTML = "Please wait....";
+    const orgName = e.target.elements[0].value;
+    // const orgZakat = e.target.elements[1].value;
+    const rbs = $createOrg.querySelectorAll('input[name="orgZakat"]');
+    var orgZakat;
+    for (const rb of rbs) {
+        if (rb.checked) {
+            orgZakat = rb.value;
+            orgZakat = parseInt(orgZakat);
+            break;
+        }
+    }
+    console.log(orgZakat);
+    contract.methods.createOrganization(Boolean(orgZakat),orgName).send({from:account,gas:3000000})
+    .then(result => {
+      $msg.innerHTML = 'Created Organization successfully.';
+    })
+    .catch(_e => {
+      $msg.innerHTML = 'Ooops... there was an error while creating Organization {' + _e + '}';
+    });
+
+    // contract.methods.getOrgDbCount().call()
+    // .then(result => {
+    //   $msg.innerHTML += result;
+    // })
+    // .catch(_e => {
+    //   $msg.innerHTML += _e;
+    // });
+  });
+};
+
+
+const init_currentOrgs = () => {
+  $getCurrentOrgs.addEventListener('submit', (e) =>{
+    e.preventDefault();
+    account = getSelectedAccount();
+    const $msg = document.getElementById('getCurrentOrgs_msg');
+    // $msg.innerHTML = "Please wait....";
+    var noOfOrgs = 0;
+    // var tbl;
+    const $currentOrgs = document.getElementById('currentOrgs');
+    // $currentCFs.innerHTML = "";
+    contract.methods.getOrgDbCount().call()
+    .then(result => {
+      noOfOrgs = parseInt(result);
+      $currentOrgs.innerHTML = 'No of Orgs = ' + noOfOrgs + '<br>';
+      document.getElementById("OrgsRows").innerHTML ="";
+      for (var i = noOfOrgs-1; i>=0; i--) {
+        console.log('i = ',i);
+        contract.methods.orgDb(i.toString()).call()
+        .then(result => {
+          // console.log(result);
+          var tbl = "";
+          tbl += "<tr class=\"table-success\">";
+          // tbl += "<th scope=\"row\">"+"</th>";
+          tbl += "<td scope=\"row\">"+result.name+"</td>";
+          tbl += "<th scope=\"row\"> <a href=\"interact_with_crowd_funding?cfAddress=" +result.admin+" \" class=\"addr\" target=\"_blank\" >" +result.admin+"</a></th>";
+          tbl += "<td scope=\"row\">"+result.acceptingZakat+"</td>";
+          tbl += "<td scope=\"row\">"+result.balanceAmount+"</td>";
+          tbl += "</tr>";
+          document.getElementById("OrgsRows").innerHTML+= tbl;
+        })
+        .catch(_e => {
+          $msg.innerHTML = 'Ooops... there was an error while getting Orgs at index= {' + i + '} Error= {' + _e + '}';
+        });
+      }
+    })
+    .catch(_e => {
+      $msg.innerHTML = 'Ooops... there was an error while getting Orgs count {' + _e + '}';
+    });
+  });
+};
+
+
+
 const init_auto = () => {
   const event = document.createEvent('Event');
   // Define that the event name is 'build'.
@@ -429,4 +514,5 @@ window.init_currentCFs = init_currentCFs;
 window.init_applyVoting = init_applyVoting;
 window.init_interactWithCFs = init_interactWithCFs;
 window.init_getVotingStats = init_getVotingStats;
-
+window.init_createOrg = init_createOrg;
+window.init_currentOrgs =init_currentOrgs;

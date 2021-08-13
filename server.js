@@ -153,6 +153,21 @@ app.get('/interact_with_crowd_funding', checkUserSession, function(req,res) {
     });
 });
 
+app.get('/create_organization', checkUserSession, function(req,res) {  
+    var cfAddress = req.query.cfAddress;
+    res.render('create_organization',{
+        account:req.session.user_id
+    });
+});
+
+app.get('/all_organizations', checkUserSession, function(req,res) {  
+    var cfAddress = req.query.cfAddress;
+    res.render('all_organizations',{
+        account:req.session.user_id
+    });
+});
+
+
 // create_crowd_funding.html
 
 

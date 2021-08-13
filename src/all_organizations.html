@@ -1,0 +1,57 @@
+<!-- <!DOCTYPE html>
+<html>
+<head>
+	<title>Apply For Voting</title>
+  <script src="./ext/web3.js"></script>
+</head>
+<body> -->
+  <%- include('./header'); %>
+  <div class="mt-2 mb-2">
+   <center>
+    <h1>All Organizations</h1>
+  </center>
+  <center class="containerBox">
+    <h3 id="YAHead">Your Account</h3>
+    <div id="currentAccount"><%= account %></div> 
+    <br> 
+    <a href="set_session?change=1">Change</a>
+  </center>
+</div>
+
+
+<form id="getCurrentOrgs" class="containerBox">
+  <h3>All Organizations</h3>
+  <div id="currentOrgs">
+    </div>
+    <table class="table table-hover" id="org-table">
+      <thead>
+      <tr>
+        <th scope="col">Name</th>
+        <th scope="col" class="col-md-3">Address</th>
+        <th scope="col">Accepting Zakat</th>
+        <th scope="col">Balance Amount</th>
+      </tr>
+      </thead>
+      <tbody id="OrgsRows"></tbody>
+    </table>
+  <button type="submit">List All</button>
+  <div id="getCurrentOrgs_msg"></div>
+</form>
+
+
+<script type="text/javascript">
+  function presets() {
+    accountSelectorEnabled = false;
+  };
+  function features() {
+   // init_createOrg();
+   init_currentOrgs();
+ };
+</script>
+
+
+
+
+<!-- </body>
+  </html> -->
+  <%- include('./footer'); %>
