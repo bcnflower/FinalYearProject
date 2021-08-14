@@ -463,7 +463,7 @@ const init_currentOrgs = () => {
 };
 
 
-// const init_interactWithOrgs = () => { good
+// const init_interactWithOrgs = () => { gooding
 
 //   $updateCfStats.addEventListener('submit', (e) => {
 //     e.preventDefault();
