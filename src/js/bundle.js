@@ -353,6 +353,7 @@ const init_interactWithCFs = () => {
       .catch(_e => {
         $msg.innerHTML = 'Ooops... there was an error while trying to Refund {' + _e + '}';
       });
+
     })
     .catch(_e => {
       $msg.innerHTML = 'Ooops... there was an error while trying to cfId {' + _e + '}';
@@ -444,7 +445,7 @@ const init_currentOrgs = () => {
           tbl += "<tr class=\"table-success\">";
           // tbl += "<th scope=\"row\">"+"</th>";
           tbl += "<td scope=\"row\">"+result.name+"</td>";
-          tbl += "<th scope=\"row\"> <a href=\"interact_with_crowd_funding?cfAddress=" +result.admin+" \" class=\"addr\" target=\"_blank\" >" +result.admin+"</a></th>";
+          tbl += "<th scope=\"row\"> <a href=\"interact_with_organization?cfAddress=" +result.admin+" \" class=\"addr\" target=\"_blank\" >" +result.admin+"</a></th>";
           tbl += "<td scope=\"row\">"+result.acceptingZakat+"</td>";
           tbl += "<td scope=\"row\">"+result.balanceAmount+"</td>";
           tbl += "</tr>";
@@ -460,6 +461,107 @@ const init_currentOrgs = () => {
     });
   });
 };
+
+
+// const init_interactWithOrgs = () => {
+
+//   $updateCfStats.addEventListener('submit', (e) => {
+//     e.preventDefault();
+//     var addr = $CFAddress.value;
+//     var cfId;
+//     contract.methods.getCfIdFromAddress(addr).call()
+//     .then(result => {
+//       cfId = result
+//       // $cf_deadline.innerHTML = cfId;
+
+//       contract.methods.cfDb(cfId).call()
+//       .then(result => {
+//         $cf_deadline.innerHTML = result.deadline;
+//         $cf_totalContributors.innerHTML = result.totalContributors;
+//         $cf_goal.innerHTML = result.goal;
+//         $cf_raisedAmount.innerHTML = result.raisedAmount;
+//       })
+//       .catch(_e => {
+//         $cf_deadline.innerHTML = 'Ooops... there was an error while trying to get stats {' + _e + '}';
+//       });
+
+//     })
+//     .catch(_e => {
+//       $cf_deadline.innerHTML = 'Ooops... there was an error while trying to cfId {' + _e + '}';
+//     });
+
+//   });
+
+
+//   $CFcontribute.addEventListener('submit', (e) =>{
+//     e.preventDefault();
+
+//     const $msg = document.getElementById('CFcontribute_msg'); 
+//     var addr = $CFAddress.value;
+//     var cfId;
+//     contract.methods.getCfIdFromAddress(addr).call()
+//     .then(result => {
+//       cfId = result;
+//       var val = $CFcontributeAmount.value;
+//       contract.methods.cf_contribute(cfId).send({from: account,value:val,gas:3000000})
+//       .then(result => {
+//         $msg.innerHTML = 'Contributed {'+val+'} successfully.';
+//       })
+//       .catch(_e => {
+//         $msg.innerHTML = 'Ooops... there was an error while trying to Contribute {' + _e + '}';
+//       });
+//     })
+//     .catch(_e => {
+//       $msg.innerHTML = 'Ooops... there was an error while trying to cfId {' + _e + '}';
+//     });
+//   });
+
+//   $CFgetRefund.addEventListener('submit', (e) =>{
+//     e.preventDefault();
+
+//     const $msg = document.getElementById('CFgetRefund_msg'); 
+//     var addr = $CFAddress.value;
+//     var cfId;
+//     contract.methods.getCfIdFromAddress(addr).call()
+//     .then(result => {
+//       cfId = result;
+//       var val = $CFcontributeAmount.value;
+//       contract.methods.cf_getRefund(cfId).send({from: account})
+//       .then(result => {
+//         $msg.innerHTML = 'Refunded successfully.';
+//       })
+//       .catch(_e => {
+//         $msg.innerHTML = 'Ooops... there was an error while trying to Refund {' + _e + '}';
+//       });
+      
+//     })
+//     .catch(_e => {
+//       $msg.innerHTML = 'Ooops... there was an error while trying to cfId {' + _e + '}';
+//     });
+//   });
+
+//   $CFwithdrawFunding.addEventListener('submit', (e) =>{
+//     e.preventDefault();
+//     const $msg = document.getElementById('CFwithdrawFunding_msg'); 
+//     var addr = $CFAddress.value;
+//     var cfId;
+//     contract.methods.getCfIdFromAddress(addr).call()
+//     .then(result => {
+//       cfId = result;
+//       var val = $CFcontributeAmount.value;
+//       contract.methods.cf_withdrawFunding(cfId).send({from: account})
+//       .then(result => {
+//         $msg.innerHTML = 'Refunded successfully.';
+//       })
+//       .catch(_e => {
+//         $msg.innerHTML = 'Ooops... there was an error while trying to Refund {' + _e + '}';
+//       });
+//     })
+//     .catch(_e => {
+//       $msg.innerHTML = 'Ooops... there was an error while trying to cfId {' + _e + '}';
+//     });
+//   });
+// };
 
 
 
