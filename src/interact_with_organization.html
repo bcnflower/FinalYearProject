@@ -27,27 +27,16 @@
 
     <form id="updateCfStats">
       <label>Crowd Funding Address: </label>
-      <input type="text" name="CFAddress" id="CFAddress" required value="<%= cfAddress %>">
+      <input type="text" name="OrgAddress" id="OrgAddress" required value="<%= orgAddress %>">
       <button type="submit">Update Stats</button><br>
       <table>
         <tr>
-          <td>Deadline</td> <td><span id="cf_deadline"></span></td>
+          <td>Total Contributers</td> <td><span id="org_totalContributors"></span></td>
         </tr>
         <tr>
-          <td>Total Contributers</td> <td><span id="cf_totalContributors"></span></td>
-        </tr>
-        <tr>
-          <td>Goal</td><td><span id="cf_goal"></span></td>
-        </tr>
-        <tr>
-          <td>Raised Amount</td> <td><span id="cf_raisedAmount"></span></td>
+          <td>Raised Amount</td> <td><span id="org_raisedAmount"></span></td>
         </tr>
       </table>
-
-<!--       <label>Deadline=> </label><span id="cf_deadline"></span><br>
-      <label>Total Contributers=></label><span id="cf_totalContributors"></span><br>
-      <label>Goal=></label><span id="cf_goal"></span><br>
-      <label>Raised Amount=></label><span id="cf_raisedAmount"></span><br> -->
     </form>
 
     <form id="CFcontribute" class="containerBox">

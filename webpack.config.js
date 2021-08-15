@@ -68,6 +68,10 @@ module.exports = {
       filename: 'views/all_organizations.html'
     }),
     new HtmlWebpackPlugin({
+      template: 'src/interact_with_organization.html',
+      filename: 'views/interact_with_organization.html'
+    }),
+    new HtmlWebpackPlugin({
       template: 'src/test.html',
       filename: 'views/test.html' 
     }),

@@ -465,7 +465,7 @@ const init_currentOrgs = () => {
 
 // const init_interactWithOrgs = () => {
 
-//   $updateCfStats.addEventListener('submit', (e) => {
+//   $updateOrgStats.addEventListener('submit', (e) => {
 //     e.preventDefault();
 //     var addr = $CFAddress.value;
 //     var cfId;
@@ -493,7 +493,7 @@ const init_currentOrgs = () => {
 //   });
 
 
-//   $CFcontribute.addEventListener('submit', (e) =>{
+//   $Orgcontribute.addEventListener('submit', (e) =>{
 //     e.preventDefault();
 
 //     const $msg = document.getElementById('CFcontribute_msg'); 
