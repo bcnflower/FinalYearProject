@@ -19,43 +19,44 @@
   </div>
 
 
-  <div id="interactWithCFs" class="containerBox">
+  <div id="interactWithOrgs" class="containerBox">
     <h3>Intreract with Organization</h3>
 
     <!-- <label>Crowd Funding Address: </label> -->
     <!-- <input type="text" name="CFAddress" id="CFAddress" required> -->
 
-    <form id="updateCfStats">
-      <label>Crowd Funding Address: </label>
-      <input type="text" name="OrgAddress" id="OrgAddress" required value="<%= orgAddress %>">
+    <form id="updateOrgStats">
+      <label>Organization Address: </label>
+      <input type="text" name="orgAddress" id="orgAddress" required value="<%= orgAddress %>">
       <button type="submit">Update Stats</button><br>
-      <table>
-        <tr>
-          <td>Total Contributers</td> <td><span id="org_totalContributors"></span></td>
-        </tr>
-        <tr>
-          <td>Raised Amount</td> <td><span id="org_raisedAmount"></span></td>
-        </tr>
-      </table>
+      <center>
+        <table border="2">
+          <tr>
+            <td>Organization Name</td> <td><span id="org_name"></span></td>
+          </tr>
+          <tr>
+            <td>Accepting Zakat</td> <td><span id="org_zakat"></span></td>
+          </tr>
+          <tr>
+            <td>Balance Amount</td> <td><span id="org_balanceAmount"></span></td>
+          </tr>
+        </table>
+      </center>
     </form>
 
-    <form id="CFcontribute" class="containerBox">
-      <input type="number" name="contributeAmount" id="CFcontributeAmount">
+    <form id="orgContribute" class="containerBox">
+      <input type="number" name="contributeAmount" id="orgContributeAmount">
       <button type="submit">Contribute</button>
-      <div id="CFcontribute_msg"></div>
+      <div id="orgContribute_msg"></div>
     </form>
 
-    <form id="CFgetRefund" class="containerBox">
-      <button type="submit">Get Refund</button>
-      <div id="CFgetRefund_msg"></div>
-    </form>
-
-    <form id="CFwithdrawFunding" class="containerBox">
+    <form id="orgWithdraw" class="containerBox">
+      <input type="number" name="withdrawAmount" id="withdrawAmount">
       <button type="submit">Withdraw Funding</button>
-      <div id="CFwithdrawFunding_msg">...</div>
+      <div id="orgWithdraw_msg">...</div>
     </form>
 
-    <div id="interactWithCFs_msg"></div>
+    <div id="interactWithOrgs_msg"></div>
   </div>
 
 
@@ -67,7 +68,7 @@
     };
     function features() {
       console.log("account=",account);
-      init_interactWithCFs();
+      init_interactWithOrgs();
     };
   </script>
 

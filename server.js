@@ -167,10 +167,11 @@ app.get('/all_organizations', checkUserSession, function(req,res) {
     });
 });
 
-app.get('/nteract_with_organization', checkUserSession, function(req,res) {  
-    var cfAddress = req.query.cfAddress;
-    res.render('nteract_with_organization',{
-        account:req.session.user_id
+app.get('/interact_with_organization', checkUserSession, function(req,res) {  
+    var orgAddress = req.query.orgAddress;
+    res.render('interact_with_organization',{
+        account:req.session.user_id,
+        orgAddress,orgAddress
     });
 });
 

@@ -49,6 +49,21 @@ let accountSelectorEnabled = true;
   const $CFwithdrawFunding = document.getElementById('CFwithdrawFunding');
   const $last_msg = document.getElementById('last_msg');
 
+  // Org variables...
+  const $updateOrgStats = document.getElementById('updateOrgStats');
+  const $orgAddress = document.getElementById('orgAddress');
+  const $org_name = document.getElementById('org_name');
+  const $org_zakat = document.getElementById('org_zakat');
+  const $org_balanceAmount = document.getElementById('org_balanceAmount');
+
+  const $orgContribute = document.getElementById('orgContribute');
+  const $orgContributeAmount = document.getElementById('orgContributeAmount');
+
+  const $orgWithdraw = document.getElementById('orgWithdraw');
+  const $withdrawAmount = document.getElementById('withdrawAmount');
+
+  // Org variables...
+
 const initWeb3 = () => {
   return new Promise((resolve, reject) => {
     if(typeof window.ethereum !== 'undefined') {
@@ -163,7 +178,7 @@ const init_applyVoting = (inputIndex = 0) => {
       $msg.innerHTML = 'Created Voting successfully.<br>';
       $msg.innerHTML+= '<a href="./vote?canidateAddress='+account+'" target="_blank" >Go for Voting</a>';
     })
-    .catch(_e => {
+    .catch(_e => {e.target.elements[0].value;
       $msg.innerHTML = 'Ooops... there was an error while creating Voting {' + _e + '}';
     });
   });
@@ -426,7 +441,7 @@ const init_currentOrgs = () => {
     e.preventDefault();
     account = getSelectedAccount();
     const $msg = document.getElementById('getCurrentOrgs_msg');
-    // $msg.innerHTML = "Please wait....";
+    $msg.innerHTML = "Please wait...";
     var noOfOrgs = 0;
     // var tbl;
     const $currentOrgs = document.getElementById('currentOrgs');
@@ -445,7 +460,7 @@ const init_currentOrgs = () => {
           tbl += "<tr class=\"table-success\">";
           // tbl += "<th scope=\"row\">"+"</th>";
           tbl += "<td scope=\"row\">"+result.name+"</td>";
-          tbl += "<th scope=\"row\"> <a href=\"interact_with_organization?cfAddress=" +result.admin+" \" class=\"addr\" target=\"_blank\" >" +result.admin+"</a></th>";
+          tbl += "<th scope=\"row\"> <a href=\"interact_with_organization?orgAddress=" +result.admin+" \" class=\"addr\" target=\"_blank\" >" +result.admin+"</a></th>";
           tbl += "<td scope=\"row\">"+result.acceptingZakat+"</td>";
           tbl += "<td scope=\"row\">"+result.balanceAmount+"</td>";
           tbl += "</tr>";
@@ -463,105 +478,72 @@ const init_currentOrgs = () => {
 };
 
 
-// const init_interactWithOrgs = () => {
+const init_interactWithOrgs = () => {
 
-//   $updateOrgStats.addEventListener('submit', (e) => {
-//     e.preventDefault();
-//     var addr = $CFAddress.value;
-//     var cfId;
-//     contract.methods.getCfIdFromAddress(addr).call()
-//     .then(result => {
-//       cfId = result
-//       // $cf_deadline.innerHTML = cfId;
+  $updateOrgStats.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const $msg = document.getElementById('interactWithOrgs_msg');
+    $msg.innerHTML = "Please wait...";
+    var addr = $orgAddress.value;
+    var orgId;
+    contract.methods.getOrgIdFromAddress(addr).call()
+    .then(result => {
+      orgId = result
+      // $cf_deadline.innerHTML = cfId;
 
-//       contract.methods.cfDb(cfId).call()
-//       .then(result => {
-//         $cf_deadline.innerHTML = result.deadline;
-//         $cf_totalContributors.innerHTML = result.totalContributors;
-//         $cf_goal.innerHTML = result.goal;
-//         $cf_raisedAmount.innerHTML = result.raisedAmount;
-//       })
-//       .catch(_e => {
-//         $cf_deadline.innerHTML = 'Ooops... there was an error while trying to get stats {' + _e + '}';
-//       });
+      contract.methods.orgDb(orgId).call()
+      .then(result => {
+        $org_name.innerHTML = result.name;
+        $org_zakat.innerHTML = result.acceptingZakat;
+        $org_balanceAmount.innerHTML = result.balanceAmount;
+         $msg.innerHTML = "Done...";
+      })
+      .catch(_e => {
+        $msg.innerHTML = 'Ooops... there was an error while trying to get stats {' + _e + '}';
+      });
 
-//     })
-//     .catch(_e => {
-//       $cf_deadline.innerHTML = 'Ooops... there was an error while trying to cfId {' + _e + '}';
-//     });
+    })
+    .catch(_e => {
+      $msg.innerHTML = 'Ooops... there was an error while trying to get orgId {' + _e + '}';
+    });
 
-//   });
+  });
 
 
-//   $Orgcontribute.addEventListener('submit', (e) =>{
-//     e.preventDefault();
+  $orgContribute.addEventListener('submit', (e) =>{
+    e.preventDefault();
+    account = getSelectedAccount();
+    const $msg = document.getElementById('interactWithOrgs_msg');
+    $msg.innerHTML = "Please wait...";
+    var addr = $orgAddress.value;
+    var val = $orgContributeAmount.value;
+    contract.methods.org_adr_donate(addr).send({from: account,value:val,gas:3000000})
+    .then(result => {
+      $msg.innerHTML = 'Contributed {'+val+'} successfully.';
+    })
+    .catch(_e => {
+      $msg.innerHTML = 'Ooops... there was an error while trying to Contribute {' + _e + '}';
+    });
 
-//     const $msg = document.getElementById('CFcontribute_msg'); 
-//     var addr = $CFAddress.value;
-//     var cfId;
-//     contract.methods.getCfIdFromAddress(addr).call()
-//     .then(result => {
-//       cfId = result;
-//       var val = $CFcontributeAmount.value;
-//       contract.methods.cf_contribute(cfId).send({from: account,value:val,gas:3000000})
-//       .then(result => {
-//         $msg.innerHTML = 'Contributed {'+val+'} successfully.';
-//       })
-//       .catch(_e => {
-//         $msg.innerHTML = 'Ooops... there was an error while trying to Contribute {' + _e + '}';
-//       });
-//     })
-//     .catch(_e => {
-//       $msg.innerHTML = 'Ooops... there was an error while trying to cfId {' + _e + '}';
-//     });
-//   });
+  });
 
-//   $CFgetRefund.addEventListener('submit', (e) =>{
-//     e.preventDefault();
 
-//     const $msg = document.getElementById('CFgetRefund_msg'); 
-//     var addr = $CFAddress.value;
-//     var cfId;
-//     contract.methods.getCfIdFromAddress(addr).call()
-//     .then(result => {
-//       cfId = result;
-//       var val = $CFcontributeAmount.value;
-//       contract.methods.cf_getRefund(cfId).send({from: account})
-//       .then(result => {
-//         $msg.innerHTML = 'Refunded successfully.';
-//       })
-//       .catch(_e => {
-//         $msg.innerHTML = 'Ooops... there was an error while trying to Refund {' + _e + '}';
-//       });
-      
-//     })
-//     .catch(_e => {
-//       $msg.innerHTML = 'Ooops... there was an error while trying to cfId {' + _e + '}';
-//     });
-//   });
+  $orgWithdraw.addEventListener('submit', (e) =>{
+    e.preventDefault();
+    account = getSelectedAccount();
+    const $msg = document.getElementById('orgWithdraw_msg'); 
+    var addr = $orgAddress.value;
+    var val = $withdrawAmount.value;
 
-//   $CFwithdrawFunding.addEventListener('submit', (e) =>{
-//     e.preventDefault();
-//     const $msg = document.getElementById('CFwithdrawFunding_msg'); 
-//     var addr = $CFAddress.value;
-//     var cfId;
-//     contract.methods.getCfIdFromAddress(addr).call()
-//     .then(result => {
-//       cfId = result;
-//       var val = $CFcontributeAmount.value;
-//       contract.methods.cf_withdrawFunding(cfId).send({from: account})
-//       .then(result => {
-//         $msg.innerHTML = 'Refunded successfully.';
-//       })
-//       .catch(_e => {
-//         $msg.innerHTML = 'Ooops... there was an error while trying to Refund {' + _e + '}';
-//       });
-//     })
-//     .catch(_e => {
-//       $msg.innerHTML = 'Ooops... there was an error while trying to cfId {' + _e + '}';
-//     });
-//   });
-// };
+    contract.methods.org_withdraw(val).send({from: account})//,gas:3000000})
+    .then(result => {
+      $msg.innerHTML = 'Refunded successfully.';
+    })
+    .catch(_e => {
+      $msg.innerHTML = 'Ooops... there was an error while trying to Refund {' + _e + '}';
+    });
+  });
+};
 
 
 
@@ -618,3 +600,4 @@ window.init_interactWithCFs = init_interactWithCFs;
 window.init_getVotingStats = init_getVotingStats;
 window.init_createOrg = init_createOrg;
 window.init_currentOrgs =init_currentOrgs;
+window.init_interactWithOrgs = init_interactWithOrgs;

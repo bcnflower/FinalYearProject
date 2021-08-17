@@ -105,7 +105,7 @@ contract mainTest{
     // }
 
     function getCfIdFromAddress(address cfAddress) view public returns(uint){
-        return (cfIdxDb[msg.sender] - 1);
+        return (cfIdxDb[cfAddress] - 1);
     }
     
     function createCrowdFund(uint _deadlineSecs,uint _goal) public{
@@ -168,6 +168,11 @@ contract mainTest{
     function getOrgDbCount() view public returns(uint){
         return orgDb.length;
     }
+
+    function getOrgIdFromAddress(address orgAddress) view public returns(uint){
+        require (orgIdxDb[orgAddress] > 0,"Organization Does Not Exists.");
+        return (orgIdxDb[orgAddress] - 1);
+    }
     
     event Deposit(address indexed _from, uint _value);
     
@@ -182,6 +187,7 @@ contract mainTest{
     }
 
     function org_id_donate(uint orgId) public payable {
+        require (orgId > 0,"Organization Does Not Exists.");
         orgDb[orgId].balanceAmount += msg.value;
         // emit Deposit(msg.sender, msg.value);
     }
@@ -196,7 +202,9 @@ contract mainTest{
         require (orgIdxDb[msg.sender] > 0,"Organization Does Not Exists.");
         uint id = orgIdxDb[msg.sender]-1;
         require(msg.sender == orgDb[id].admin,"Only Admin is allowed!");
+        require(orgDb[id].balanceAmount >= amount,"Not enough balance!");
         orgDb[id].admin.transfer(amount);
+        orgDb[id].balanceAmount-= amount;
     }
     
     // function org_donate(uint orgId) public payable {
