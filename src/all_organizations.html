@@ -13,6 +13,9 @@
   <center class="containerBox">
     <h3 id="YAHead">Your Account</h3>
     <div id="currentAccount"><%= account %></div> 
+    <div>Balance: <span id="balance"></span></div>
+    <div>Rate (wei) per Rupee: <span id="rate"><%= rate %></span></div>
+    <div>Balance PKR: <span id="balancePKR"></span></div>
     <br> 
     <a href="set_session?change=1">Change</a>
   </center>
@@ -46,6 +49,7 @@
   function features() {
    // init_createOrg();
    init_currentOrgs();
+   init_balance();
  };
 </script>
 

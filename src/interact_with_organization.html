@@ -4,15 +4,16 @@
   <title>Create Crowd Funding</title>
   <script src="./ext/web3.js"></script>
 </head>
-<body>
-  <div class="mt-2 mb-2"> -->
-    <%- include('./header'); %>
+<body>-->
+  <%- include('./header'); %>
+  <div class="mt-2 mb-2"> 
     <center>
       <h1>Intreract with Organization</h1>
     </center>
     <center class="containerBox">
       <h3 id="YAHead">Your Account</h3>
       <div id="currentAccount"><%= account %></div> 
+    <div>Rate (wei) per Rupee: <span id="rate"><%= rate %></span></div>
       <br> 
       <a href="set_session?change=1">Change</a>
     </center>

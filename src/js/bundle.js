@@ -124,11 +124,11 @@ const initApp = () => {
         console.log(err.message);
       };
     };
-    // try{
+    try{
       features();
-    //   }catch(err){
-    //     console.log(err.message);
-    // };
+      }catch(err){
+        console.log(err.message);
+    };
   });
 };
 
@@ -146,6 +146,7 @@ const accountSelector = () =>{
     web3.eth.getBalance(account)
     .then(balance =>{
       document.getElementById("balance").innerHTML = web3.utils.fromWei(balance);
+      document.getElementById("balancePKR").innerHTML = Math.floor(weiToPkr(balance));
     });
 
     $selectAccount.addEventListener('change', (e) =>{
@@ -462,7 +463,7 @@ const init_currentOrgs = () => {
           tbl += "<td scope=\"row\">"+result.name+"</td>";
           tbl += "<th scope=\"row\"> <a href=\"interact_with_organization?orgAddress=" +result.admin+" \" class=\"addr\" target=\"_blank\" >" +result.admin+"</a></th>";
           tbl += "<td scope=\"row\">"+result.acceptingZakat+"</td>";
-          tbl += "<td scope=\"row\">"+result.balanceAmount+"</td>";
+          tbl += "<td scope=\"row\">"+Math.round(weiToPkr(result.balanceAmount))+" PKR</td>";
           tbl += "</tr>";
           document.getElementById("OrgsRows").innerHTML+= tbl;
         })
@@ -495,7 +496,7 @@ const init_interactWithOrgs = () => {
       .then(result => {
         $org_name.innerHTML = result.name;
         $org_zakat.innerHTML = result.acceptingZakat;
-        $org_balanceAmount.innerHTML = result.balanceAmount;
+        $org_balanceAmount.innerHTML = Math.round(weiToPkr(result.balanceAmount)) + " PKR";
          $msg.innerHTML = "Done...";
       })
       .catch(_e => {
@@ -517,6 +518,7 @@ const init_interactWithOrgs = () => {
     $msg.innerHTML = "Please wait...";
     var addr = $orgAddress.value;
     var val = $orgContributeAmount.value;
+    val = Math.round(PkrToWei(val));
     contract.methods.org_adr_donate(addr).send({from: account,value:val,gas:3000000})
     .then(result => {
       $msg.innerHTML = 'Contributed {'+val+'} successfully.';
@@ -534,7 +536,7 @@ const init_interactWithOrgs = () => {
     const $msg = document.getElementById('orgWithdraw_msg'); 
     var addr = $orgAddress.value;
     var val = $withdrawAmount.value;
-
+    val = Math.round(PkrToWei(val));
     contract.methods.org_withdraw(val).send({from: account})//,gas:3000000})
     .then(result => {
       $msg.innerHTML = 'Refunded successfully.';
@@ -580,6 +582,29 @@ function getSelectedAccount(elementID = "currentAccount"){
   return acc;
 }
 
+function getRate(elementID = "rate"){
+  var rate = document.getElementById(elementID);
+  var rate = rate.innerHTML;
+  return rate;
+}
+
+function weiToPkr(wei){
+  return (wei/getRate());
+}
+
+function PkrToWei(pkr){
+  return (pkr*getRate());
+}
+
+function init_balance(){
+  account = getSelectedAccount();
+  web3.eth.getBalance(account)
+    .then(balance =>{
+      document.getElementById('balance').innerHTML = web3.utils.fromWei(balance) + ' ETH';
+      document.getElementById('balancePKR').innerHTML = Math.round(weiToPkr(balance)) + ' PKR';
+    });
+}
+
 window.getAccount = function(){
   return account;
 }
@@ -601,3 +626,4 @@ window.init_getVotingStats = init_getVotingStats;
 window.init_createOrg = init_createOrg;
 window.init_currentOrgs =init_currentOrgs;
 window.init_interactWithOrgs = init_interactWithOrgs;
+window.init_balance = init_balance;

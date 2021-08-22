@@ -5,6 +5,8 @@ const multer = require('multer');
 const helpers = require('./helpers');
 const sqlite3 = require('sqlite3').verbose();
 
+const https = require('https')
+
 const app = express();
 var db = new sqlite3.Database('mydb.db', (err) => {
     if (err) {
@@ -14,6 +16,7 @@ var db = new sqlite3.Database('mydb.db', (err) => {
 });
 
 var returnToPage = "";
+var ratePerRupee = 0;
 
 app.use('/', express.static(path.join(__dirname, 'dist')));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
@@ -140,7 +143,8 @@ app.get('/create_crowd_funding', checkUserSession, function(req,res) {
 
 app.get('/all_crowd_fundings', checkUserSession, function(req,res) {  
     res.render('all_crowd_fundings',{
-        account:req.session.user_id
+        account:req.session.user_id,
+        // rate:ratePerRupee
     });
 });
 
@@ -163,7 +167,8 @@ app.get('/create_organization', checkUserSession, function(req,res) {
 app.get('/all_organizations', checkUserSession, function(req,res) {  
     var cfAddress = req.query.cfAddress;
     res.render('all_organizations',{
-        account:req.session.user_id
+        account:req.session.user_id,
+        rate:ratePerRupee
     });
 });
 
@@ -171,7 +176,8 @@ app.get('/interact_with_organization', checkUserSession, function(req,res) {
     var orgAddress = req.query.orgAddress;
     res.render('interact_with_organization',{
         account:req.session.user_id,
-        orgAddress,orgAddress
+        orgAddress,orgAddress,
+        rate:ratePerRupee
     });
 });
 
@@ -183,12 +189,13 @@ app.get('/set_session', function(req,res) {
   // Your code here
   if(req.query.change)
   {
-    console.log("yes");
+    // console.log("yes");
     // returnToPage = req.url;
     req.session.user_id = 0;
   }
   console.log(req.query);
-  res.render('set_session');
+  console.log("Rate = ",ratePerRupee);
+  res.render('set_session',{rate:ratePerRupee});
 });
 
 app.post('/set_session', function(req,res) {
@@ -212,7 +219,32 @@ function checkUserSession( req, res, next )
 }//checkUserSession()
 
 
+// wei per rupee
+var d = new Date();
+var dateString = d.getFullYear()+'-'+(d.getMonth()+1)+'-'+(d.getDate()-1);
+const options = {
+  hostname: 'exchangerate.guru',
+  port: 443,
+  path: '/system/exchange-rate-chart/?amount=1&bcc=ETH&scc=PKR&dateFrom='+dateString+'&dateTo='+dateString,
+  method: 'GET'
+}
 
+const req = https.request(options, res => {
+  // console.log(`statusCode: ${res.statusCode}`)
+  res.on('data', d => {
+    var price = JSON.parse(d);
+    console.log('price = ',price);
+    ratePerRupee = (1e18)/price[0][1];
+    console.log('ratePerRupee = ',ratePerRupee);
+  });
+});
+
+req.on('error', error => {
+  console.error(error)
+});
+
+req.end();
+// wei per rupee
 
 app.set('port', process.env.PORT || 8080);
 
