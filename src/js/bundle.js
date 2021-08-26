@@ -2,9 +2,9 @@
 // import Web3 from '../ext/web3.min.js';
 import Contract from '../../build/contracts/mainTest.json';
 
-import './bootstrap.bundle.min.js'
-import '../css/bootstrap.min.css'
-import '../css/myCss.css'
+// import './bootstrap.bundle.min.js'
+// import '../css/bootstrap.min.css'
+// import '../css/myCss.css'
 
 let web3;
 let contract;

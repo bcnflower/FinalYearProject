@@ -1,0 +1,74 @@
+<!-- <!DOCTYPE html>
+<html>
+<head>
+  <title>Create Crowd Funding</title>
+  <script src="./ext/web3.js"></script>
+</head>
+<body>
+  <div class="mt-2 mb-2"> -->
+<%- include('./header'); %>
+    <center>
+      <h1>Create Crowd Funding</h1>
+    </center>
+    <center class="containerBox">
+      <h3 id="YAHead">Your Account</h3>
+      <div id="currentAccount"><%= account %></div> 
+      <br> 
+      <a href="set_session?change=1">Change</a>
+    </center>
+  </div>
+  
+  
+  <center>
+    <form id="getVotingStatus" class="containerBox">
+      <table border="2">
+        <tr>
+          <td colspan="2">
+            <center><button type="submit" >Get Voting Status</button></center>
+          </td>
+        </tr>
+        <tr>
+          <td><b>Positve Votes</b></td>
+          <td id="positiveVotes"></td>
+        </tr>
+        <tr>
+          <td><b>Negative Votes</b></td>
+          <td id="negativeVotes"></td>
+        </tr>
+        <tr>
+          <td><b>Deadline</b></td>
+          <td id="VSDeadline"></td>
+        </tr>
+      </table>
+    </form>
+  </center>
+
+
+  <form id="createCF" class="containerBox">
+  <h3>Create Crowd Funding</h3>
+  <label>Deadline in Secs:</label>
+  <input type="number" name="CFDeadline" id="CFDeadline" required>
+  <br>
+  <label>Target:</label>
+  <input type="number" name="CFTarget" id="CFTarget" required>
+  <br>
+  <button type="submit">Create Crowd Funding</button>
+  <div id="createCF_msg"></div>
+</form>
+
+
+<script type="text/javascript">
+  function presets() {
+    accountSelectorEnabled = false;
+  };
+  function features() {
+    console.log("account=",account);
+    init_getVotingStats();
+    init_createCF();
+  };
+</script>
+
+
+<!-- </body>
+</html> -->
+<%- include('./footer'); %>

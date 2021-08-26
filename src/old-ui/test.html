@@ -1,0 +1,217 @@
+<%- include('./header'); %>
+<script src="./ext/web3.js"></script>
+    <div class="container">
+      <div class="row">
+        <div class="col-sm-12">
+        <center class="containerBox">
+          <h3>Accounts</h3>
+          <select id="selectAccount">
+               <!-- <option>Choose an Account</option> -->
+          </select><br>
+          <h3 id="YAHead">Your Account</h3>
+          <input type="text" name="yourAccount" id="yourAccount" style="width: 390px"><br>
+          <div>Balance: <span id="balance"></span></div>
+          <button onclick="copyAccount()">Copy Account Address</button>
+        </center>
+
+
+        <form id="createVoting" class="containerBox">
+          <h3>Voting for Crowd Funding</h3>
+          <label>Deadline in Secs:</label>
+          <input type="number" name="votingDeadline" id="votingDeadline" required>
+          <br>
+          <button type="submit" >Create Voting</button>
+          <div id="createVoting_msg"></div>
+        </form>
+
+
+        <form id="doVote" class="containerBox">
+          <h3>Vote</h3>
+          <label>Address:</label>
+          <input type="text" name="canidateAddress" id="canidateAddress" required>
+          <br>
+          <label>Do You agree:</label>
+          <input type="checkbox" name="voteChoice" id="voteChoice" required>
+          <br>
+          <button type="submit">Vote</button>
+          <div id="doVote_msg"></div>
+        </form>
+
+
+        
+        <form id="createCF" class="containerBox">
+          <h3>Create Crowd Funding</h3>
+          <label>Deadline in Secs:</label>
+          <input type="number" name="CFDeadline" id="CFDeadline" required>
+          <br>
+          <label>Target:</label>
+          <input type="number" name="CFTarget" id="CFTarget" required>
+          <br>
+          <button type="submit">Create Crowd Funding</button>
+          <div id="createCF_msg"></div>
+        </form>
+
+
+        <form id="getCurrentCFs" class="containerBox">
+          <h3>Current Crowd Fundings</h3>
+          <div id="currentCFs">
+          </div>
+          <table class="table table-hover" id="progress-table">
+            <thead>
+            <tr>
+              <th scope="col" class="col-md-3">Address</th>
+              <th scope="col">Raised</th>
+              <th scope="col">Goal</th>
+              <th scope="col"># Contributors</th>
+              <th scope="col">Deadline</th>
+            </tr>
+            </thead>
+            <tbody id="CFsRows"></tbody>
+          </table>
+          <button type="submit">Get Crowd Fundings</button>
+          <div id="getCurrentCFs_msg"></div>
+        </form>
+
+        <div id="interactWithCFs" class="containerBox">
+          <h3>Interact with Crowd Fundings</h3>
+
+          <!-- <label>Crowd Funding Address: </label> -->
+          <!-- <input type="text" name="CFAddress" id="CFAddress" required> -->
+
+          <form id="updateCfStats">
+            <label>Crowd Funding Address: </label>
+            <input type="text" name="CFAddress" id="CFAddress" required>
+            <button type="submit">Update Stats</button><br>
+            <label>Deadline=> </label><span id="cf_deadline"></span><br>
+            <!-- <label>Now=></label><span id="cf_now"></span><br> -->
+            <!-- <label>Remaining Time=></label><span id="cf_remainingTime"></span><br> -->
+            <label>Total Contributers=></label><span id="cf_totalContributors"></span><br>
+            <label>Goal=></label><span id="cf_goal"></span><br>
+            <label>Raised Amount=></label><span id="cf_raisedAmount"></span><br>
+          </form>
+
+          <form id="CFcontribute" class="containerBox">
+            <input type="number" name="contributeAmount" id="CFcontributeAmount">
+            <button type="submit">Contribute</button>
+            <div id="CFcontribute_msg"></div>
+          </form>
+
+          <form id="CFgetRefund" class="containerBox">
+            <button type="submit">Get Refund</button>
+            <div id="CFgetRefund_msg"></div>
+          </form>
+
+          <form id="CFwithdrawFunding" class="containerBox">
+            <button type="submit">Withdraw Funding</button>
+            <div id="CFwithdrawFunding_msg">...</div>
+          </form>
+
+          <div id="interactWithCFs_msg"></div>
+        </div>
+
+
+
+<!--         <form action="/uploadProfilePicture" enctype="multipart/form-data" method="POST">
+              <span>Upload Profile Picture:</span>  
+              <input type="file" name="mypic" required/> <br>
+              <input type="submit" value="submit"> 
+        </form> -->
+
+
+        <!-- <h3>Crowd Funding</h3> -->
+
+        <!-- <form> --> <!-- id="getDeadline"> -->
+<!--           <button id="getDeadline" >Get Variablesaaaa</button><br>
+          <label>Deadline=> </label><span id="deadline"></span><br>
+          <label>Now=></label><span id="now"></span><br>
+          <label>Remaining Time=></label><span id="remainingTime"></span><br>
+          <label>Total Contributers=></label><span id="totalContributors"></span><br>
+          <label>Goal=></label><span id="goal"></span><br>
+          <label>Raised Amount=></label><span id="raisedAmount"></span><br> -->
+        <!-- </form> -->
+
+        <!-- <form id="contribute" class="containerBox">
+          <input type="number" name="contributeAmount" id="contributeAmount">
+          <button type="submit">Contribute</button>
+        </form>
+
+        <form id="getRefund" class="containerBox">
+          <button type="submit">Get Refund</button>
+        </form>
+
+        <form id="withdrawFunding" class="containerBox">
+          <button type="submit">Withdraw Funding</button>
+        </form> -->
+
+        <div class="containerBox">
+          <form method="POST" action="/upload-image" enctype="multipart/form-data">
+            <div>
+              <label>Select an image:</label>
+              <input type="file" name="image" />
+            </div>
+            <div>
+              <input type="submit" name="btn_upload_image" value="Upload" />
+            </div>
+          </form>
+          <hr>
+          <form method="POST" action="/upload-multiple-images" enctype="multipart/form-data">
+            <div>
+              <label>Select multiple images:</label>
+              <input type="file" name="images" multiple />
+            </div>
+            <div>
+              <input type="submit" name="btn_upload_multiple_images" value="Upload" />
+            </div>
+          </form> 
+        </div>
+
+        <div id="last_msg"></div>
+        <!-- <a href="" onclick="return copyToClipboard('Hi Ho Ha Ha');">Copy</a> -->
+
+        </div>
+      </div>
+    </div>
+    <script type="text/javascript">
+      function copyAccount() {
+        /* Get the text field */
+        var copyText = document.getElementById("yourAccount");
+        /* Select the text field */
+        copyText.select();
+        copyText.setSelectionRange(0, 99999); /* For mobile devices */
+        /* Copy the text inside the text field */
+        document.execCommand("copy");
+        /* Alert the copied text */
+        // alert("Copied the text: " + copyText.value);
+      }
+
+      function presets() {
+      // accountSelectorEnabled = false;
+      };
+      function features() {
+      initApp();
+      initWeb3();
+      initContract();
+      init_auto();
+      init_doVote();
+      init_createCF();
+      init_currentCFs();
+      init_applyVoting();
+      init_interactWithCFs();
+    };
+
+      const copyToClipboard = str => {
+        const el = document.createElement('textarea');
+        el.value = str;
+        el.setAttribute('readonly', '');
+        el.style.position = 'absolute';
+        el.style.left = '-9999px';
+        document.body.appendChild(el);
+        el.select();
+        document.execCommand('copy');
+        document.body.removeChild(el);
+        return false;
+      };
+
+    </script>
+    <!-- <script src="./bootstrap_dist/js/bootstrap.bundle.min.js"></script> -->
+<%- include('./footer'); %>

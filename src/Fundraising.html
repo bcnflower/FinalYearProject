@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>ECHARITY</title>
+  <%- include('./head'); %>
+</head>
+<style>
+.fot{
+  color: white;
+}
+.bod{
+  border: 2px solid;
+}
+table, td, th {
+  border: 1px solid black;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.form1{
+  width: 60%;
+  height: 35px;
+}
+.btn{
+  background-color: green;
+  color: white;
+  padding: 7px 35px;
+}
+</style>
+<body>
+
+  <%- include('./header'); %>
+
+</body>
+<div class="container text-center">
+  <div class="row">
+    <div class="col-md-6 col-md-offset-3"style="background-color: darkgrey;">
+      <h3> START A CAMPAIGN </h3>
+      <form>
+        <label for="Org">Cause OF Fundraise:</label> <br>
+        <select name="Org"class="form1" id="cars">
+          <option value="1">Education</option>
+          <option value="2">Medical</option>
+          <option value="4">Financial</option>
+          <option value="5">Disaster</option>
+          <option value="6">Welfare</option>
+          <option value="7">Food</option>
+        </select><br>
+        <label for="amount">Amount Required:</label><br>
+        <input type="text" class="form1" id="amount" name="amount" value="" required><br>
+        <label for="appt">DURATION IN HOURS:</label> <BR>
+        <input type="time" class="form1" id="appt" name="appt" min="09:00" max="18:00" required> <BR>
+        <label for="appt">UPLOAD DOCUMENTS:</label> <BR>
+        <center><input type="file" id="myFile" name="filename"></center><BR>
+        <input type="submit" class="btn" value="Submit Your Request"> <br>
+      </form>
+      <br>
+    </div>
+  </div>
+</div>
+<%- include('./footer'); %>
+<script type="text/javascript">
+  function features() {
+        init_applyVoting(4);
+        init_getVotingStats();
+        console.log("a=",getAccount());
+      };
+</script>
+</html>

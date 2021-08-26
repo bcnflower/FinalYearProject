@@ -1,0 +1,157 @@
+<!-- <!DOCTYPE html>
+<html>
+<head>
+	<title>Apply For Voting</title>
+  <script src="./ext/web3.js"></script>
+</head>
+<body> -->
+<%- include('./header'); %>
+	<div class="mt-2 mb-2">
+	<center>
+		<h1>Apply for Voting</h1>
+	</center>
+	<center class="containerBox">
+          <h3 id="YAHead">Your Account</h3>
+          <div id="currentAccount"><%= account %></div> 
+          <br> 
+          <a href="set_session?change=1">Change</a>
+        </center>
+</div>
+<center>
+  <div><%- images %></div>
+</center>
+          <form method="POST" action="/upload-multiple-images" enctype="multipart/form-data">
+                <label>Select Documents to attach:</label>
+                <input type="file" name="images" multiple />
+                <input type="submit" name="btn_upload_multiple_images" value="Upload" />
+          </form>
+	    <form id="createVoting" class="containerBox">
+          <h3>Voting for Crowd Funding</h3>
+        <center>
+        	<h5>Deadline</h5>
+       	<table border="2">
+   			<tr style="text-align: center;">
+   				<td><b>Days<b></td>
+       			<td><b>Hours<b></td>
+       			<td><b>Minutes<b></td>
+       			<td><b>Seconds<b></td>
+       		</tr>
+   			<tr>
+   				<td>
+   					<input type="number" name="days" id = "days" min="0" max="30" onchange="dtChanged();">
+   				</td>
+   				<td>
+   					<input type="number" name="hours" id = "hours" min="0" max="24" onchange="dtChanged();">
+   				</td>
+   				<td>
+   					<input type="number" name="minutes" id = "minutes" min="0" max="60" onchange="dtChanged();">
+   				</td>
+   				<td>
+   					<input type="number" name="seconds" id = "seconds" min="0" max="60" onchange="dtChanged();">
+   				</td>
+   			</tr>
+   			<tr>
+   				<td colspan="2">
+   					<label><b>Deadline in Secs:</b></label>
+   				</td>
+   				<td colspan="2">
+   					<input type="number" name="votingDeadline" id="votingDeadline" required min="0" style="width: 140px">
+   				</td>
+   			</tr>
+   			<tr>
+   				<td colspan="4">
+   					<center>
+   					<button type="submit" >Create Voting</button></center>
+   				</td>
+   			</tr>
+       	</table>
+       </center><br>
+
+          
+          <div id="createVoting_msg"></div>
+        </form>
+        <center>
+        <form id="getVotingStatus" class="containerBox">
+        	<table border="2">
+        		<tr>
+        			<td colspan="2">
+        				<center><button type="submit" >Get Voting Status</button></center>
+        			</td>
+        		</tr>
+        		<tr>
+        			<td><b>Positve Votes</b></td>
+        			<td id="positiveVotes"></td>
+        		</tr>
+        		<tr>
+        			<td><b>Negative Votes</b></td>
+        			<td id="negativeVotes"></td>
+        		</tr>
+        		<tr>
+        			<td><b>Deadline</b></td>
+        			<td id="VSDeadline"></td>
+        		</tr>
+        	</table>
+        </form>
+        </center>
+
+
+
+      <script type="text/javascript">
+      	var days = document.getElementById("days");
+      	var hours = document.getElementById("hours");
+      	var minutes = document.getElementById("minutes");
+      	var seconds = document.getElementById("seconds");
+      	var votingDeadline  = document.getElementById("votingDeadline");
+
+      	days.value = 0;
+      	hours.value = 0;
+      	minutes.value = 0;
+      	seconds.value = 0;
+
+      	function dtChanged(){
+      		if (seconds.value == 60) {
+      			seconds.value = 0;
+      			minutes.value = parseInt(minutes.value) + 1;
+      		}
+      		if (minutes.value == 60) {
+      			minutes.value = 0;
+      			hours.value = parseInt(hours.value) + 1;
+      		}
+      		if (hours.value == 24) {
+      			hours.value = 0;
+      			days.value = parseInt(days.value) + 1;
+      		}
+      		calcDurationInSec();
+      	}
+
+      	function calcDurationInSec()
+      	{
+      		var d = parseInt(days.value);
+      		var h = parseInt(hours.value);
+      		var m = parseInt(minutes.value);
+      		var s = parseInt(seconds.value);
+      		var t = 0;
+      		t += d * 24 * 60 * 60;
+      		t += h * 60 * 60;
+      		t += m * 60;
+      		t += s;
+      		votingDeadline.value = t;
+      	}
+
+      </script>
+
+      	<script type="text/javascript">
+          function presets() {
+      accountSelectorEnabled = false;
+    };
+		function features() {
+	      init_applyVoting(4);
+	      init_getVotingStats();
+	      console.log("a=",getAccount());
+    	};
+	</script>
+
+
+<!-- </body>
+</html> -->
+<%- include('./footer'); %>
