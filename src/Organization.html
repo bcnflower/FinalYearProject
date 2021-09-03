@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>ECHARITY</title>
+  <%- include('./head'); %>
+</head>
+<style>
+.fot{
+  color: white;
+}
+.bod{
+  border: 2px solid;
+}
+.h{
+ background-color: blue;
+ color: white;
+ padding: 11px 45px;
+ text-align: center;
+ text-decoration: none;
+}
+.btn{
+  background-color: green;
+  color: white;
+  width: 70%;
+}
+</style>
+<body>
+
+  <%- include('./header'); %>
+
+  <div class="container text-center">
+    <div style="background-color: darkgrey; margin-left:25%;" class="col-md-6 col-md-offset-3">
+    <h2>CREATE ORGANIZATION</h2>
+    <br>
+    <form id="createOrg">
+      <label for="orgName">Organization Name:</label>
+      <input type="text" class="form1" name="orgName" id="orgName" required><br>
+      <label for="orgZakat">DOES ORGANIZATION ACCEPTS ZAKAT?:</label><br>
+      <label>Yes:</label>
+      <input type="radio" name="orgZakat" id="orgZakat" value="1" checked>  
+      <label>No:</label>
+      <input type="radio" name="orgZakat" id="orgZakat" value="0">
+      <br>
+      <center>
+        <input type="submit" class="btn" value="Submit Your Request"> <br><br>
+        <div class="bod" id="createOrg_msg"><br></div><br>
+      </center>
+    </form>
+    <br>
+    </div>
+  </div>
+  <br>
+  <%- include('./footer'); %>
+</body>
+<script type="text/javascript">
+  function features() {
+        init_createOrg();
+      };
+  function presets(){
+
+  }
+</script>
+</html>

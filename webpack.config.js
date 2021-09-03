@@ -31,50 +31,88 @@ module.exports = {
   plugins: [
     new CleanWebpackPlugin(),
     new MiniCssExtractPlugin(),
+    // new HtmlWebpackPlugin({
+    //   template: 'src/index.html',
+    //   filename: 'views/index.html'
+    // }),
+    // new HtmlWebpackPlugin({
+    //   template: 'src/apply_voting.html',
+    //   filename: 'views/apply_voting.html'
+    // }),
+    // new HtmlWebpackPlugin({
+    //   template: 'src/set_session.html',
+    //   filename: 'views/set_session.html'
+    // }),
+    // new HtmlWebpackPlugin({
+    //   template: 'src/vote.html',
+    //   filename: 'views/vote.html'
+    // }),
+    // new HtmlWebpackPlugin({
+    //   template: 'src/create_crowd_funding.html',
+    //   filename: 'views/create_crowd_funding.html'
+    // }),
+    // new HtmlWebpackPlugin({
+    //   template: 'src/all_crowd_fundings.html',
+    //   filename: 'views/all_crowd_fundings.html'
+    // }),
+    // new HtmlWebpackPlugin({
+    //   template: 'src/interact_with_crowd_funding.html',
+    //   filename: 'views/interact_with_crowd_funding.html'
+    // }),
+    // new HtmlWebpackPlugin({
+    //   template: 'src/create_organization.html',
+    //   filename: 'views/create_organization.html'
+    // }),
+    // new HtmlWebpackPlugin({
+    //   template: 'src/all_organizations.html',
+    //   filename: 'views/all_organizations.html'
+    // }),
+    // new HtmlWebpackPlugin({
+    //   template: 'src/interact_with_organization.html',
+    //   filename: 'views/interact_with_organization.html'
+    // }),
+    // new HtmlWebpackPlugin({
+    //   template: 'src/test.html',
+    //   filename: 'views/test.html' 
+    // }),
+
     new HtmlWebpackPlugin({
-      template: 'src/index.html',
-      filename: 'views/index.html'
-    }),
-    new HtmlWebpackPlugin({
-      template: 'src/apply_voting.html',
-      filename: 'views/apply_voting.html'
+      template: 'src/home.html',
+      filename: 'views/home.html'
     }),
     new HtmlWebpackPlugin({
       template: 'src/set_session.html',
       filename: 'views/set_session.html'
     }),
     new HtmlWebpackPlugin({
-      template: 'src/vote.html',
-      filename: 'views/vote.html'
+      template: 'src/Fundraising.html',
+      filename: 'views/Fundraising.html'
     }),
     new HtmlWebpackPlugin({
-      template: 'src/create_crowd_funding.html',
-      filename: 'views/create_crowd_funding.html'
+      template: 'src/Vote.html',
+      filename: 'views/Vote.html'
     }),
     new HtmlWebpackPlugin({
-      template: 'src/all_crowd_fundings.html',
-      filename: 'views/all_crowd_fundings.html'
+      template: 'src/Active_Campaigns.html',
+      filename: 'views/Active_Campaigns.html'
     }),
     new HtmlWebpackPlugin({
-      template: 'src/interact_with_crowd_funding.html',
-      filename: 'views/interact_with_crowd_funding.html'
+      template: 'src/Organization.html',
+      filename: 'views/Organization.html'
     }),
     new HtmlWebpackPlugin({
-      template: 'src/create_organization.html',
-      filename: 'views/create_organization.html'
+      template: 'src/Active_Organizations.html',
+      filename: 'views/Active_Organizations.html'
     }),
     new HtmlWebpackPlugin({
-      template: 'src/all_organizations.html',
-      filename: 'views/all_organizations.html'
+      template: 'src/Donate_Organization.html',
+      filename: 'views/Donate_Organization.html'
     }),
     new HtmlWebpackPlugin({
-      template: 'src/interact_with_organization.html',
-      filename: 'views/interact_with_organization.html'
+      template: 'src/Donate_Individual.html',
+      filename: 'views/Donate_Individual.html'
     }),
-    new HtmlWebpackPlugin({
-      template: 'src/test.html',
-      filename: 'views/test.html' 
-    }),
+
     new CopyWebpackPlugin([
       // { 
       //   from: path.resolve(__dirname,"src/ext")+'/ext.js',
@@ -97,6 +135,14 @@ module.exports = {
       { 
         from: path.resolve(__dirname,"src")+'/header.ejs',
         to: './views/header.ejs',
+        toType: 'file',
+        // transform: function (content, path) {               // add transform()
+        //   return UglifyJS.minify(content.toString('utf8')).code;  // use uglify
+        // }
+      },
+      { 
+        from: path.resolve(__dirname,"src")+'/head.ejs',
+        to: './views/head.ejs',
         toType: 'file',
         // transform: function (content, path) {               // add transform()
         //   return UglifyJS.minify(content.toString('utf8')).code;  // use uglify

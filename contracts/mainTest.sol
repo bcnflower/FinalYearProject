@@ -15,47 +15,82 @@ contract mainTest{
         uint positiveVotes;
         uint negativeVotes;
         bool valid;
+        uint amount;
+        uint8 catagory;
     }
     
     // voting[] public votingDb;
-    mapping(address=>voting) votingDb;
+    // mapping(address=>voting) votingDb;
+    
+    // uind id = votingIdxDb[Address] - 1;
+    // votingDb[id];
+    
+    voting[] public votingDb;
+    mapping (address => uint) votingIdxDb;
     
     
-    function createVoting(uint deadline) public {
-        require(now>votingDb[msg.sender].deadline,"Voting Already Exists.");
-        delete votingDb[msg.sender].alreadyVoted;
-        votingDb[msg.sender].positiveVotes = 0;
-        votingDb[msg.sender].negativeVotes = 0;
-        votingDb[msg.sender].deadline = deadline + now;
-        votingDb[msg.sender].valid = true;
+    function createVoting(uint deadline,uint _amount, uint8 _catagory) public {
+        if(votingIdxDb[msg.sender] > 0){
+            require(votingDb[votingIdxDb[msg.sender] - 1].deadline < now,"Deadline not over yet.");
+        }
+        // require(votingIdxDb[msg.sender] == 0,"Voting Already Exists.");
+        if(cfIdxDb[msg.sender]>0){
+            require(cfDb[cfIdxDb[msg.sender] - 1].deadline<now,"Crowdfunding Exists and deadline not over yet.");
+        }
+        voting memory v;
+        v.positiveVotes = 0;
+        v.negativeVotes = 0;
+        v.deadline = deadline + now;
+        v.valid = true;
+        v.amount = _amount;
+        v.catagory = _catagory;
+        votingDb.push(v);
+        votingIdxDb[msg.sender] = votingDb.length;
     }
     
     function vote(address votingId,bool doYouAgree) public {
         require(votingId != msg.sender,"Admin Cannot Vote!");
-        uint idx = votingDb[votingId].votersIdx[msg.sender];
-        if(idx+1 > votingDb[votingId].alreadyVoted.length){
-            votingDb[votingId].alreadyVoted.push(true);
-            votingDb[votingId].votersIdx[msg.sender] = votingDb[votingId].alreadyVoted.length - 1;
+        uint id = votingIdxDb[votingId] - 1;
+        require(votingDb[id].deadline>now,"Voting deadline over!");
+        uint idx = votingDb[id].votersIdx[msg.sender];
+        if(idx+1 > votingDb[id].alreadyVoted.length){
+            votingDb[id].alreadyVoted.push(true);
+            votingDb[id].votersIdx[msg.sender] = votingDb[id].alreadyVoted.length - 1;
         }else{
-            require(votingDb[votingId].alreadyVoted[idx] == false,"Already Voted!");
+            require(votingDb[id].alreadyVoted[idx] == false,"Already Voted!");
         }
         
         if(doYouAgree){
-            votingDb[votingId].positiveVotes++;
+            votingDb[id].positiveVotes++;
         }else{
-            votingDb[votingId].negativeVotes++;
+            votingDb[id].negativeVotes++;
         }
         
     }
 
-    function getVotingStatus(address votingId) view public returns(uint positiveVotes,uint negativeVotes,uint deadline) {
-        return (votingDb[votingId].positiveVotes,votingDb[votingId].negativeVotes,votingDb[votingId].deadline);
+    function getVotingStatus(address votingId) view public returns(
+            uint positiveVotes,
+            uint negativeVotes,
+            uint deadline,
+            uint amount,
+            uint8 catagory
+        ) {
+        require(votingIdxDb[votingId] != 0,"Voting does not exists on this address.");
+        uint id = votingIdxDb[votingId] - 1;
+        return (
+            votingDb[id].positiveVotes,
+            votingDb[id].negativeVotes,
+            votingDb[id].deadline,
+            votingDb[id].amount,
+            votingDb[id].catagory
+        );
     }
     
     
     function isEligible(address votingId) view public returns(bool) {
         //Some logic
-        return (votingDb[votingId].positiveVotes > votingDb[votingId].negativeVotes);
+        uint id = votingIdxDb[votingId] - 1;
+        return (votingDb[id].positiveVotes > votingDb[id].negativeVotes);
     }
     
     
@@ -85,6 +120,7 @@ contract mainTest{
         uint deadline;             
         uint goal;                 
         uint raisedAmount ;    
+        uint8 catagory;
         address payable admin;
     }
     
@@ -108,16 +144,20 @@ contract mainTest{
         return (cfIdxDb[cfAddress] - 1);
     }
     
-    function createCrowdFund(uint _deadlineSecs,uint _goal) public{
-        require(votingDb[msg.sender].valid,"Not Valid. First Apply for voting.");
+    function createCrowdFund(uint _deadlineSecs) public{
+        uint id = votingIdxDb[msg.sender] - 1;
+        require(votingIdxDb[msg.sender] != 0,"Not Valid. First Apply for voting.");
+        // require(votingDb[id].valid,"Not Valid. First Apply for voting.!");
         require(isEligible(msg.sender),"Not Eligible. No enough votes.");
-        require(votingDb[msg.sender].deadline < now,"Voting deadline not over yet!");
+        require(votingDb[id].deadline < now,"Voting deadline not over yet!");
         crowdFund memory cf;
         cf.deadline= now + _deadlineSecs;
-        cf.goal=_goal;
+        cf.goal= votingDb[id].amount;
+        cf.catagory = votingDb[id].catagory;
         cf.admin = msg.sender;
         cfDb.push(cf);
-        votingDb[msg.sender].valid = false;
+        // votingDb[id].valid = false;
+        votingIdxDb[msg.sender] = 0;
         cfIdxDb[msg.sender] = cfDb.length;
     }
     

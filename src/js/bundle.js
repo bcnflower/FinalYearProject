@@ -6,6 +6,8 @@ import Contract from '../../build/contracts/mainTest.json';
 // import '../css/bootstrap.min.css'
 // import '../css/myCss.css'
 
+import "./html-duration-picker.min.js"
+
 let web3;
 let contract;
 let accounts = [];
@@ -62,6 +64,8 @@ let accountSelectorEnabled = true;
   const $orgWithdraw = document.getElementById('orgWithdraw');
   const $withdrawAmount = document.getElementById('withdrawAmount');
 
+  const $populateOrgs = document.getElementById('populateOrgs');
+
   // Org variables...
 
 const initWeb3 = () => {
@@ -109,11 +113,11 @@ const initApp = () => {
 
   web3.eth.getAccounts()
   .then(_accounts => {
-    // try{
+    try{
       presets();
-    // }catch(err){
-    //   console.log(err.message);
-    // };
+    }catch(err){
+      console.log(err.message);
+    };
     accounts = _accounts;
     account = accounts[0];
     console.log(accounts);
@@ -124,11 +128,11 @@ const initApp = () => {
         console.log(err.message);
       };
     };
-    try{
+    // try{
       features();
-      }catch(err){
-        console.log(err.message);
-    };
+    //   }catch(err){
+    //     console.log(err.message);
+    // };
   });
 };
 
@@ -167,17 +171,22 @@ const accountSelector = () =>{
 const init_applyVoting = (inputIndex = 0) => {
 
   $createVoting.addEventListener('submit', (e) => {
+    // document.getElementById('createVoting').addEventListener('submit', (e) => {
     e.preventDefault();
     account = getSelectedAccount();
     const $msg = document.getElementById('createVoting_msg');
+    var cause = document.getElementById("cause").value;
+    cause = parseInt(cause);
+    var amount = document.getElementById("amount").value;
+    amount = parseInt(amount);
+    amount = PkrToWei(amount);
+    console.log(amount);
+    var duration = getDurationInSec();
     $msg.innerHTML = "Please wait....";
-    const val = e.target.elements[inputIndex].value;
-    // console.log("account =",account);
-    // console.log("val =",val);
-    contract.methods.createVoting(val).send({from:account})
+    contract.methods.createVoting(duration,amount,cause).send({from:account,gas:3000000})
     .then(result => {
-      $msg.innerHTML = 'Created Voting successfully.<br>';
-      $msg.innerHTML+= '<a href="./vote?canidateAddress='+account+'" target="_blank" >Go for Voting</a>';
+      $msg.innerHTML = 'Created Voting successfully. ';
+      $msg.innerHTML+= '<a href="./Vote.html?canidateAddress='+account+'" target="_blank" >Voting Link</a>';
     })
     .catch(_e => {e.target.elements[0].value;
       $msg.innerHTML = 'Ooops... there was an error while creating Voting {' + _e + '}';
@@ -185,21 +194,32 @@ const init_applyVoting = (inputIndex = 0) => {
   });
 };
 
-const init_getVotingStats = (addr = account) => {
+const init_getVotingStats = (elementID = "currentAccount") => {
 
   $getVotingStatus.addEventListener('submit', (e) =>{
     e.preventDefault();
-    account = getSelectedAccount();
-    contract.methods.getVotingStatus(account).call()
+    const $msg = document.getElementById('getVotingStatus_msg');
+    $msg.innerHTML = "";
+    var acc = document.getElementById(elementID).value;
+    if(acc.length < 42){
+      $msg.innerHTML = 'Address not Valid!';
+      return;
+    }
+    contract.methods.getVotingStatus(acc).call()
       .then(result => {
         // console.log("addr = ",addr);
         // console.log("Result = ",result);
         $positiveVotes.innerHTML = result.positiveVotes;
-        $negativeVotes.innerHTML = result.negativeVotes;
-        $VSDeadline.innerHTML = parseInt(result.deadline) - parseInt(Date.now()/1000);
+        // $negativeVotes.innerHTML = result.negativeVotes;
+        var d = parseInt(result.deadline) - Date.now()/1000
+        d = Math.floor(d);
+        document.getElementById("VSamount").innerHTML = Math.round(weiToPkr(result.amount));  
+        document.getElementById("VScause").innerHTML = getCause(result.catagory);
+        // $VSDeadline.innerHTML = new Date((result.deadline*1000 - Date.now())).toISOString().substr(11, 8) ;
+        $VSDeadline.innerHTML = (d<0?"Time Over":new Date(d * 1000).toISOString().substr(11, 8))
       })
       .catch(_e => {
-        console.log("Error = ",_e);
+        $msg.innerHTML = 'Ooops... there was an error while getting stats {' + _e + '}';
       });
   });
 };
@@ -214,7 +234,7 @@ const init_doVote = () => {
     $msg.innerHTML = "Please wait....";
     const addr = e.target.elements[0].value;
     const vote = e.target.elements[1].value;
-    contract.methods.vote(addr,vote).send({from:account})
+    contract.methods.vote(addr,vote).send({from:account,gas:3000000})
     .then(result => {
       $msg.innerHTML = 'Voted successfully. {' + result + '}';
     })
@@ -445,27 +465,29 @@ const init_currentOrgs = () => {
     $msg.innerHTML = "Please wait...";
     var noOfOrgs = 0;
     // var tbl;
-    const $currentOrgs = document.getElementById('currentOrgs');
+    // const $currentOrgs = document.getElementById('currentOrgs');
     // $currentCFs.innerHTML = "";
     contract.methods.getOrgDbCount().call()
     .then(result => {
       noOfOrgs = parseInt(result);
-      $currentOrgs.innerHTML = 'No of Orgs = ' + noOfOrgs + '<br>';
-      document.getElementById("OrgsRows").innerHTML ="";
+      // $currentOrgs.innerHTML = 'No of Orgs = ' + noOfOrgs + '<br>';
+      document.getElementById("orgsRows").innerHTML ="";
       for (var i = noOfOrgs-1; i>=0; i--) {
         console.log('i = ',i);
         contract.methods.orgDb(i.toString()).call()
         .then(result => {
           // console.log(result);
-          var tbl = "";
-          tbl += "<tr class=\"table-success\">";
-          // tbl += "<th scope=\"row\">"+"</th>";
-          tbl += "<td scope=\"row\">"+result.name+"</td>";
-          tbl += "<th scope=\"row\"> <a href=\"interact_with_organization?orgAddress=" +result.admin+" \" class=\"addr\" target=\"_blank\" >" +result.admin+"</a></th>";
-          tbl += "<td scope=\"row\">"+result.acceptingZakat+"</td>";
-          tbl += "<td scope=\"row\">"+Math.round(weiToPkr(result.balanceAmount))+" PKR</td>";
-          tbl += "</tr>";
-          document.getElementById("OrgsRows").innerHTML+= tbl;
+          // var tbl = "";
+          // tbl += "<tr class=\"table-success\">";
+          // // tbl += "<th scope=\"row\">"+"</th>";
+          // tbl += "<td scope=\"row\">"+result.name+"</td>";
+          // tbl += "<th scope=\"row\"> <a href=\"interact_with_organization?orgAddress=" +result.admin+" \" class=\"addr\" target=\"_blank\" >" +result.admin+"</a></th>";
+          // tbl += "<td scope=\"row\">"+result.acceptingZakat+"</td>";
+          // tbl += "<td scope=\"row\">"+Math.round(weiToPkr(result.balanceAmount))+" PKR</td>";
+          // tbl += "</tr>";
+          var row = "";
+          row += '<a href="Donate_Organization.html?orgAddress='+result.admin+'" class=" btn" target="_blank">' + result.name + '</a> <BR> <BR>'
+          document.getElementById("orgsRows").innerHTML+= row;
         })
         .catch(_e => {
           $msg.innerHTML = 'Ooops... there was an error while getting Orgs at index= {' + i + '} Error= {' + _e + '}';
@@ -475,46 +497,47 @@ const init_currentOrgs = () => {
     .catch(_e => {
       $msg.innerHTML = 'Ooops... there was an error while getting Orgs count {' + _e + '}';
     });
+    $msg.innerHTML = "";
   });
 };
 
 
-const init_interactWithOrgs = () => {
+const init_donateToOrg = () => {
 
-  $updateOrgStats.addEventListener('submit', (e) => {
+  $populateOrgs.addEventListener('submit', (e) =>{
     e.preventDefault();
-    const $msg = document.getElementById('interactWithOrgs_msg');
+    const $msg = document.getElementById('org_msg');
     $msg.innerHTML = "Please wait...";
-    var addr = $orgAddress.value;
-    var orgId;
-    contract.methods.getOrgIdFromAddress(addr).call()
+    var noOfOrgs = 0;
+    contract.methods.getOrgDbCount().call()
     .then(result => {
-      orgId = result
-      // $cf_deadline.innerHTML = cfId;
-
-      contract.methods.orgDb(orgId).call()
-      .then(result => {
-        $org_name.innerHTML = result.name;
-        $org_zakat.innerHTML = result.acceptingZakat;
-        $org_balanceAmount.innerHTML = Math.round(weiToPkr(result.balanceAmount)) + " PKR";
-         $msg.innerHTML = "Done...";
-      })
-      .catch(_e => {
-        $msg.innerHTML = 'Ooops... there was an error while trying to get stats {' + _e + '}';
-      });
-
+      noOfOrgs = parseInt(result);
+      // $currentOrgs.innerHTML = 'No of Orgs = ' + noOfOrgs + '<br>';
+      document.getElementById("orgsList").innerHTML ="";
+      for (var i = noOfOrgs-1; i>=0; i--) {
+        // console.log('i = ',i);
+        contract.methods.orgDb(i.toString()).call()
+        .then(result => {
+          var row = "";
+          row += '<option value="'+result.admin+'">'+result.name+'</option>'
+          document.getElementById("orgsList").innerHTML+= row;
+          document.getElementById("orgsList").value = document.getElementById("orgAddress").value;
+        })
+        .catch(_e => {
+          $msg.innerHTML = 'Ooops... there was an error while getting Orgs at index= {' + i + '} Error= {' + _e + '}';
+        });
+      }
     })
     .catch(_e => {
-      $msg.innerHTML = 'Ooops... there was an error while trying to get orgId {' + _e + '}';
+      $msg.innerHTML = 'Ooops... there was an error while getting Orgs count {' + _e + '}';
     });
-
+    $msg.innerHTML = "";
   });
-
 
   $orgContribute.addEventListener('submit', (e) =>{
     e.preventDefault();
     account = getSelectedAccount();
-    const $msg = document.getElementById('interactWithOrgs_msg');
+    const $msg = document.getElementById('org_msg');
     $msg.innerHTML = "Please wait...";
     var addr = $orgAddress.value;
     var val = $orgContributeAmount.value;
@@ -528,24 +551,128 @@ const init_interactWithOrgs = () => {
     });
 
   });
+};
 
+const init_donateToIndividual = () => {
 
-  $orgWithdraw.addEventListener('submit', (e) =>{
+  document.getElementById('donateToIndividual').addEventListener('submit', (e) =>{
     e.preventDefault();
     account = getSelectedAccount();
-    const $msg = document.getElementById('orgWithdraw_msg'); 
-    var addr = $orgAddress.value;
-    var val = $withdrawAmount.value;
+    const $msg = document.getElementById('msg');
+    $msg.innerHTML = "Please wait...";
+    var addr = document.getElementById('account').value;
+    var val = document.getElementById('amount').value;
     val = Math.round(PkrToWei(val));
-    contract.methods.org_withdraw(val).send({from: account})//,gas:3000000})
+    // contract.methods.org_adr_donate(addr).send({from: account,value:val,gas:3000000})
+    web3.eth.sendTransaction({to:addr, from:account, value:val})
     .then(result => {
-      $msg.innerHTML = 'Refunded successfully.';
+      $msg.innerHTML = 'Donated {'+val+' wei} successfully.';
     })
     .catch(_e => {
-      $msg.innerHTML = 'Ooops... there was an error while trying to Refund {' + _e + '}';
+      $msg.innerHTML = 'Ooops... there was an error while trying to Donate {' + _e + '}';
     });
+
   });
 };
+
+
+// const init_interactWithOrgs = () => {
+
+//   $populateOrgs.addEventListener('submit', (e) =>{
+//     e.preventDefault();
+//     const $msg = document.getElementById('org_msg');
+//     $msg.innerHTML = "Please wait...";
+//     var noOfOrgs = 0;
+//     contract.methods.getOrgDbCount().call()
+//     .then(result => {
+//       noOfOrgs = parseInt(result);
+//       // $currentOrgs.innerHTML = 'No of Orgs = ' + noOfOrgs + '<br>';
+//       document.getElementById("orgsList").innerHTML ="";
+//       for (var i = noOfOrgs-1; i>=0; i--) {
+//         // console.log('i = ',i);
+//         contract.methods.orgDb(i.toString()).call()
+//         .then(result => {
+//           var row = "";
+//           row += '<option value="'+result.admin+'">'+result.name+'</option>'
+//           document.getElementById("orgsList").innerHTML+= row;
+//           document.getElementById("orgsList").value = document.getElementById("orgAddress").value;
+//         })
+//         .catch(_e => {
+//           $msg.innerHTML = 'Ooops... there was an error while getting Orgs at index= {' + i + '} Error= {' + _e + '}';
+//         });
+//       }
+//     })
+//     .catch(_e => {
+//       $msg.innerHTML = 'Ooops... there was an error while getting Orgs count {' + _e + '}';
+//     });
+//     $msg.innerHTML = "";
+//   });
+
+//   // $updateOrgStats.addEventListener('submit', (e) => {
+//   //   e.preventDefault();
+//   //   const $msg = document.getElementById('interactWithOrgs_msg');
+//   //   $msg.innerHTML = "Please wait...";
+//   //   var addr = $orgAddress.value;
+//   //   var orgId;
+//   //   contract.methods.getOrgIdFromAddress(addr).call()
+//   //   .then(result => {
+//   //     orgId = result
+//   //     // $cf_deadline.innerHTML = cfId;
+
+//   //     contract.methods.orgDb(orgId).call()
+//   //     .then(result => {
+//   //       $org_name.innerHTML = result.name;
+//   //       $org_zakat.innerHTML = result.acceptingZakat;
+//   //       $org_balanceAmount.innerHTML = Math.round(weiToPkr(result.balanceAmount)) + " PKR";
+//   //        $msg.innerHTML = "Done...";
+//   //     })
+//   //     .catch(_e => {
+//   //       $msg.innerHTML = 'Ooops... there was an error while trying to get stats {' + _e + '}';
+//   //     });
+
+//   //   })
+//   //   .catch(_e => {
+//   //     $msg.innerHTML = 'Ooops... there was an error while trying to get orgId {' + _e + '}';
+//   //   });
+
+//   // });
+
+
+//   $orgContribute.addEventListener('submit', (e) =>{
+//     e.preventDefault();
+//     account = getSelectedAccount();
+//     const $msg = document.getElementById('org_msg');
+//     $msg.innerHTML = "Please wait...";
+//     var addr = $orgAddress.value;
+//     var val = $orgContributeAmount.value;
+//     val = Math.round(PkrToWei(val));
+//     contract.methods.org_adr_donate(addr).send({from: account,value:val,gas:3000000})
+//     .then(result => {
+//       $msg.innerHTML = 'Contributed {'+val+'} successfully.';
+//     })
+//     .catch(_e => {
+//       $msg.innerHTML = 'Ooops... there was an error while trying to Contribute {' + _e + '}';
+//     });
+
+//   });
+
+
+//   // $orgWithdraw.addEventListener('submit', (e) =>{
+//   //   e.preventDefault();
+//   //   account = getSelectedAccount();
+//   //   const $msg = document.getElementById('orgWithdraw_msg'); 
+//   //   var addr = $orgAddress.value;
+//   //   var val = $withdrawAmount.value;
+//   //   val = Math.round(PkrToWei(val));
+//   //   contract.methods.org_withdraw(val).send({from: account})//,gas:3000000})
+//   //   .then(result => {
+//   //     $msg.innerHTML = 'Refunded successfully.';
+//   //   })
+//   //   .catch(_e => {
+//   //     $msg.innerHTML = 'Ooops... there was an error while trying to Refund {' + _e + '}';
+//   //   });
+//   // });
+// };
 
 
 
@@ -566,6 +693,9 @@ document.addEventListener('DOMContentLoaded', () => {
       initApp(); 
     })
     .catch(e => console.log(e.message));
+    console.log("dom loaded");
+    const deploymentKey = Object.keys(Contract.networks)[0];
+    console.log("Contract Address = ",Contract.networks[deploymentKey].address);
 });
 
 function copyInputElement(elementID = "yourAccount") {
@@ -576,7 +706,7 @@ function copyInputElement(elementID = "yourAccount") {
 }
 
 function getSelectedAccount(elementID = "currentAccount"){
-  var acc = document.getElementById(elementID).innerHTML;
+  var acc = document.getElementById(elementID).value;
   console.log("acc = ",acc);
   // var acc = account;
   return acc;
@@ -584,7 +714,7 @@ function getSelectedAccount(elementID = "currentAccount"){
 
 function getRate(elementID = "rate"){
   var rate = document.getElementById(elementID);
-  var rate = rate.innerHTML;
+  var rate = rate.value;
   return rate;
 }
 
@@ -604,6 +734,106 @@ function init_balance(){
       document.getElementById('balancePKR').innerHTML = Math.round(weiToPkr(balance)) + ' PKR';
     });
 }
+
+function getDurationInSec(elementID = "duration")
+{
+  var t = 0;
+  var input = document.getElementById(elementID);
+  var d = input.value.split(":");
+  t += parseInt(d[0]) * 60 * 60;
+  t += parseInt(d[1]) * 60;
+  t += parseInt(d[2]);
+  console.log(t);
+  return t;
+}
+
+function getCause (c) {
+  c = parseInt(c);
+  var r = "";
+  switch(c){
+    case 1:
+    r = "Education";
+    break;
+    case 2:
+    r = "Medical";
+    break;
+    case 3:
+    r = "Financial";
+    break;
+    case 4:
+    r = "Disaster";
+    break;
+    case 5:
+    r = "Welfare";
+    break;
+    case 6:
+    r = "Food";
+    break;
+    default:
+    r = "Other";
+    break;
+  }
+  return r;
+}
+
+
+// =X=X=X=X=X=X=X=X=X=X=X=X=X=X=X=X=X=X=X=X=X Testing =X=X=X=X=X=X=X=X=X=X=X=X=X=X=X=X=X=X=X=X=X=X
+
+import 'regenerator-runtime/runtime'
+const abiDecoder = require('abi-decoder'); // NodeJS
+abiDecoder.addABI(Contract.abi);
+const testData = "0xf63b649d000000000000000000000000bab5a2cc2eae8f2cb1fe1069d1311bca23fcadb6";
+
+
+
+
+async function getTransactionsByAccount(myaccount, startBlockNumber, endBlockNumber) {
+  if (endBlockNumber == null) {
+    endBlockNumber = await web3.eth.getBlockNumber();
+    // (async ()=> { await web3.eth.getBlockNumber().then(d =>{ endBlockNumber = d}) })();
+    console.log("Using endBlockNumber: " + endBlockNumber);
+  }
+  if (startBlockNumber == null) {
+    // startBlockNumber = endBlockNumber - 1000;
+    startBlockNumber = 0;
+    console.log("Using startBlockNumber: " + startBlockNumber);
+  }
+  console.log("Searching for transactions to/from account \"" + myaccount + "\" within blocks "  + startBlockNumber + " and " + endBlockNumber);
+
+  for (var i = startBlockNumber; i <= endBlockNumber; i++) {
+    if (i % 1000 == 0) {
+      console.log("Searching block " + i);
+    }
+    var block = await web3.eth.getBlock(i, true);
+    if (block != null && block.transactions != null) {
+      block.transactions.forEach( function(e) {
+        if (myaccount == "*" || myaccount == e.from || myaccount == e.to) {
+          console.log(""
+            // + "  tx hash          : " + e.hash + "\n"
+            // + "   nonce           : " + e.nonce + "\n"
+            // + "   blockHash       : " + e.blockHash + "\n"
+            + "   blockNumber     : " + e.blockNumber + "\n"
+            // + "   transactionIndex: " + e.transactionIndex + "\n"
+            + "   from            : " + e.from + "\n" 
+            + "   to              : " + e.to + "\n"
+            + "   value           : " + e.value + "\n"
+            + "   time            : " + block.timestamp + " " + new Date(block.timestamp * 1000).toGMTString() + "\n"
+            + "   gasPrice        : " + e.gasPrice + "\n"
+            + "   gas             : " + e.gas + "\n"
+            + "   input           : " + e.input
+            );
+          console.log("abiDecoder = ",abiDecoder.decodeMethod(e.input)["name"]);
+        }
+      })
+    }
+  }
+}
+
+
+// =x=x=x=x=x=x=x=x=x=x=x=x=x=x=x=x=x=x=x=x=x Testing =x=x=x=x=x=x=x=x=x=x=x=x=x=x=x=x=x=x=x=x=x=x
+
+
+
 
 window.getAccount = function(){
   return account;
@@ -625,5 +855,17 @@ window.init_interactWithCFs = init_interactWithCFs;
 window.init_getVotingStats = init_getVotingStats;
 window.init_createOrg = init_createOrg;
 window.init_currentOrgs =init_currentOrgs;
-window.init_interactWithOrgs = init_interactWithOrgs;
+window.init_donateToOrg = init_donateToOrg;
+window.init_donateToIndividual = init_donateToIndividual;
 window.init_balance = init_balance;
+
+window.getCause = getCause;
+
+window.getTransactionsByAccount = getTransactionsByAccount;
+
+
+
+/*Links
+https://github.com/ConsenSys/abi-decoder
+https://ethereum.stackexchange.com/questions/32959/how-to-use-web3-to-send-money-from-wallet-a-to-wallet-b
+*/

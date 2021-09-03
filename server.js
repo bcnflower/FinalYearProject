@@ -235,7 +235,7 @@ const req = https.request(options, res => {
     var price = JSON.parse(d);
     console.log('price = ',price);
     ratePerRupee = (1e18)/price[0][1];
-    console.log('ratePerRupee = ',ratePerRupee);
+    console.log('rate (WeiPerRupee) = ',ratePerRupee);
   });
 });
 
@@ -245,6 +245,75 @@ req.on('error', error => {
 
 req.end();
 // wei per rupee
+
+
+// ############### New Ui Changes ###############
+
+app.get('/home', checkUserSession, function(req,res) {  
+    res.render('home',{
+        account:req.session.user_id,
+        rate:ratePerRupee
+    });
+});
+
+app.get('/Fundraising.html', checkUserSession, function(req,res) {  
+    res.render('Fundraising',{
+        account:req.session.user_id,
+        rate:ratePerRupee
+    });
+});
+
+app.get('/Vote.html', checkUserSession, function(req,res) {  
+    var canidateAddress = req.query.canidateAddress;
+    res.render('Vote',{
+        account:req.session.user_id,
+        rate:ratePerRupee,
+        canidateAddress:canidateAddress
+    });
+});
+
+app.get('/Active_Campaigns.html', checkUserSession, function(req,res) {  
+    res.render('Active_Campaigns',{
+        account:req.session.user_id,
+        rate:ratePerRupee
+    });
+});
+
+app.get('/Organization.html', checkUserSession, function(req,res) {  
+    res.render('Organization',{
+        account:req.session.user_id,
+        rate:ratePerRupee
+    });
+});
+
+app.get('/Active_Organizations.html', checkUserSession, function(req,res) {  
+    res.render('Active_Organizations',{
+        account:req.session.user_id,
+        rate:ratePerRupee
+    });
+});
+
+app.get('/Donate_Organization.html', checkUserSession, function(req,res) {  
+    var orgAddress = req.query.orgAddress;
+    res.render('Donate_Organization',{
+        account:req.session.user_id,
+        rate:ratePerRupee,
+        orgAddress:orgAddress
+    });
+});
+
+app.get('/Donate_Individual.html', checkUserSession, function(req,res) {  
+    res.render('Donate_Individual',{
+        account:req.session.user_id,
+        rate:ratePerRupee
+    });
+});
+
+// ############### New Ui Changes ###############
+
+
+
+
 
 app.set('port', process.env.PORT || 8080);
 

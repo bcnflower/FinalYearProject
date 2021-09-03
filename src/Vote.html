@@ -35,26 +35,18 @@ table {
 <div class="container text-center">
   <div class="row">
     <div class="col-md-6 col-md-offset-3"style="background-color: darkgrey;">
-      <h3> START A CAMPAIGN </h3>
-      <form id="createVoting">
-        <label for="cause">Cause OF Fundraise:</label> <br>
-        <select name="cause"class="form1" id="cause">
-          <option value="1">Education</option>
-          <option value="2">Medical</option>
-          <option value="3">Financial</option>
-          <option value="4">Disaster</option>
-          <option value="5">Welfare</option>
-          <option value="6">Food</option>
-        </select><br>
-        <label for="amount">Amount Required:</label><br>
-        <input type="number" class="form1" id="amount" name="amount" value="" required><br>
-        <label for="appt">DURATION IN HOURS:</label> <BR>
-        <!-- <input type="time" class="form1" id="duration" name="duration" min="09:00" max="18:00" required> <BR> -->
-        <input class="html-duration-picker form1" id="duration" onchange="calcDurationInSec();"><br>
-        <label for="appt">UPLOAD DOCUMENTS:</label> <BR>
-        <center><input type="file" id="myFile" name="filename"><BR>
-        <input type="submit" class="btn" value="Submit Your Request"> <br><br>
-        <div class="bod" id="createVoting_msg"><br></div><br></center>
+      <h3> VOTE FOR CAMPAIGN </h3>
+      <form id="doVote">
+        <label for="canidateAddress">Address:</label> <br>
+        <input type="text" class="form1" id="canidateAddress" name="canidateAddress" value="<%= canidateAddress %>" required><br>
+        <label for="appt">Your Choice:</label> <BR>
+        <label>Yes:</label>
+        <input type="radio" name="voteAgree" id="voteAgree" value="1" checked>
+        <label>No:</label>
+        <input type="radio" name="voteAgree" id="voteAgree" value="0">
+        <br>
+        <input type="submit" class="btn" value="Submit Your Choice"> <br><br>
+        <center><div class="bod" id="doVote_msg"><br></div><br></center></center>
       </form>
       <br>
     </div>
@@ -97,9 +89,8 @@ table {
 <%- include('./footer'); %>
 <script type="text/javascript">
   function features() {
-        init_applyVoting();
-        init_getVotingStats();
-        console.log("a=",getAccount());
+        init_doVote();
+        init_getVotingStats("canidateAddress");
       };
   function presets(){
 
