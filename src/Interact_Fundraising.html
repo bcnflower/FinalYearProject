@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>ECHARITY</title>
+  <%- include('./head'); %>
+</head>
+<style>
+.fot{
+  color: white;
+}
+.bod{
+  border: 2px solid;
+}
+table, td, th {
+  border: 1px solid black;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.form1{
+  width: 60%;
+  height: 35px;
+}
+.btn{
+  background-color: green;
+  color: white;
+  padding: 7px 35px;
+}
+</style>
+<body>
+<%- include('./header'); %>
+<input type="hidden" name="cfAddress" id="cfAddress" value="<%= cfAddress %>">
+<div class="container text-center">
+
+  <div class="row">
+    <div class="col-md-6 col-md-offset-3"style="background-color: darkgrey;">
+      <h3>CAMPAIGN STATUS</h3>
+      <form id="updateCfStats">
+        <label for="cfAddress">Address:</label> <br>
+        <input type="text" class="form1" id="CFAddress" name="cfAddress" value="" required disabled><br><br>
+        <table >
+          <tr>
+            <td class="form1"><label>Cause :</label></td><td id="cf_cause" class="form1">-</td>
+          </tr>
+          <tr>
+            <td><label>Raised Amount:</label></td><td id="cf_raisedAmount" >-</td>
+          </tr>
+          <tr>
+            <td><label>Target Amount:</label></td><td id="cf_goal">-</td>
+          </tr>
+          <tr>
+            <td><label>Total Contributers:</label></td><td id="cf_totalContributors">-</td>
+          </tr>
+          <tr>
+            <td><label>Time Remaining:</label></td><td id="cf_deadline">-</td>
+          </tr>
+        </table><br>
+        <input type="submit" class="btn" value="Get Campaign Status"> <br><br>
+        <div class="bod" id="cfStatus_msg"><br></div><br></center>
+      </form>
+      <br>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-6 col-md-offset-3"style="background-color: darkgrey;">
+      <h3>CONTRIBUTE TO FUNDRAISING</h3>
+      <form id="CFcontribute">
+        <label>Amount:</label><br>
+        <input type="number" class="form1" name="CFcontributeAmount" id="CFcontributeAmount"><br><br>
+        <input type="submit" class="btn" value="Contribute"> <br><br>
+        <center><div class="bod" id="CFcontribute_msg"><br></div><br></center>
+      </form>
+      <br>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-6 col-md-offset-3"style="background-color: darkgrey;">
+      <h3>GET REFUND</h3>
+      <form id="CFgetRefund">
+        <input type="submit" class="btn" value="Get Refund"> <br><br>
+        <center><div class="bod" id="CFgetRefund_msg"><br></div><br></center>
+      </form>
+      <br>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-6 col-md-offset-3"style="background-color: darkgrey;">
+      <h3>WITHDRAW FUNDING</h3>
+      <form id="CFwithdrawFunding">
+        <input type="submit" class="btn" value="withdraw Funding"> <br><br>
+        <center><div class="bod" id="CFwithdrawFunding_msg"><br></div><br></center>
+      </form>
+      <br>
+    </div>
+  </div>
+</div>
+</body>
+<%- include('./footer'); %>
+<script type="text/javascript">
+  function features() {
+        init_interactWithCFs();
+        console.log("a=",getAccount());
+      };
+  function presets(){
+
+  }
+
+</script>
+</html>

@@ -11,12 +11,14 @@ contract mainTest{
     struct voting{
         mapping(address=>uint) votersIdx;
         bool[] alreadyVoted;
-        uint deadline;
+        uint votingDeadline;
+        uint cfDeadline;
         uint positiveVotes;
         uint negativeVotes;
         bool valid;
         uint amount;
         uint8 catagory;
+        address admin;
     }
     
     // voting[] public votingDb;
@@ -29,9 +31,9 @@ contract mainTest{
     mapping (address => uint) votingIdxDb;
     
     
-    function createVoting(uint deadline,uint _amount, uint8 _catagory) public {
+    function createVoting(uint deadline,uint cfDeadline,uint _amount, uint8 _catagory) public {
         if(votingIdxDb[msg.sender] > 0){
-            require(votingDb[votingIdxDb[msg.sender] - 1].deadline < now,"Deadline not over yet.");
+            require(votingDb[votingIdxDb[msg.sender] - 1].votingDeadline < now,"Deadline not over yet.");
         }
         // require(votingIdxDb[msg.sender] == 0,"Voting Already Exists.");
         if(cfIdxDb[msg.sender]>0){
@@ -40,18 +42,21 @@ contract mainTest{
         voting memory v;
         v.positiveVotes = 0;
         v.negativeVotes = 0;
-        v.deadline = deadline + now;
+        v.votingDeadline = deadline + now;
+        v.cfDeadline = cfDeadline;
         v.valid = true;
         v.amount = _amount;
         v.catagory = _catagory;
+        v.admin = msg.sender;
         votingDb.push(v);
         votingIdxDb[msg.sender] = votingDb.length;
     }
     
     function vote(address votingId,bool doYouAgree) public {
+        require (orgIdxDb[msg.sender] > 0,"Only Organizations can Vote!");
         require(votingId != msg.sender,"Admin Cannot Vote!");
         uint id = votingIdxDb[votingId] - 1;
-        require(votingDb[id].deadline>now,"Voting deadline over!");
+        require(votingDb[id].votingDeadline>now,"Voting deadline over!");
         uint idx = votingDb[id].votersIdx[msg.sender];
         if(idx+1 > votingDb[id].alreadyVoted.length){
             votingDb[id].alreadyVoted.push(true);
@@ -64,6 +69,10 @@ contract mainTest{
             votingDb[id].positiveVotes++;
         }else{
             votingDb[id].negativeVotes++;
+        }
+        
+        if(isEligible(votingId)){
+            createCrowdFund(votingDb[id].admin);
         }
         
     }
@@ -80,7 +89,7 @@ contract mainTest{
         return (
             votingDb[id].positiveVotes,
             votingDb[id].negativeVotes,
-            votingDb[id].deadline,
+            votingDb[id].votingDeadline,
             votingDb[id].amount,
             votingDb[id].catagory
         );
@@ -141,25 +150,46 @@ contract mainTest{
     // }
 
     function getCfIdFromAddress(address cfAddress) view public returns(uint){
+        require(cfIdxDb[cfAddress] > 0,"CrowdFunding does not exists on this address!");
         return (cfIdxDb[cfAddress] - 1);
     }
     
-    function createCrowdFund(uint _deadlineSecs) public{
-        uint id = votingIdxDb[msg.sender] - 1;
-        require(votingIdxDb[msg.sender] != 0,"Not Valid. First Apply for voting.");
+        function createCrowdFund(address addr) public{//uint _deadlineSecs
+        uint id = votingIdxDb[addr] - 1;
+        require(votingIdxDb[addr] != 0,"Not Valid. First Apply for voting.");
         // require(votingDb[id].valid,"Not Valid. First Apply for voting.!");
-        require(isEligible(msg.sender),"Not Eligible. No enough votes.");
-        require(votingDb[id].deadline < now,"Voting deadline not over yet!");
+        require(isEligible(addr),"Not Eligible. No enough votes.");
+        // require(votingDb[id].votingDeadline < now,"Voting deadline not over yet!");
+        votingDb[id].votingDeadline = now;
         crowdFund memory cf;
-        cf.deadline= now + _deadlineSecs;
+        // cf.deadline= now + _deadlineSecs;
+        cf.deadline = votingDb[id].cfDeadline + now;
         cf.goal= votingDb[id].amount;
         cf.catagory = votingDb[id].catagory;
-        cf.admin = msg.sender;
+        cf.admin = address(uint160(addr));
         cfDb.push(cf);
         // votingDb[id].valid = false;
-        votingIdxDb[msg.sender] = 0;
-        cfIdxDb[msg.sender] = cfDb.length;
+        // votingIdxDb[addr] = 0;
+        cfIdxDb[addr] = cfDb.length;
     }
+    
+    // function createCrowdFund() public{//uint _deadlineSecs
+    //     uint id = votingIdxDb[msg.sender] - 1;
+    //     require(votingIdxDb[msg.sender] != 0,"Not Valid. First Apply for voting.");
+    //     // require(votingDb[id].valid,"Not Valid. First Apply for voting.!");
+    //     require(isEligible(msg.sender),"Not Eligible. No enough votes.");
+    //     require(votingDb[id].votingDeadline < now,"Voting deadline not over yet!");
+    //     crowdFund memory cf;
+    //     // cf.deadline= now + _deadlineSecs;
+    //     cf.deadline = votingDb[id].cfDeadline + now;
+    //     cf.goal= votingDb[id].amount;
+    //     cf.catagory = votingDb[id].catagory;
+    //     cf.admin = msg.sender;
+    //     cfDb.push(cf);
+    //     // votingDb[id].valid = false;
+    //     votingIdxDb[msg.sender] = 0;
+    //     cfIdxDb[msg.sender] = cfDb.length;
+    // }
     
     function cf_contribute(uint cfId) public payable {
         require(now < cfDb[cfId].deadline,"Time is Over!");

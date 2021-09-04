@@ -309,6 +309,15 @@ app.get('/Donate_Individual.html', checkUserSession, function(req,res) {
     });
 });
 
+app.get('/Interact_Fundraising.html', checkUserSession, function(req,res) {  
+    var cfAddress = req.query.cfAddress;
+    res.render('Interact_Fundraising',{
+        account:req.session.user_id,
+        rate:ratePerRupee,
+        cfAddress:cfAddress
+    });
+});
+
 // ############### New Ui Changes ###############
 
 

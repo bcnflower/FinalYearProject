@@ -112,6 +112,10 @@ module.exports = {
       template: 'src/Donate_Individual.html',
       filename: 'views/Donate_Individual.html'
     }),
+    new HtmlWebpackPlugin({
+      template: 'src/Interact_Fundraising.html',
+      filename: 'views/Interact_Fundraising.html'
+    }),
 
     new CopyWebpackPlugin([
       // { 

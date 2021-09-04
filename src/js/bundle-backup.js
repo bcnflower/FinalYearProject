@@ -280,7 +280,7 @@ const init_currentCFs = () => {
   var ended_div = document.getElementById("ended_div");
   var refund_div = document.getElementById("refund_div");
   var withdraw_div = document.getElementById("withdraw_div");
-
+  
   document.getElementById("getCurrentCFs").addEventListener('submit', (e) =>{
     e.preventDefault();
     const $msg = document.getElementById('msg');
@@ -375,7 +375,7 @@ const init_interactWithCFs = () => {
     .then(result => {
       cfId = result
       // $cf_deadline.innerHTML = cfId;
-      console.log("cfId=",cfId);
+      console.log("cfId=",cfId)
 
       contract.methods.cfDb(cfId).call()
       .then(result => {
