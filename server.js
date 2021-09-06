@@ -15,14 +15,97 @@ var db = new sqlite3.Database('mydb.db', (err) => {
     console.log('Connected to the database.');
 });
 
-var returnToPage = "";
+// X=X=X=X=X=X=X=X=X WEB3 Test X=X=X=X=X=X=X=X=X
+const Web3 = require('web3');
+const Contract = require('./build/contracts/mainTest.json');
+const deploymentKey = Object.keys(Contract.networks)[0];
+const web3 = new Web3('http://localhost:9545');
+const contractAddress = Contract.networks[deploymentKey].address;
+const contract = new web3.eth.Contract(Contract.abi,contractAddress);
+
+var contractAdmin;
+
+contract.methods.contractAdmin().call()
+.then(async (result) => {
+    contractAdmin = result;
+    console.log("Contract Admin = ",contractAdmin);
+    console.log("Contract Address = ",contractAddress);
+})
+.catch(_e => {
+    $msg.innerHTML = 'Ooops... there was an error while getting contractAdmin {' + _e + '}';
+});
+// console.log("Contract Admin = ",contractAdmin);
+// console.log("Contract Address = ",contractAddress);
+
+// var adr = "0xbab5a2cc2eae8f2cb1fe1069d1311bca23fcadb6";
+// var adr = "0xe7674aF9bDcE09B9975CC99BDf5659d3BE843027";
+var adr = "0xBAB5A2cC2EaE8f2CB1fE1069d1311Bca23fCAdB6";
+// contract.methods.getAddrStatus(adr).call()
+// .then( result => {
+//     console.log("result =",result); 
+// })
+
+// async function asyncGetUserType(addr) {
+//     var ut = 0;
+//     var orgId = 0;
+//     var result = await contract.methods.getAddrStatus(addr).call();
+//     orgId = result["orgId"];
+//     if(addr == contractAdmin) //it's admin
+//     {
+//         ut += 2
+//     }
+//     if(orgId > 0){// it's organization
+//         ut +=1
+//     }
+//     return ut; // 1 => organization , 2=> admin , 3 => admin + organization
+// }
+
+// async function getUserType(addr){
+//     var ut = await asyncGetUserType(addr);
+//     // console.log("user Type = ", userType);
+//     return ut;
+// }
+
+function asyncGetUserType(addr) {
+    return new Promise((resolve, reject) => {
+        var ut = 0;
+        var orgId = 0;
+        contract.methods.getAddrStatus(addr).call()
+        .then(result =>{
+            orgId = result["orgId"];
+            if(addr == contractAdmin) //it's admin
+            {
+                ut += 2
+            }
+            if(orgId > 0){// it's organization
+                ut +=1
+            }
+            resolve(ut); // 1 => organization , 2=> admin , 3 => admin + organization
+        })
+        .catch(reject);
+    });
+}
+
+console.log("asyncGetUserType = ",asyncGetUserType(adr));
+
+
+
+// x-x-x-x-x-x-x-x-x WEB3 Test x-x-x-x-x-x-x-x-x
+
+
+var returnToPage = "Home.html";
 var ratePerRupee = 0;
+var userType = 0;
 
 app.use('/', express.static(path.join(__dirname, 'dist')));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use('/docs', express.static(path.join(__dirname, 'documentation')));
 
-app.use(session({secret: 'user_id'}));
+app.use(session({
+    secret: 'user_id',
+    resave: true,
+    saveUninitialized: true
+}));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -195,7 +278,11 @@ app.get('/set_session', function(req,res) {
   }
   console.log(req.query);
   console.log("Rate = ",ratePerRupee);
-  res.render('set_session',{rate:ratePerRupee});
+  res.render('set_session',{
+    account:req.session.user_id,
+    rate:ratePerRupee,
+    userType:0
+});
 });
 
 app.post('/set_session', function(req,res) {
@@ -240,7 +327,10 @@ const req = https.request(options, res => {
 });
 
 req.on('error', error => {
-  console.error(error)
+  // console.error(error)
+  console.log("Inter Connection Error. Using Previous rate.");
+  ratePerRupee = 1521869061597.4343;
+  console.log('rate (WeiPerRupee) = ',ratePerRupee);
 });
 
 req.end();
@@ -249,72 +339,114 @@ req.end();
 
 // ############### New Ui Changes ###############
 
-app.get('/home', checkUserSession, function(req,res) {  
-    res.render('home',{
+app.get('/Home.html', checkUserSession, async function(req,res) {  
+    var userType = await asyncGetUserType(req.session.user_id);
+    res.render('Home',{
         account:req.session.user_id,
-        rate:ratePerRupee
+        rate:ratePerRupee,
+        userType:userType
     });
 });
 
-app.get('/Fundraising.html', checkUserSession, function(req,res) {  
+app.get('/Fundraising.html', checkUserSession, async function(req,res) {  
+    var userType = await asyncGetUserType(req.session.user_id);
     res.render('Fundraising',{
         account:req.session.user_id,
-        rate:ratePerRupee
+        rate:ratePerRupee,
+        userType:userType
     });
 });
 
-app.get('/Vote.html', checkUserSession, function(req,res) {  
+app.get('/Vote.html', checkUserSession, async function(req,res) {  
     var canidateAddress = req.query.canidateAddress;
+    var userType = await asyncGetUserType(req.session.user_id);
     res.render('Vote',{
         account:req.session.user_id,
         rate:ratePerRupee,
-        canidateAddress:canidateAddress
+        canidateAddress:canidateAddress,
+        userType:userType
     });
 });
 
-app.get('/Active_Campaigns.html', checkUserSession, function(req,res) {  
+app.get('/Active_Campaigns.html', checkUserSession, async function(req,res) {  
+    var userType = await asyncGetUserType(req.session.user_id);
     res.render('Active_Campaigns',{
         account:req.session.user_id,
-        rate:ratePerRupee
+        rate:ratePerRupee,
+        userType:userType
     });
 });
 
-app.get('/Organization.html', checkUserSession, function(req,res) {  
+app.get('/Organization.html', checkUserSession, async function(req,res) {  
+    var userType = await asyncGetUserType(req.session.user_id);
     res.render('Organization',{
         account:req.session.user_id,
-        rate:ratePerRupee
+        rate:ratePerRupee,
+        userType:userType
     });
 });
 
-app.get('/Active_Organizations.html', checkUserSession, function(req,res) {  
+app.get('/Active_Organizations.html', checkUserSession, async function(req,res) { 
+    var userType = await asyncGetUserType(req.session.user_id); 
     res.render('Active_Organizations',{
         account:req.session.user_id,
-        rate:ratePerRupee
+        rate:ratePerRupee,
+        userType:userType
     });
 });
 
-app.get('/Donate_Organization.html', checkUserSession, function(req,res) {  
+app.get('/Donate_Organization.html', checkUserSession, async function(req,res) {  
+    var userType = await asyncGetUserType(req.session.user_id); 
     var orgAddress = req.query.orgAddress;
+    var amount = req.query.amount;
     res.render('Donate_Organization',{
         account:req.session.user_id,
         rate:ratePerRupee,
-        orgAddress:orgAddress
+        orgAddress:orgAddress,
+        amount:amount,
+        userType,userType
     });
 });
 
-app.get('/Donate_Individual.html', checkUserSession, function(req,res) {  
+app.get('/Donate_Individual.html', checkUserSession, async function(req,res) {  
+    var userType = await asyncGetUserType(req.session.user_id); 
     res.render('Donate_Individual',{
         account:req.session.user_id,
-        rate:ratePerRupee
+        rate:ratePerRupee,
+        userType:userType
     });
 });
 
-app.get('/Interact_Fundraising.html', checkUserSession, function(req,res) {  
-    var cfAddress = req.query.cfAddress;
+app.get('/Interact_Fundraising.html', checkUserSession, async function(req,res) {  
+    var userType = await asyncGetUserType(req.session.user_id); 
+    var cfId = req.query.cfId;
     res.render('Interact_Fundraising',{
         account:req.session.user_id,
         rate:ratePerRupee,
-        cfAddress:cfAddress
+        cfId:cfId,
+        userType:userType
+    });
+});
+
+app.get('/Wallet.html', checkUserSession, async function(req,res) {  
+    var userType = await asyncGetUserType(req.session.user_id); 
+    var cfId = req.query.cfId;
+    res.render('Wallet',{
+        account:req.session.user_id,
+        rate:ratePerRupee,
+        cfId:cfId,
+        userType:userType
+    });
+});
+
+app.get('/Zakat.html', checkUserSession,async function(req,res) {  
+    var userType = await asyncGetUserType(req.session.user_id); 
+    var cfId = req.query.cfId;
+    res.render('Zakat',{
+        account:req.session.user_id,
+        rate:ratePerRupee,
+        cfId:cfId,
+        userType:userType
     });
 });
 

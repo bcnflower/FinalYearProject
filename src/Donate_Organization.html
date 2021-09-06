@@ -37,7 +37,7 @@ height: 35px;
     <div class="col-md-6 col-md-offset-3 " style=" background-color: darkgrey;">
       <h4 class="h"> DONATE TO ORGNAIZATION </h4>
       <label for="amount">Enter Amount:</label><br>
-      <input type="number" class="form1" id="orgContributeAmount" name="amount" value="" required><br><br>
+      <input type="number" class="form1" id="orgContributeAmount" step="0.01" min="0" name="amount" value="<%= amount %>" required><br><br>
       <label for="Org">Select Orgnaization:</label> <br>
       <select name="Org"class="form1" id="orgsList">
       </select><br><br>
@@ -48,7 +48,7 @@ height: 35px;
       <form id="orgContribute">
         <input type="submit" class="btn" value="Donate"> <br>
       </form> <br>
-      <center><div class="bod" id="org_msg"><br></div><br></center>
+      <center><div class="bod" style="background-color: #fff" id="org_msg"><br></div><br></center>
     </div>
   </div>
 </div>

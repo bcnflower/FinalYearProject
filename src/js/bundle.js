@@ -7,6 +7,9 @@ import Contract from '../../build/contracts/mainTest.json';
 // import '../css/myCss.css'
 
 import "./html-duration-picker.min.js"
+import 'regenerator-runtime/runtime'
+const abiDecoder = require('abi-decoder'); // NodeJS
+abiDecoder.addABI(Contract.abi);
 
 let web3;
 let contract;
@@ -163,6 +166,7 @@ const accountSelector = () =>{
       web3.eth.getBalance(account)
       .then(balance =>{
         document.getElementById("balance").innerHTML = web3.utils.fromWei(balance);
+        document.getElementById('balancePKR').innerHTML = Math.round(weiToPkr(balance));
       });
     }
   });
@@ -180,6 +184,7 @@ const init_applyVoting = (inputIndex = 0) => {
     var amount = document.getElementById("amount").value;
     amount = parseInt(amount);
     amount = PkrToWei(amount);
+    amount = Math.round(amount);
     console.log(amount);
     var Vduration = getDurationInSec("Vduration");
     var CFduration = getDurationInSec("CFduration");
@@ -365,15 +370,20 @@ const init_currentCFs = () => {
 
 const init_interactWithCFs = () => {
 
+  var $cfId = document.getElementById("cfId");
+  var contribute_div = document.getElementById("contribute_div");
+  var refund_div = document.getElementById("refund_div");
+  var withdraw_div = document.getElementById("withdraw_div");
+
   $updateCfStats.addEventListener('submit', (e) => {
     e.preventDefault();
     var $msg = document.getElementById("cfStatus_msg");
     var addr = $CFAddress.value;
     var cfId;
     console.log("addr= ",addr);
-    contract.methods.getCfIdFromAddress(addr).call()
-    .then(result => {
-      cfId = result
+    // contract.methods.getCfIdFromAddress(addr).call()
+    // .then(result => {
+      cfId = parseInt($cfId.value);
       // $cf_deadline.innerHTML = cfId;
       console.log("cfId=",cfId);
 
@@ -385,41 +395,55 @@ const init_interactWithCFs = () => {
         $cf_totalContributors.innerHTML = result.totalContributors;
         $cf_goal.innerHTML = weiToPkr(result.goal).toFixed(2);
         $cf_raisedAmount.innerHTML = weiToPkr(result.raisedAmount).toFixed(2);
+        $CFAddress.value = result.admin;
+
+
+        contribute_div.style.display = "none";
+        refund_div.style.display = "none";
+        withdraw_div.style.display = "none";
+        if(d>0){
+          contribute_div.style.display = "block";
+        }else if(result.raisedAmount < result.goal){
+          refund_div.style.display = "block";
+        }else if(result.admin == getSelectedAccount()){
+          withdraw_div.style.display = "block";
+        }
       })
       .catch(_e => {
         $msg.innerHTML = 'Ooops... there was an error while trying to get stats {' + _e + '}';
       });
 
-    })
-    .catch(_e => {
-      $msg.innerHTML = 'Ooops... there was an error while trying to cfId {' + _e + '}';
-    });
+    // })
+    // .catch(_e => {
+    //   $msg.innerHTML = 'Ooops... there was an error while trying to cfId {' + _e + '}';
+    // });
 
   });
 
 
   $CFcontribute.addEventListener('submit', (e) =>{
     e.preventDefault();
-
+    account = getSelectedAccount();
     const $msg = document.getElementById('CFcontribute_msg'); 
     var addr = $CFAddress.value;
     var cfId;
-    contract.methods.getCfIdFromAddress(addr).call()
-    .then(result => {
-      cfId = result;
+    // contract.methods.getCfIdFromAddress(addr).call()
+    // .then(result => {
+      // cfId = result;
+      cfId = parseInt($cfId.value);
       var val = $CFcontributeAmount.value;
       val = Math.round(PkrToWei(val));
       contract.methods.cf_contribute(cfId).send({from: account,value:val,gas:3000000})
       .then(result => {
-        $msg.innerHTML = 'Contributed {'+val+'} successfully.';
+        $msg.innerHTML = 'Contributed {'+val+' wei} successfully.';
       })
       .catch(_e => {
         $msg.innerHTML = 'Ooops... there was an error while trying to Contribute {' + _e + '}';
       });
-    })
-    .catch(_e => {
-      $msg.innerHTML = 'Ooops... there was an error while trying to cfId {' + _e + '}';
-    });
+    // })
+    // .catch(_e => {
+    //   $msg.innerHTML = 'Ooops... there was an error while trying to cfId {' + _e + '}';
+    // });
   });
 
   $CFgetRefund.addEventListener('submit', (e) =>{
@@ -428,9 +452,10 @@ const init_interactWithCFs = () => {
     const $msg = document.getElementById('CFgetRefund_msg'); 
     var addr = $CFAddress.value;
     var cfId;
-    contract.methods.getCfIdFromAddress(addr).call()
-    .then(result => {
-      cfId = result;
+    // contract.methods.getCfIdFromAddress(addr).call()
+    // .then(result => {
+    //   cfId = result;
+    cfId = parseInt($cfId.value);
       var val = $CFcontributeAmount.value;
       contract.methods.cf_getRefund(cfId).send({from: account})
       .then(result => {
@@ -440,10 +465,10 @@ const init_interactWithCFs = () => {
         $msg.innerHTML = 'Ooops... there was an error while trying to Refund {' + _e + '}';
       });
 
-    })
-    .catch(_e => {
-      $msg.innerHTML = 'Ooops... there was an error while trying to cfId {' + _e + '}';
-    });
+    // })
+    // .catch(_e => {
+    //   $msg.innerHTML = 'Ooops... there was an error while trying to cfId {' + _e + '}';
+    // });
   });
 
   $CFwithdrawFunding.addEventListener('submit', (e) =>{
@@ -451,9 +476,10 @@ const init_interactWithCFs = () => {
     const $msg = document.getElementById('CFwithdrawFunding_msg'); 
     var addr = $CFAddress.value;
     var cfId;
-    contract.methods.getCfIdFromAddress(addr).call()
-    .then(result => {
-      cfId = result;
+    // contract.methods.getCfIdFromAddress(addr).call()
+    // .then(result => {
+    //   cfId = result;
+    cfId = parseInt($cfId.value);
       var val = $CFcontributeAmount.value;
       contract.methods.cf_withdrawFunding(cfId).send({from: account})
       .then(result => {
@@ -462,10 +488,10 @@ const init_interactWithCFs = () => {
       .catch(_e => {
         $msg.innerHTML = 'Ooops... there was an error while trying to Refund {' + _e + '}';
       });
-    })
-    .catch(_e => {
-      $msg.innerHTML = 'Ooops... there was an error while trying to cfId {' + _e + '}';
-    });
+    // })
+    // .catch(_e => {
+    //   $msg.innerHTML = 'Ooops... there was an error while trying to cfId {' + _e + '}';
+    // });
   });
 };
 
@@ -476,19 +502,28 @@ const init_createOrg = () => {
     account = getSelectedAccount();
     const $msg = document.getElementById('createOrg_msg');
     $msg.innerHTML = "Please wait....";
-    const orgName = e.target.elements[0].value;
+    // const orgName = e.target.elements[0].value;
     // const orgZakat = e.target.elements[1].value;
-    const rbs = $createOrg.querySelectorAll('input[name="orgZakat"]');
-    var orgZakat;
-    for (const rb of rbs) {
-        if (rb.checked) {
-            orgZakat = rb.value;
-            orgZakat = parseInt(orgZakat);
-            break;
-        }
+    // const rbs = $createOrg.querySelectorAll('input[name="orgZakat"]');
+    // var orgZakat;
+    // for (const rb of rbs) {
+    //     if (rb.checked) {
+    //         orgZakat = rb.value;
+    //         orgZakat = parseInt(orgZakat);
+    //         break;
+    //     }
+    // }
+    // console.log(orgZakat);
+    var orgName = document.getElementById("orgName").value;
+    var orgAddress = document.getElementById("orgAddress").value;
+
+    if(orgAddress.length < 42){
+      $msg.innerHTML = 'Address not Valid!';
+      return;
     }
-    console.log(orgZakat);
-    contract.methods.createOrganization(Boolean(orgZakat),orgName).send({from:account,gas:3000000})
+
+    // contract.methods.createOrganization(Boolean(orgZakat),orgName).send({from:account,gas:3000000})
+    contract.methods.createOrganization(orgAddress,orgName).send({from:account,gas:3000000})
     .then(result => {
       $msg.innerHTML = 'Created Organization successfully.';
     })
@@ -547,7 +582,7 @@ const init_currentOrgs = () => {
     .catch(_e => {
       $msg.innerHTML = 'Ooops... there was an error while getting Orgs count {' + _e + '}';
     });
-    $msg.innerHTML = "";
+    $msg.innerHTML = "<br>";
   });
 };
 
@@ -571,7 +606,10 @@ const init_donateToOrg = () => {
           var row = "";
           row += '<option value="'+result.admin+'">'+result.name+'</option>'
           document.getElementById("orgsList").innerHTML+= row;
-          document.getElementById("orgsList").value = document.getElementById("orgAddress").value;
+          var orgAdr = document.getElementById("orgAddress").value;
+          if(orgAdr.length >= 42){
+            document.getElementById("orgsList").value = orgAdr;
+          }
         })
         .catch(_e => {
           $msg.innerHTML = 'Ooops... there was an error while getting Orgs at index= {' + i + '} Error= {' + _e + '}';
@@ -581,7 +619,7 @@ const init_donateToOrg = () => {
     .catch(_e => {
       $msg.innerHTML = 'Ooops... there was an error while getting Orgs count {' + _e + '}';
     });
-    $msg.innerHTML = "";
+    $msg.innerHTML = "<br>";
   });
 
   $orgContribute.addEventListener('submit', (e) =>{
@@ -589,12 +627,14 @@ const init_donateToOrg = () => {
     account = getSelectedAccount();
     const $msg = document.getElementById('org_msg');
     $msg.innerHTML = "Please wait...";
-    var addr = $orgAddress.value;
+    // var addr = $orgAddress.value;
+    var addr = document.getElementById("orgsList").value;
     var val = $orgContributeAmount.value;
+    console.log("addr = ",addr);
     val = Math.round(PkrToWei(val));
     contract.methods.org_adr_donate(addr).send({from: account,value:val,gas:3000000})
     .then(result => {
-      $msg.innerHTML = 'Contributed {'+val+'} successfully.';
+      $msg.innerHTML = 'Contributed {'+val+' wei} successfully.';
     })
     .catch(_e => {
       $msg.innerHTML = 'Ooops... there was an error while trying to Contribute {' + _e + '}';
@@ -621,10 +661,161 @@ const init_donateToIndividual = () => {
     .catch(_e => {
       $msg.innerHTML = 'Ooops... there was an error while trying to Donate {' + _e + '}';
     });
-
+    $msg = "<br>";
   });
 };
 
+
+const init_wallet = () => {
+  document.getElementById("orgWithdraw").addEventListener('submit', (e) =>{
+    e.preventDefault();
+    account = getSelectedAccount();
+    const $msg = document.getElementById('orgWithdraw_msg'); 
+    var val = document.getElementById("withdrawAmount").value;
+    val = Math.round(PkrToWei(val));
+    contract.methods.org_withdraw(val).send({from: account})//,gas:3000000})
+    .then(result => {
+      $msg.innerHTML = 'Withdraw {' + val + ' wei} successfully.';
+    })
+    .catch(_e => {
+      $msg.innerHTML = 'Ooops... there was an error while trying to Withdraw {' + _e + '}';
+    });
+  });
+
+
+  document.getElementById("updateWalletStats").addEventListener('submit', (e) =>{
+    e.preventDefault();
+    const $msg = document.getElementById('wallet_msg');
+    $msg.innerHTML = "Please wait...";
+    // var addr = $orgAddress.value;
+    var addr = getSelectedAccount();
+    var orgId;
+    contract.methods.getOrgIdFromAddress(addr).call()
+    .then(result => {
+      orgId = result
+      contract.methods.orgDb(orgId).call()
+      .then(result => {
+        document.getElementById("org_name").innerHTML = result.name;
+        document.getElementById("org_address").value = addr;
+        document.getElementById("org_totalCollected").value = weiToPkr(result.donateTotal).toFixed();
+        document.getElementById("org_totalDistributed").value = weiToPkr(result.withdrawTotal).toFixed();
+        // $org_zakat.innerHTML = result.acceptingZakat;
+        document.getElementById("org_balanceAmount").value = weiToPkr(result.balanceAmount).toFixed();// + " PKR";
+         // $msg.innerHTML = "Done...";
+      })
+      .catch(_e => {
+        $msg.innerHTML = 'Ooops... there was an error while trying to get stats {' + _e + '}';
+      });
+
+    })
+    .catch(_e => {
+      $msg.innerHTML = 'Ooops... there was an error while trying to get orgId {' + _e + '}';
+    });
+    getCredit(getSelectedAccount())
+    .then(() =>{
+      $msg.innerHTML = "Done...";
+    });
+  });
+
+
+  document.getElementById("orgSend").addEventListener('submit', (e) =>{
+    e.preventDefault();
+    account = getSelectedAccount();
+    const $msg = document.getElementById('orgSend_msg'); 
+    var val = document.getElementById("sendAmount").value;
+    var sendAddress = document.getElementById("sendAddress").value;
+    val = Math.round(PkrToWei(val));
+    contract.methods.org_send(sendAddress,val).send({from: account})//,gas:3000000})
+    .then(result => {
+      $msg.innerHTML = 'Sent {' + val + ' wei to '+ sendAddress +'} successfully.';
+    })
+    .catch(_e => {
+      $msg.innerHTML = 'Ooops... there was an error while trying to Send Amount {' + _e + '}';
+    });
+  });
+};
+
+async function getCredit(orgAddress){
+  var endBlockNumber = await web3.eth.getBlockNumber();
+  var startBlockNumber = 0;
+  var func = "org_adr_donate";
+
+    var $creditTbl = document.getElementById("creditTbl");
+    var $debitTbl = document.getElementById("debitTbl");
+    $creditTbl.innerHTML = "";
+    $debitTbl.innerHTML = "";
+
+  for (var i = startBlockNumber; i <= endBlockNumber; i++) {
+    if (i % 1000 == 0) {
+      console.log("Searching block " + i);
+    }
+    var block = await web3.eth.getBlock(i, true);
+    if (block != null && block.transactions != null) {
+      block.transactions.forEach( function(e) {
+        var dec = abiDecoder.decodeMethod(e.input);
+        if(dec){
+          // console.log("parameter = ",dec["params"][0]["value"]);
+
+
+          if(dec["name"] == "org_adr_donate" && (dec["params"][0]["value"].toLowerCase() == orgAddress.toLowerCase() || orgAddress == "*"))
+            {
+              $creditTbl.innerHTML += '<tr><td>'
+              +e.from
+              +'</td><td>'
+              +weiToPkr(e.value).toFixed(2)
+              +'</td><td> '
+              + new Date(block.timestamp * 1000).toLocaleString([], { hour12: true}) 
+              +'</td></tr>';
+            // console.log("\n"
+            //   + "   from            : " + e.from + "\n" 
+            //   + "   to              : " + e.to + "\n"
+            //   + "   value           : " + e.value + "\n"
+            //   + "   time            : " + block.timestamp + " " + new Date(block.timestamp * 1000).toGMTString() + "\n"
+            //   );
+          }
+
+
+          if(dec["name"] == "org_send" && (e.from.toLowerCase() == orgAddress.toLowerCase() || orgAddress == "*"))
+            {
+              $debitTbl.innerHTML += '<tr><td>'
+              +dec["params"][0]["value"]
+              +'</td><td>'
+              +weiToPkr(parseInt(dec["params"][1]["value"])).toFixed(2)
+              +'</td><td>Send</td><td> '
+              + new Date(block.timestamp * 1000).toLocaleString([], { hour12: true}) 
+              +'</td></tr>';
+            // console.log("\n"
+            //   + "   from            : " + e.from + "\n" 
+            //   + "   to              : " + e.to + "\n"
+            //   + "   value           : " + e.value + "\n"
+            //   + "   time            : " + block.timestamp + " " + new Date(block.timestamp * 1000).toGMTString() + "\n"
+            //   );
+          }
+
+
+          if(dec["name"] == "org_withdraw" && (e.from.toLowerCase() == orgAddress.toLowerCase() || orgAddress == "*"))
+            {
+              $debitTbl.innerHTML += '<tr><td>'
+              +e.from
+              +'</td><td>'
+              +weiToPkr(parseInt(dec["params"][0]["value"])).toFixed(2)
+              +'</td><td>Withdraw</td><td> '
+              + new Date(block.timestamp * 1000).toLocaleString([], { hour12: true}) 
+              +'</td></tr>';
+
+
+            // console.log("\n"
+            //   + "   from            : " + e.from + "\n" 
+            //   + "   to              : " + e.to + "\n"
+            //   + "   value           : " + e.value + "\n"
+            //   + "   time            : " + block.timestamp + " " + new Date(block.timestamp * 1000).toGMTString() + "\n"
+            //   );
+          }
+        }
+      })
+    }
+  }
+}
 
 // const init_interactWithOrgs = () => {
 
@@ -833,9 +1024,7 @@ function id(elementID) {
 
 // =X=X=X=X=X=X=X=X=X=X=X=X=X=X=X=X=X=X=X=X=X Testing =X=X=X=X=X=X=X=X=X=X=X=X=X=X=X=X=X=X=X=X=X=X
 
-import 'regenerator-runtime/runtime'
-const abiDecoder = require('abi-decoder'); // NodeJS
-abiDecoder.addABI(Contract.abi);
+
 const testData = "0xf63b649d000000000000000000000000bab5a2cc2eae8f2cb1fe1069d1311bca23fcadb6";
 
 
@@ -861,7 +1050,8 @@ async function getTransactionsByAccount(myaccount, startBlockNumber, endBlockNum
     var block = await web3.eth.getBlock(i, true);
     if (block != null && block.transactions != null) {
       block.transactions.forEach( function(e) {
-        if (myaccount == "*" || myaccount == e.from || myaccount == e.to) {
+        var dec = abiDecoder.decodeMethod(e.input);
+        if ((myaccount == "*" || myaccount == e.from || myaccount == e.to) /*&& (dec?abiDecoder.decodeMethod(e.input)["name"] == "org_adr_donate":false)*/) {
           console.log(""
             // + "  tx hash          : " + e.hash + "\n"
             // + "   nonce           : " + e.nonce + "\n"
@@ -874,11 +1064,14 @@ async function getTransactionsByAccount(myaccount, startBlockNumber, endBlockNum
             + "   time            : " + block.timestamp + " " + new Date(block.timestamp * 1000).toGMTString() + "\n"
             + "   gasPrice        : " + e.gasPrice + "\n"
             + "   gas             : " + e.gas + "\n"
-            + "   input           : " + e.input
+            // + "   input           : " + e.input
             );
-          console.log("abiDecoder = ",abiDecoder.decodeMethod(e.input)["name"]);
+          console.log("ABI Decoded = ",dec);
+          if(dec){
+           console.log("abiDecoder = ",dec["name"]);
+          }
         }
-      })
+      });
     }
   }
 }
@@ -912,11 +1105,12 @@ window.init_currentOrgs =init_currentOrgs;
 window.init_donateToOrg = init_donateToOrg;
 window.init_donateToIndividual = init_donateToIndividual;
 window.init_balance = init_balance;
+window.init_wallet = init_wallet;
 
 window.getCause = getCause;
 
 window.getTransactionsByAccount = getTransactionsByAccount;
-
+window.getCredit = getCredit;
 
 
 /*Links

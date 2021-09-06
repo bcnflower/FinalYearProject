@@ -77,8 +77,8 @@ module.exports = {
     // }),
 
     new HtmlWebpackPlugin({
-      template: 'src/home.html',
-      filename: 'views/home.html'
+      template: 'src/Home.html',
+      filename: 'views/Home.html'
     }),
     new HtmlWebpackPlugin({
       template: 'src/set_session.html',
@@ -116,11 +116,19 @@ module.exports = {
       template: 'src/Interact_Fundraising.html',
       filename: 'views/Interact_Fundraising.html'
     }),
+    new HtmlWebpackPlugin({
+      template: 'src/Wallet.html',
+      filename: 'views/Wallet.html'
+    }),
+    new HtmlWebpackPlugin({
+      template: 'src/Zakat.html',
+      filename: 'views/Zakat.html'
+    }),
 
     new CopyWebpackPlugin([
       // { 
-      //   from: path.resolve(__dirname,"src/ext")+'/ext.js',
-      //   to: './ext/ext.js',
+      //   from: path.resolve(__dirname,"src")+'/styles.css',
+      //   to: './views/styles.css',
       //   toType: 'file'
       // },
       { 
@@ -128,6 +136,18 @@ module.exports = {
         to: './ext/web3.js',
         toType: 'file'
       },
+
+      { 
+        from: path.resolve(__dirname,"src/ext")+'/web3.min.js',
+        to: './ext/web3.min.js',
+        toType: 'file'
+      },
+      { 
+        from: path.resolve(__dirname,"src/ext")+'/web3.min.js.map',
+        to: './ext/web3.min.js.map',
+        toType: 'file'
+      },
+
       { 
         from: path.resolve(__dirname,"src")+'/footer.ejs',
         to: './views/footer.ejs',

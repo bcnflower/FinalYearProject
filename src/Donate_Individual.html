@@ -8,6 +8,9 @@
 .fot{
   color: white;
 }
+.bod{
+  border: 2px solid;
+}
 .h{
    background-color: blue;
   color: white;
@@ -34,7 +37,7 @@ height: 35px;
        <h4 class="h"> DONATE TO INDIVIDUAL</h4>
        <form id="donateToIndividual">
         <label for="amount">Enter Amount:</label><br>
-        <input type="number" class="form1" id="amount" name="amount" value=""><br>
+        <input type="number" class="form1" id="amount" step="0.01" min="0" name="amount" value=""><br><br>
         <label for="amount">Account No</label><br>
         <input type="text" class="form1" id="account" name="account" value=""><br>
        <label for="Org">Donation Cause:</label> <br>
@@ -45,7 +48,7 @@ height: 35px;
         </select><br><br> -->
         <input type="submit" class="btn" value="Submit"> <br>
       </form> <br>
-      <center><div class="bod" id="msg"><br></div><br></center>
+      <center><div class="bod" style="background-color: #fff" id="msg"><br></div><br></center>
     </div>
   </div>
 </div>

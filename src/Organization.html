@@ -18,32 +18,39 @@
  text-align: center;
  text-decoration: none;
 }
+.form1{
+  width: 60%;
+  height: 35px;
+}
 .btn{
   background-color: green;
   color: white;
   width: 70%;
 }
 </style>
+
 <body>
 
   <%- include('./header'); %>
 
   <div class="container text-center">
     <div style="background-color: darkgrey; margin-left:25%;" class="col-md-6 col-md-offset-3">
-    <h2>CREATE ORGANIZATION</h2>
+    <h3 class="h">CREATE ORGANIZATION</h3>
     <br>
     <form id="createOrg">
-      <label for="orgName">Organization Name:</label>
+      <label for="orgName">Organization Address:</label><br>
+      <input type="text" class="form1" name="orgAddress" id="orgAddress" required><br><br>
+      <label for="orgName">Organization Name:</label><br>
       <input type="text" class="form1" name="orgName" id="orgName" required><br>
-      <label for="orgZakat">DOES ORGANIZATION ACCEPTS ZAKAT?:</label><br>
+      <!-- <label for="orgZakat">DOES ORGANIZATION ACCEPTS ZAKAT?:</label><br>
       <label>Yes:</label>
       <input type="radio" name="orgZakat" id="orgZakat" value="1" checked>  
       <label>No:</label>
-      <input type="radio" name="orgZakat" id="orgZakat" value="0">
+      <input type="radio" name="orgZakat" id="orgZakat" value="0"> -->
       <br>
       <center>
         <input type="submit" class="btn" value="Submit Your Request"> <br><br>
-        <div class="bod" id="createOrg_msg"><br></div><br>
+        <div class="bod" style="background-color: #fff" id="createOrg_msg"><br></div><br>
       </center>
     </form>
     <br>

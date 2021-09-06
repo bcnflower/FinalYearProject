@@ -4,6 +4,28 @@ pragma solidity >=0.4.22 <0.9.0;
 // pragma solidity >=0.4.22 <0.6.0;
 
 contract mainTest{   
+    
+    address payable public contractAdmin;
+    constructor() public {
+        contractAdmin = msg.sender;
+    }
+    
+    // function getContractAdmin() public view returns(address){
+    //     return contractAdmin;
+    // }
+    
+    function getAddrStatus(address addr) view public 
+    returns(
+    uint orgId,
+    uint cfId,
+    uint votingId
+    ){
+        return(
+            orgIdxDb[addr],
+            cfIdxDb[addr],
+            votingIdxDb[addr]
+        );
+    }
 
 
 // ######################### Voting #########################
@@ -227,8 +249,10 @@ contract mainTest{
     struct organization{
         address payable admin;
         string name;
-        bool acceptingZakat;
+        // bool acceptingZakat;
         uint balanceAmount;
+        uint donateTotal;
+        uint withdrawTotal;
     }
     
     organization[] public orgDb;
@@ -246,25 +270,28 @@ contract mainTest{
     
     event Deposit(address indexed _from, uint _value);
     
-    function createOrganization(bool _acceptingZakat,string memory orgName) public {
-        require (orgIdxDb[msg.sender] == 0,"Organization Already Exists on this Account.");
+    function createOrganization(address payable addr,string memory orgName) public {
+        require(msg.sender == contractAdmin,"Only Contract Admin can Create Organization!");
+        require (orgIdxDb[addr] == 0,"Organization Already Exists on this Account.");
         organization memory org;
-        org.admin = msg.sender;
+        org.admin = addr;
         org.name = orgName;
-        org.acceptingZakat = _acceptingZakat;
+        // org.acceptingZakat = _acceptingZakat;
         orgDb.push(org);
-        orgIdxDb[msg.sender] = orgDb.length;
+        orgIdxDb[addr] = orgDb.length;
     }
 
     function org_id_donate(uint orgId) public payable {
         require (orgId > 0,"Organization Does Not Exists.");
         orgDb[orgId].balanceAmount += msg.value;
+        orgDb[orgId].donateTotal += msg.value;
         // emit Deposit(msg.sender, msg.value);
     }
 
     function org_adr_donate(address orgAdr) public payable {
         require (orgIdxDb[orgAdr] > 0,"Organization Does Not Exists.");
         orgDb[orgIdxDb[orgAdr]-1].balanceAmount += msg.value;
+        orgDb[orgIdxDb[orgAdr]-1].donateTotal += msg.value;
         // emit Deposit(msg.sender, msg.value);
     }
     
@@ -275,6 +302,17 @@ contract mainTest{
         require(orgDb[id].balanceAmount >= amount,"Not enough balance!");
         orgDb[id].admin.transfer(amount);
         orgDb[id].balanceAmount-= amount;
+        orgDb[id].withdrawTotal += amount;
+    }
+    
+    function org_send(address payable addr,uint amount) public{
+        require (orgIdxDb[msg.sender] > 0,"Organization Does Not Exists.");
+        uint id = orgIdxDb[msg.sender]-1;
+        require(msg.sender == orgDb[id].admin,"Only Admin is allowed!");
+        require(orgDb[id].balanceAmount >= amount,"Not enough balance!");
+        addr.transfer(amount);
+        orgDb[id].balanceAmount-= amount;
+        orgDb[id].withdrawTotal += amount;
     }
     
     // function org_donate(uint orgId) public payable {
