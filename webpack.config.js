@@ -97,8 +97,8 @@ module.exports = {
       filename: 'views/Active_Campaigns.html'
     }),
     new HtmlWebpackPlugin({
-      template: 'src/Organization.html',
-      filename: 'views/Organization.html'
+      template: 'src/Create_Organization.html',
+      filename: 'views/Create_Organization.html'
     }),
     new HtmlWebpackPlugin({
       template: 'src/Active_Organizations.html',
@@ -117,12 +117,22 @@ module.exports = {
       filename: 'views/Interact_Fundraising.html'
     }),
     new HtmlWebpackPlugin({
-      template: 'src/Wallet.html',
-      filename: 'views/Wallet.html'
+      template: 'src/Organization_Dashboard.html',
+      filename: 'views/Organization_Dashboard.html'
     }),
     new HtmlWebpackPlugin({
       template: 'src/Zakat.html',
       filename: 'views/Zakat.html'
+    }),
+
+
+    new HtmlWebpackPlugin({
+      template: 'src/Upload_Images.html',
+      filename: 'views/Upload_Images.html'
+    }),
+    new HtmlWebpackPlugin({
+      template: 'src/View_Images.html',
+      filename: 'views/View_Images.html'
     }),
 
     new CopyWebpackPlugin([

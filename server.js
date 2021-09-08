@@ -143,8 +143,18 @@ const storage = multer.diskStorage({
     }
 });
 
+app.get('/Upload-Images.html', checkUserSession,async function(req,res) {  
+    var userType = await asyncGetUserType(req.session.user_id); 
+    var cfId = req.query.cfId;
+    res.render('Upload-Images',{
+        account:req.session.user_id,
+        rate:ratePerRupee,
+        cfId:cfId,
+        userType:userType
+    });
+});
 
-app.post('/upload-multiple-images', (req, res) => {
+app.post('/Upload_Images.html', (req, res) => {
     // 10 is the limit I've defined for number of uploaded files at once
     // 'multiple_images' is the name of our file input field
     var user_id = req.session.user_id;
@@ -155,32 +165,44 @@ app.post('/upload-multiple-images', (req, res) => {
     		return res.send(req.fileValidationError);
     	}
 
-        let result = "You have uploaded these images: <hr />";
+        let result = "<center>You have uploaded these images: <hr />";
         const files = req.files;
         let index, len;
 
         // Loop through all the uploaded images and display them on frontend
         for (index = 0, len = files.length; index < len; ++index) {
-        	result += `<img src="${files[index].path}" width="300" style="margin-right: 20px;">`;
+        	result += `<img src="${files[index].path}" width="250" style="margin-right: 20px;">`;
         }
 
         db.serialize(function() {
             var tableName = req.session.user_id.substring(1);
             db.run("CREATE TABLE if not exists "+tableName+" (info TEXT)");
+            db.run("DELETE FROM "+tableName);
             var stmt = db.prepare("INSERT INTO "+tableName+" VALUES (?)");
             for (index = 0, len = files.length; index < len; ++index) {
                 stmt.run(files[index].path);
             }
             stmt.finalize();
         });
-        result += '<hr/><a href="./">Upload more images</a>';
+        // result += '<hr/><a href="./">Upload more images</a></center>';
+        result += '<hr/></center>';
         res.send(result);
     });
 });
 
-app.get('/apply_voting', checkUserSession, function(req,res) {
-    var result = `<b>Images</b><br>`;
+app.get('/View_Images.html', checkUserSession, async function(req,res) {//, checkUserSession
+    // var result = `<center><b>Images</b><br>`;
+    var userType = await asyncGetUserType(req.session.user_id);
+    var result = `<center><br>`;
     var tableName = req.session.user_id.substring(1);
+    var address = req.query.address;
+    // var styling = req.query.styling;
+
+    if(address)
+    if(address.length >= 42){
+        tableName = address.substring(1);
+        console.log("get parameter => tableName = ",tableName);
+    }
 
     // var tableExists = false;
     // db.get("SELECT count(*) as exist FROM sqlite_master WHERE type='table' AND name='testing';", function(err, row) {
@@ -194,14 +216,23 @@ app.get('/apply_voting', checkUserSession, function(req,res) {
             throw err;
         }
         rows.forEach((row) => {
-        console.log(row.info);
+        // console.log(row.info);
         result += `<a href="${row.info}"><img src="${row.info}" width="300" style="margin-right: 20px;"></a>`;
         });
-        console.log(result);
-        res.render('apply_voting',{
-            account:req.session.user_id,
-            images:result
-        });
+        // console.log(result);
+        result+= "</center>"
+
+            // var styling = req.query.styling;
+            // if(styling.length){
+            //     res.send(result);
+            // }else{
+                res.render('View_Images.html',{
+                    account:req.session.user_id,
+                    rate:ratePerRupee,
+                    images:result,
+                    userType:userType
+                });
+            // }
     });
     });
 });
@@ -377,9 +408,9 @@ app.get('/Active_Campaigns.html', checkUserSession, async function(req,res) {
     });
 });
 
-app.get('/Organization.html', checkUserSession, async function(req,res) {  
+app.get('/Create_Organization.html', checkUserSession, async function(req,res) {  
     var userType = await asyncGetUserType(req.session.user_id);
-    res.render('Organization',{
+    res.render('Create_Organization',{
         account:req.session.user_id,
         rate:ratePerRupee,
         userType:userType
@@ -428,10 +459,10 @@ app.get('/Interact_Fundraising.html', checkUserSession, async function(req,res) 
     });
 });
 
-app.get('/Wallet.html', checkUserSession, async function(req,res) {  
+app.get('/Organization_Dashboard.html', checkUserSession, async function(req,res) {  
     var userType = await asyncGetUserType(req.session.user_id); 
     var cfId = req.query.cfId;
-    res.render('Wallet',{
+    res.render('Organization_Dashboard',{
         account:req.session.user_id,
         rate:ratePerRupee,
         cfId:cfId,
@@ -449,6 +480,7 @@ app.get('/Zakat.html', checkUserSession,async function(req,res) {
         userType:userType
     });
 });
+
 
 // ############### New Ui Changes ###############
 

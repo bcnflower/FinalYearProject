@@ -42,15 +42,26 @@ table {
   <div class="row">
     <div class="col-md-6 col-md-offset-3"style="background-color: darkgrey;">
       <h3 class="h"> VOTE FOR CAMPAIGN </h3>
-      <form id="doVote">
+     
         <label for="canidateAddress">Address:</label> <br>
         <input type="text" class="form1" id="canidateAddress" name="canidateAddress" value="<%= canidateAddress %>" required><br>
+        <label>All Voting List:</label> <br>
+        <select name="votingList"class="form1" id="votingList">
+        </select><br><br>
+        <form id="populateVotingList">
+          <input type="submit" class="btn" value="Populate Voting List"> <br>
+        </form>
+        <br>
+        <form id="viewDocs">
+          <input type="submit" class="btn" value="View Documents"> <br><br>
+        </form>
         <label for="appt">Your Choice:</label> <BR>
         <label>Yes:</label>
         <input type="radio" name="voteAgree" id="voteAgree" value="1" checked>
         <label>No:</label>
         <input type="radio" name="voteAgree" id="voteAgree" value="0">
         <br>
+         <form id="doVote">
         <input type="submit" class="btn" value="Submit Your Choice"> <br><br>
         <center><div class="bod" style="background-color: #fff" id="doVote_msg"><br></div><br></center></center>
       </form>
@@ -96,11 +107,27 @@ table {
 <script type="text/javascript">
   function features() {
         init_doVote();
+        init_getVotingList();
         init_getVotingStats("canidateAddress");
+         const event = document.createEvent('Event');
+      event.initEvent('submit', true, true);
+      document.getElementById("populateVotingList").dispatchEvent(event);
       };
   function presets(){
 
   }
+
+  document.getElementById("votingList").addEventListener('change', (e) =>{
+    document.getElementById("canidateAddress").value = document.getElementById("votingList").value;
+  });
+
+  document.getElementById("viewDocs").addEventListener('submit', (e) =>{
+    e.preventDefault();
+    var addr = document.getElementById("canidateAddress").value;
+    if(addr.length >= 42){
+      window.open("View_Images.html?address="+addr, '_blank').focus();
+    }
+  });
 
 </script>
 </html>

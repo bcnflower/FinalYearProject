@@ -238,15 +238,75 @@ const init_doVote = () => {
     account = getSelectedAccount();
     const $msg = document.getElementById('doVote_msg');
     $msg.innerHTML = "Please wait....";
-    const addr = e.target.elements[0].value;
-    const vote = e.target.elements[1].value;
-    contract.methods.vote(addr,vote).send({from:account,gas:3000000})
+    // const addr = e.target.elements[0].value;
+    // const vote = e.target.elements[1].value;
+    const addr = document.getElementById("canidateAddress").value;
+    var vote;// = document.getElementById("voteAgree").value;
+    const rbs = document.querySelectorAll('input[name="voteAgree"]');
+    // console.log(rbs)
+    for (const rb of rbs) {
+        if (rb.checked) {
+            vote = rb.value;
+            vote = parseInt(vote);
+            break;
+        }
+    }
+    // console.log("vote = ",vote," = ",Boolean(vote));
+    contract.methods.vote(addr,Boolean(vote)).send({from:account,gas:3000000})
     .then(result => {
       $msg.innerHTML = 'Voted successfully. {' + result + '}';
     })
     .catch(_e => {
       $msg.innerHTML = 'Ooops... there was an error while Voting {' + _e + '}';
     });
+  });
+};
+
+const init_getVotingList = async () => {
+
+  document.getElementById("populateVotingList").addEventListener('submit', (e) => {
+    e.preventDefault();
+    account = getSelectedAccount();
+    const $msg = document.getElementById('doVote_msg');
+    $msg.innerHTML = "Please wait....";
+    var votingList = document.getElementById("votingList");
+
+    var noVoting = 0;
+    contract.methods.getVotingDbCount().call()
+    .then(async (result) => {
+      noVoting = parseInt(result);
+      // $currentOrgs.innerHTML = 'No of Orgs = ' + noOfOrgs + '<br>';
+      votingList.innerHTML ="";
+      for (var i = noVoting-1; i>=0; i--) {
+        // console.log('i = ',i);
+        await contract.methods.votingDb(i.toString()).call()
+        .then(result => {
+          // console.log('result = ',result);
+          var row = "";
+          var d = parseInt(result.votingDeadline) - Date.now()/1000;
+          // console.log("result.votingDeadline = ",result.votingDeadline);
+          // console.log("i = ",i,", d =",d);
+          if(d>0){
+            row += '<option value="'+result.admin+'">'+result.admin+'</option>'
+            votingList.innerHTML+= row;
+          }
+        })
+        .catch(_e => {
+          $msg.innerHTML = 'Ooops... there was an error while getting Voting at index= {' + i + '} Error= {' + _e + '}';
+        });
+      }
+        var votingAdr = document.getElementById("canidateAddress");
+        if(votingAdr.value.length >= 42){
+          votingList.value = votingAdr.value;
+        }else{
+          votingAdr.value = votingList.value;
+          // votingAdr.value = votingList.options[0].value;
+        }
+    })
+    .catch(_e => {
+      $msg.innerHTML = 'Ooops... there was an error while getting Voting Count {' + _e + '}';
+    });
+    $msg.innerHTML = "<br>";
   });
 };
 
@@ -664,6 +724,50 @@ const init_donateToIndividual = () => {
     $msg = "<br>";
   });
 };
+
+
+const init_updateTransactionStats = () =>{
+
+  document.getElementById("updateWalletStats").addEventListener('submit', (e) =>{
+    e.preventDefault();
+    const $msg = document.getElementById('wallet_msg');
+    $msg.innerHTML = "Please wait...";
+    // var addr = $orgAddress.value;
+    // var addr = getSelectedAccount();
+    var addr = document.getElementById("orgsList").value;
+    if(addr.length < 42){
+      $msg.innerHTML = "Invalid Address";
+      return;
+    }
+    var orgId;
+    contract.methods.getOrgIdFromAddress(addr).call()
+    .then(result => {
+      orgId = result
+      contract.methods.orgDb(orgId).call()
+      .then(result => {
+        document.getElementById("org_name").innerHTML = result.name;
+        document.getElementById("org_address").value = addr;
+        document.getElementById("org_totalCollected").value = weiToPkr(result.donateTotal).toFixed();
+        document.getElementById("org_totalDistributed").value = weiToPkr(result.withdrawTotal).toFixed();
+        // $org_zakat.innerHTML = result.acceptingZakat;
+        document.getElementById("org_balanceAmount").value = weiToPkr(result.balanceAmount).toFixed();// + " PKR";
+         // $msg.innerHTML = "Done...";
+      })
+      .catch(_e => {
+        $msg.innerHTML = 'Ooops... there was an error while trying to get stats {' + _e + '}';
+      });
+
+    })
+    .catch(_e => {
+      $msg.innerHTML = 'Ooops... there was an error while trying to get orgId {' + _e + '}';
+    });
+    getCredit(addr)
+    .then(() =>{
+      $msg.innerHTML = "Done...";
+    });
+  });
+
+}
 
 
 const init_wallet = () => {
@@ -1106,6 +1210,9 @@ window.init_donateToOrg = init_donateToOrg;
 window.init_donateToIndividual = init_donateToIndividual;
 window.init_balance = init_balance;
 window.init_wallet = init_wallet;
+window.init_updateTransactionStats = init_updateTransactionStats;
+
+window.init_getVotingList = init_getVotingList;
 
 window.getCause = getCause;
 

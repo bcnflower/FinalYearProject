@@ -42,6 +42,19 @@ table {
   <div class="row">
     <div class="col-md-6 col-md-offset-3"style="background-color: darkgrey;">
       <h3 class="h"> START A CAMPAIGN </h3>
+      <center>
+        <form method="POST" action="/Upload_Images.html" enctype="multipart/form-data" target="frame">
+          <label>Select Documents to attach:</label>
+          <input type="file" class="form1" name="images" id="images" multiple required />
+          <input type="submit" class="btn" name="btn_upload_multiple_images" value="Upload" onclick="uploadButton()"; />
+          <div style="display: none" id="frame">
+            <br>
+            <iframe name="frame"></iframe>
+            <br>
+          </div>
+        </form>
+      </center>
+        <br>
       <form id="createVoting">
         <label for="cause">Cause OF Fundraise:</label> <br>
         <select name="cause"class="form1" id="cause">
@@ -59,8 +72,8 @@ table {
         <label for="appt">DURATION IN HOURS(For Funding):</label> <BR>
         <input class="html-duration-picker form1" id="CFduration"><br>
         <label for="appt">UPLOAD DOCUMENTS:</label> <BR>
-        <center><input type="file" id="myFile" name="filename"><BR>
-        <input type="submit" class="btn" value="Submit Your Request"> <br><br>
+        <!-- <center><input type="file" id="myFile" name="filename"><BR> -->
+        <input type="submit" id="submitRequst" class="btn" value="Submit Your Request" disabled> <br><br>
         <div class="bod" style="background-color: #fff" id="createVoting_msg"><br></div><br></center>
       </form>
       <br>
@@ -110,6 +123,15 @@ table {
       };
   function presets(){
 
+  }
+
+  function uploadButton() {
+    var uploadInput = document.getElementById("images");
+    if(uploadInput.value.length > 0)
+    {
+       document.getElementById("submitRequst").disabled = false
+       document.getElementById("frame").style.display = "block";
+    }
   }
 
 </script>

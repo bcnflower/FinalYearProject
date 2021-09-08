@@ -53,6 +53,11 @@ contract mainTest{
     mapping (address => uint) votingIdxDb;
     
     
+     function getVotingDbCount() view public returns(uint){
+        return votingDb.length;
+    }
+    
+    
     function createVoting(uint deadline,uint cfDeadline,uint _amount, uint8 _catagory) public {
         if(votingIdxDb[msg.sender] > 0){
             require(votingDb[votingIdxDb[msg.sender] - 1].votingDeadline < now,"Deadline not over yet.");
@@ -75,8 +80,8 @@ contract mainTest{
     }
     
     function vote(address votingId,bool doYouAgree) public {
-        require (orgIdxDb[msg.sender] > 0,"Only Organizations can Vote!");
         require(votingId != msg.sender,"Admin Cannot Vote!");
+        require (orgIdxDb[msg.sender] > 0,"Only Organizations can Vote!");
         uint id = votingIdxDb[votingId] - 1;
         require(votingDb[id].votingDeadline>now,"Voting deadline over!");
         uint idx = votingDb[id].votersIdx[msg.sender];

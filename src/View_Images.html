@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>ECHARITY</title>
+  <%- include('./head'); %>
+</head>
+<style>
+.fot{
+  color: white;
+}
+.bod{
+  border: 2px solid;
+}
+
+table, td, th {
+  border: 1px solid black;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.form1{
+  width: 60%;
+  height: 35px;
+}
+.btn{
+  background-color: green;
+  color: white;
+  padding: 7px 35px;
+}
+
+/*body{
+ background:#a5b5c5;
+ background:lightblue !important;
+ }*/
+
+ .box {
+   background: #fff;
+   border-radius: 4px;
+   padding: 5px ;
+   width: min-content;
+ }
+
+ .col-lg-2 {
+   margin: 5px !important;
+ }
+
+ .h{
+   background-color: blue;
+   color: white;
+   padding: 11px 45px;
+   text-align: center;
+   text-decoration: none;
+ }
+
+</style>
+<body>
+
+  <%- include('./header'); %>
+
+
+  <div class="container text-center">
+    <div class="row">
+      <div class="col-md-6 col-md-offset-3"style="background-color: darkgrey;">
+        <h3 class="h">UPLOADED DOCUMENTS</h3>
+        <center>
+          <div><%- images %></div>
+          <br>
+        </center>
+      </div>
+    </div>
+  </div>
+</body>
+<%- include('./footer'); %>
+<script type="text/javascript">
+  function uploadButton() {
+    var uploadInput = document.getElementById("images");
+    if(uploadInput.value.length < 0)
+    {
+      alert("Please Select file");
+    }
+  }
+  function features() {
+    init_currentCFs();
+    const event = document.createEvent('Event');
+    event.initEvent('submit', true, true);
+    document.getElementById("getCurrentCFs").dispatchEvent(event);
+  };
+  function presets(){
+
+  }
+
+</script>
+</html>
