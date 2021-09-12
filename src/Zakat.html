@@ -271,7 +271,7 @@ table {
 
   function calcZakat()
   {
-    zakatAmount.value = parseFloat(grandTotal.value) * 0.025;
+    zakatAmount.value = (parseFloat(grandTotal.value) * 0.025).toFixed(2);
   }
 
   function donateZakat() {

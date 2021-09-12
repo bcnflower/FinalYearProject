@@ -1,6 +1,7 @@
 // import Web3 from '../ext/web3';
 // import Web3 from '../ext/web3.min.js';
 import Contract from '../../build/contracts/mainTest.json';
+import config from '../../myConfig.json';
 
 // import './bootstrap.bundle.min.js'
 // import '../css/bootstrap.min.css'
@@ -93,8 +94,10 @@ const initWeb3 = () => {
       );
     }
     // resolve(new Web3('http://192.168.1.123:9545'));
-    resolve(new Web3('http://localhost:9545'));
-    // resolve(new Web3('http://192.168.1.111:7545'));
+    var web3Address = "http://" + config["ip"] + ':' + (config["port"]?config["port"]:9545);
+    // resolve(new Web3('http://localhost:9545'));
+    resolve(new Web3(web3Address));
+    // resolve(new Web3('http://192.168.1.9:7545'));
   });
 };
 
@@ -184,7 +187,7 @@ const init_applyVoting = (inputIndex = 0) => {
     var amount = document.getElementById("amount").value;
     amount = parseInt(amount);
     amount = PkrToWei(amount);
-    amount = Math.round(amount);
+    amount = Math.round(amount).toString();
     console.log(amount);
     var Vduration = getDurationInSec("Vduration");
     var CFduration = getDurationInSec("CFduration");

@@ -31,13 +31,13 @@ contract mainTest{
 // ######################### Voting #########################
     
     struct voting{
-        mapping(address=>uint) votersIdx;
-        bool[] alreadyVoted;
+        mapping(address=>bool) votersIdx;
+        // bool[] alreadyVoted;
         uint votingDeadline;
         uint cfDeadline;
         uint positiveVotes;
         uint negativeVotes;
-        bool valid;
+        // bool valid;
         uint amount;
         uint8 catagory;
         address admin;
@@ -71,7 +71,7 @@ contract mainTest{
         v.negativeVotes = 0;
         v.votingDeadline = deadline + now;
         v.cfDeadline = cfDeadline;
-        v.valid = true;
+        // v.valid = true;
         v.amount = _amount;
         v.catagory = _catagory;
         v.admin = msg.sender;
@@ -81,16 +81,19 @@ contract mainTest{
     
     function vote(address votingId,bool doYouAgree) public {
         require(votingId != msg.sender,"Admin Cannot Vote!");
-        require (orgIdxDb[msg.sender] > 0,"Only Organizations can Vote!");
+        // require (orgIdxDb[msg.sender] > 0,"Only Organizations can Vote!");
         uint id = votingIdxDb[votingId] - 1;
         require(votingDb[id].votingDeadline>now,"Voting deadline over!");
-        uint idx = votingDb[id].votersIdx[msg.sender];
-        if(idx+1 > votingDb[id].alreadyVoted.length){
-            votingDb[id].alreadyVoted.push(true);
-            votingDb[id].votersIdx[msg.sender] = votingDb[id].alreadyVoted.length - 1;
-        }else{
-            require(votingDb[id].alreadyVoted[idx] == false,"Already Voted!");
-        }
+        require(votingDb[id].votersIdx[msg.sender] == false,"Already Voted!");
+        votingDb[id].votersIdx[msg.sender] = true;
+        
+        // uint idx = votingDb[id].votersIdx[msg.sender];
+        // if(idx+1 > votingDb[id].alreadyVoted.length){
+        //     votingDb[id].alreadyVoted.push(true);
+        //     votingDb[id].votersIdx[msg.sender] = votingDb[id].alreadyVoted.length - 1;
+        // }else{
+        //     require(votingDb[id].alreadyVoted[idx] == false,"Already Voted!");
+        // }
         
         if(doYouAgree){
             votingDb[id].positiveVotes++;
@@ -126,7 +129,8 @@ contract mainTest{
     function isEligible(address votingId) view public returns(bool) {
         //Some logic
         uint id = votingIdxDb[votingId] - 1;
-        return (votingDb[id].positiveVotes > votingDb[id].negativeVotes);
+        // return (votingDb[id].positiveVotes > votingDb[id].negativeVotes);
+        return (votingDb[id].positiveVotes >= 3);
     }
     
     

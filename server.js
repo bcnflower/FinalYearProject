@@ -1,3 +1,4 @@
+const fs = require('fs');
 const path = require('path');
 const express = require('express');
 const session = require('express-session');
@@ -16,10 +17,40 @@ var db = new sqlite3.Database('mydb.db', (err) => {
 });
 
 // X=X=X=X=X=X=X=X=X WEB3 Test X=X=X=X=X=X=X=X=X
+var config;
+var ip = "";
+var host = "";
+var rate = 0;
+var port = 0;
+
+try{
+    config = fs.readFileSync('myConfig.json', 'utf8');
+    config = JSON.parse(config);
+    ip = config["ip"];
+    host = config["host"];
+    rate = config["rate"];
+    port = config["port"];
+}catch(err){
+  console.log(err.message);
+};
+
+// console.log("rate = ",rate);
+// console.log("ip = ",ip);
+// console.log("host = ",host);
+// console.log("port = ",port);
+
+if(!port){
+    port = 9545;
+}
+
+var web3Address = "http://" + ip + ':' + port;
+console.log("web3Address = ",web3Address);
+
 const Web3 = require('web3');
 const Contract = require('./build/contracts/mainTest.json');
 const deploymentKey = Object.keys(Contract.networks)[0];
-const web3 = new Web3('http://localhost:9545');
+// const web3 = new Web3('http://localhost:9545');
+const web3 = new Web3(web3Address);
 const contractAddress = Contract.networks[deploymentKey].address;
 const contract = new web3.eth.Contract(Contract.abi,contractAddress);
 
@@ -72,21 +103,23 @@ function asyncGetUserType(addr) {
         var orgId = 0;
         contract.methods.getAddrStatus(addr).call()
         .then(result =>{
+            // console.log("result = ",result);
             orgId = result["orgId"];
-            if(addr == contractAdmin) //it's admin
+            if(addr.toLowerCase() == contractAdmin.toLowerCase()) //it's admin
             {
                 ut += 2
             }
             if(orgId > 0){// it's organization
                 ut +=1
             }
+            // console.log("ut = ",ut);
             resolve(ut); // 1 => organization , 2=> admin , 3 => admin + organization
         })
         .catch(reject);
     });
 }
 
-console.log("asyncGetUserType = ",asyncGetUserType(adr));
+// console.log("asyncGetUserType = ",asyncGetUserType(adr));
 
 
 
@@ -121,8 +154,8 @@ app.engine('html', ejs.renderFile);
 
 app.get('/', function(req, res) {
   // res.render('index');
-  returnToPage = '/apply_voting';
-  res.redirect('/apply_voting');
+  returnToPage = '/Home.html';
+  res.redirect(returnToPage);
 });
 
 app.get('/test', function(req, res) {
@@ -354,13 +387,19 @@ const req = https.request(options, res => {
     console.log('price = ',price);
     ratePerRupee = (1e18)/price[0][1];
     console.log('rate (WeiPerRupee) = ',ratePerRupee);
+
+    config["rate"] = ratePerRupee;
+    let data = JSON.stringify(config);
+    fs.writeFileSync('myConfig.json', data);
+
   });
 });
 
 req.on('error', error => {
   // console.error(error)
-  console.log("Inter Connection Error. Using Previous rate.");
-  ratePerRupee = 1521869061597.4343;
+  console.log("Internet Connection Error. Using Previous rate.");
+  // ratePerRupee = 1521869061597.4343;
+  ratePerRupee = config["rate"];
   console.log('rate (WeiPerRupee) = ',ratePerRupee);
 });
 
