@@ -72,47 +72,47 @@ let accountSelectorEnabled = true;
 
   // Org variables...
 
-const initWeb3 = () => {
-  return new Promise((resolve, reject) => {
-    if(typeof window.ethereum !== 'undefined') {
-      const web3 = new Web3(window.ethereum);
-      window.web3 = web3;
-      window.ethereum.enable()
+  const initWeb3 = () => {
+    return new Promise((resolve, reject) => {
+      if(typeof window.ethereum !== 'undefined') {
+        const web3 = new Web3(window.ethereum);
+        window.web3 = web3;
+        window.ethereum.enable()
         .then(() => {
           resolve(
             new Web3(window.ethereum)
-          );
+            );
         })
         .catch(e => {
           reject(e);
         });
-      return;
-    }
-    if(typeof window.web3 !== 'undefined') {
-      return resolve(
-        new Web3(window.web3.currentProvider)
-      );
-    }
+        return;
+      }
+      if(typeof window.web3 !== 'undefined') {
+        return resolve(
+          new Web3(window.web3.currentProvider)
+          );
+      }
     // resolve(new Web3('http://192.168.1.123:9545'));
     var web3Address = "http://" + config["ip"] + ':' + (config["port"]?config["port"]:9545);
     // resolve(new Web3('http://localhost:9545'));
     resolve(new Web3(web3Address));
     // resolve(new Web3('http://192.168.1.9:7545'));
   });
-};
+  };
 
-const initContract = () => {
-  const deploymentKey = Object.keys(Contract.networks)[0];
-  return new web3.eth.Contract(
-    Contract.abi, 
-    Contract
+  const initContract = () => {
+    const deploymentKey = Object.keys(Contract.networks)[0];
+    return new web3.eth.Contract(
+      Contract.abi, 
+      Contract
       .networks[deploymentKey]
       .address
-  );
-};
+      );
+  };
 
 
-const initApp = () => {
+  const initApp = () => {
 
   // let accounts = [];
   // let account = '';
@@ -144,22 +144,22 @@ const initApp = () => {
 
 const accountSelector = () =>{
 
-    var select = document.getElementById("selectAccount"); 
-    for(var i = 0; i < accounts.length; i++) {
-      var opt = accounts[i];
-      var el = document.createElement("option");
-      el.textContent = opt;
-      el.value = opt;
-      select.appendChild(el);
-    }
-    document.getElementById("yourAccount").value = account;
-    web3.eth.getBalance(account)
-    .then(balance =>{
-      document.getElementById("balance").innerHTML = web3.utils.fromWei(balance);
-      document.getElementById("balancePKR").innerHTML = Math.floor(weiToPkr(balance));
-    });
+  var select = document.getElementById("selectAccount"); 
+  for(var i = 0; i < accounts.length; i++) {
+    var opt = accounts[i];
+    var el = document.createElement("option");
+    el.textContent = opt;
+    el.value = opt;
+    select.appendChild(el);
+  }
+  document.getElementById("yourAccount").value = account;
+  web3.eth.getBalance(account)
+  .then(balance =>{
+    document.getElementById("balance").innerHTML = web3.utils.fromWei(balance);
+    document.getElementById("balancePKR").innerHTML = Math.floor(weiToPkr(balance));
+  });
 
-    $selectAccount.addEventListener('change', (e) =>{
+  $selectAccount.addEventListener('change', (e) =>{
     var index = selectAccount.selectedIndex;
     account = selectAccount.options[index].value;
     // alert(account);
@@ -179,28 +179,28 @@ const init_applyVoting = (inputIndex = 0) => {
 
   $createVoting.addEventListener('submit', (e) => {
     // document.getElementById('createVoting').addEventListener('submit', (e) => {
-    e.preventDefault();
-    account = getSelectedAccount();
-    const $msg = document.getElementById('createVoting_msg');
-    var cause = document.getElementById("cause").value;
-    cause = parseInt(cause);
-    var amount = document.getElementById("amount").value;
-    amount = parseInt(amount);
-    amount = PkrToWei(amount);
-    amount = Math.round(amount).toString();
-    console.log(amount);
-    var Vduration = getDurationInSec("Vduration");
-    var CFduration = getDurationInSec("CFduration");
-    $msg.innerHTML = "Please wait....";
-    contract.methods.createVoting(Vduration,CFduration,amount,cause).send({from:account,gas:3000000})
-    .then(result => {
-      $msg.innerHTML = 'Created Voting successfully. ';
-      $msg.innerHTML+= '<a href="./Vote.html?canidateAddress='+account+'" target="_blank" >Voting Link</a>';
-    })
-    .catch(_e => {e.target.elements[0].value;
-      $msg.innerHTML = 'Ooops... there was an error while creating Voting {' + _e + '}';
+      e.preventDefault();
+      account = getSelectedAccount();
+      const $msg = document.getElementById('createVoting_msg');
+      var cause = document.getElementById("cause").value;
+      cause = parseInt(cause);
+      var amount = document.getElementById("amount").value;
+      amount = parseInt(amount);
+      amount = PkrToWei(amount);
+      amount = Math.round(amount).toString();
+      console.log(amount);
+      var Vduration = getDurationInSec("Vduration");
+      var CFduration = getDurationInSec("CFduration");
+      $msg.innerHTML = "Please wait....";
+      contract.methods.createVoting(Vduration,CFduration,amount,cause).send({from:account,gas:3000000})
+      .then(result => {
+        $msg.innerHTML = 'Created Voting successfully. ';
+        $msg.innerHTML+= '<a href="./Vote.html?canidateAddress='+account+'" target="_blank" >Voting Link</a>';
+      })
+      .catch(_e => {e.target.elements[0].value;
+        $msg.innerHTML = 'Ooops... there was an error while creating Voting {' + _e + '}';
+      });
     });
-  });
 };
 
 const init_getVotingStats = (elementID = "currentAccount") => {
@@ -215,7 +215,7 @@ const init_getVotingStats = (elementID = "currentAccount") => {
       return;
     }
     contract.methods.getVotingStatus(acc).call()
-      .then(result => {
+    .then(result => {
         // console.log("addr = ",addr);
         // console.log("Result = ",result);
         $positiveVotes.innerHTML = result.positiveVotes;
@@ -227,9 +227,9 @@ const init_getVotingStats = (elementID = "currentAccount") => {
         // $VSDeadline.innerHTML = new Date((result.deadline*1000 - Date.now())).toISOString().substr(11, 8) ;
         $VSDeadline.innerHTML = (d<0?"Time Over":new Date(d * 1000).toISOString().substr(11, 8))
       })
-      .catch(_e => {
-        $msg.innerHTML = 'Ooops... there was an error while getting stats {' + _e + '}';
-      });
+    .catch(_e => {
+      $msg.innerHTML = 'Ooops... there was an error while getting stats {' + _e + '}';
+    });
   });
 };
 
@@ -248,11 +248,11 @@ const init_doVote = () => {
     const rbs = document.querySelectorAll('input[name="voteAgree"]');
     // console.log(rbs)
     for (const rb of rbs) {
-        if (rb.checked) {
-            vote = rb.value;
-            vote = parseInt(vote);
-            break;
-        }
+      if (rb.checked) {
+        vote = rb.value;
+        vote = parseInt(vote);
+        break;
+      }
     }
     // console.log("vote = ",vote," = ",Boolean(vote));
     contract.methods.vote(addr,Boolean(vote)).send({from:account,gas:3000000})
@@ -298,14 +298,14 @@ const init_getVotingList = async () => {
           $msg.innerHTML = 'Ooops... there was an error while getting Voting at index= {' + i + '} Error= {' + _e + '}';
         });
       }
-        var votingAdr = document.getElementById("canidateAddress");
-        if(votingAdr.value.length >= 42){
-          votingList.value = votingAdr.value;
-        }else{
-          votingAdr.value = votingList.value;
+      var votingAdr = document.getElementById("canidateAddress");
+      if(votingAdr.value.length >= 42){
+        votingList.value = votingAdr.value;
+      }else{
+        votingAdr.value = votingList.value;
           // votingAdr.value = votingList.options[0].value;
         }
-    })
+      })
     .catch(_e => {
       $msg.innerHTML = 'Ooops... there was an error while getting Voting Count {' + _e + '}';
     });
@@ -519,14 +519,14 @@ const init_interactWithCFs = () => {
     // .then(result => {
     //   cfId = result;
     cfId = parseInt($cfId.value);
-      var val = $CFcontributeAmount.value;
-      contract.methods.cf_getRefund(cfId).send({from: account})
-      .then(result => {
-        $msg.innerHTML = 'Refunded successfully.';
-      })
-      .catch(_e => {
-        $msg.innerHTML = 'Ooops... there was an error while trying to Refund {' + _e + '}';
-      });
+    var val = $CFcontributeAmount.value;
+    contract.methods.cf_getRefund(cfId).send({from: account})
+    .then(result => {
+      $msg.innerHTML = 'Refunded successfully.';
+    })
+    .catch(_e => {
+      $msg.innerHTML = 'Ooops... there was an error while trying to Refund {' + _e + '}';
+    });
 
     // })
     // .catch(_e => {
@@ -543,14 +543,14 @@ const init_interactWithCFs = () => {
     // .then(result => {
     //   cfId = result;
     cfId = parseInt($cfId.value);
-      var val = $CFcontributeAmount.value;
-      contract.methods.cf_withdrawFunding(cfId).send({from: account})
-      .then(result => {
-        $msg.innerHTML = 'Refunded successfully.';
-      })
-      .catch(_e => {
-        $msg.innerHTML = 'Ooops... there was an error while trying to Refund {' + _e + '}';
-      });
+    var val = $CFcontributeAmount.value;
+    contract.methods.cf_withdrawFunding(cfId).send({from: account})
+    .then(result => {
+      $msg.innerHTML = 'Refunded successfully.';
+    })
+    .catch(_e => {
+      $msg.innerHTML = 'Ooops... there was an error while trying to Refund {' + _e + '}';
+    });
     // })
     // .catch(_e => {
     //   $msg.innerHTML = 'Ooops... there was an error while trying to cfId {' + _e + '}';
@@ -601,6 +601,7 @@ const init_createOrg = () => {
     // .catch(_e => {
     //   $msg.innerHTML += _e;
     // });
+    $createOrg.reset();
   });
 };
 
@@ -755,7 +756,7 @@ const init_updateTransactionStats = () =>{
         // $org_zakat.innerHTML = result.acceptingZakat;
         document.getElementById("org_balanceAmount").value = weiToPkr(result.balanceAmount).toFixed();// + " PKR";
          // $msg.innerHTML = "Done...";
-      })
+       })
       .catch(_e => {
         $msg.innerHTML = 'Ooops... there was an error while trying to get stats {' + _e + '}';
       });
@@ -776,17 +777,69 @@ const init_updateTransactionStats = () =>{
 const init_wallet = () => {
   document.getElementById("orgWithdraw").addEventListener('submit', (e) =>{
     e.preventDefault();
+
+    var fileTag = document.getElementById("images_withdraw");
+    if(fileTag.value.length == 0)
+    {
+      alert("Please select document");
+      return;
+    }
+
     account = getSelectedAccount();
     const $msg = document.getElementById('orgWithdraw_msg'); 
     var val = document.getElementById("withdrawAmount").value;
     val = Math.round(PkrToWei(val));
-    contract.methods.org_withdraw(val).send({from: account})//,gas:3000000})
+    // contract.methods.org_withdraw(val).send({from: account})//,gas:3000000})
+    // .then(result => {
+    //   $msg.innerHTML = 'Withdraw {' + val + ' wei} successfully.';
+    // })
+    // .catch(_e => {
+    //   $msg.innerHTML = 'Ooops... there was an error while trying to Withdraw {' + _e + '}';
+    // });
+
+    contract.methods.getOrgIdFromAddress(account).call()
     .then(result => {
-      $msg.innerHTML = 'Withdraw {' + val + ' wei} successfully.';
+      var orgId = result
+      contract.methods.orgDb(orgId).call()
+      .then(result => {
+        ////////
+        if(result.balanceAmount >= val){
+        contract.methods.org_withdraw(val).send({from: account})//,gas:3000000})
+        .on('transactionHash', function(hash){
+          console.log("hash = ",hash);
+          document.getElementById("txId_withdraw").value = hash;
+          document.getElementById("file_upload_withdraw").submit();
+          document.getElementById("frame_withdraw").style.display = "block";
+        })
+        .on('receipt', function(receipt){
+          console.log("receipt = ",receipt);
+          $msg.innerHTML = 'Withdraw {' + val + ' wei} successfully.';
+        })
+        .on('error', function(error){
+          console.log("error = ",error);
+          return;
+        });
+      }else{
+        $msg.innerHTML = "Not Enough Balance";
+      }
+        /////////
+      
+      })
+      .catch(_e => {
+        $msg.innerHTML = 'Ooops... there was an error while trying to get stats {' + _e + '}';
+      });
+
     })
     .catch(_e => {
-      $msg.innerHTML = 'Ooops... there was an error while trying to Withdraw {' + _e + '}';
+      $msg.innerHTML = 'Ooops... there was an error while trying to get orgId {' + _e + '}';
     });
+
+
+
+
+
+
+
   });
 
 
@@ -809,7 +862,7 @@ const init_wallet = () => {
         // $org_zakat.innerHTML = result.acceptingZakat;
         document.getElementById("org_balanceAmount").value = weiToPkr(result.balanceAmount).toFixed();// + " PKR";
          // $msg.innerHTML = "Done...";
-      })
+       })
       .catch(_e => {
         $msg.innerHTML = 'Ooops... there was an error while trying to get stats {' + _e + '}';
       });
@@ -827,18 +880,69 @@ const init_wallet = () => {
 
   document.getElementById("orgSend").addEventListener('submit', (e) =>{
     e.preventDefault();
+
+    var fileTag = document.getElementById("images_send");
+    if(fileTag.value.length == 0)
+    {
+      alert("Please select document");
+      return;
+    }
+
     account = getSelectedAccount();
     const $msg = document.getElementById('orgSend_msg'); 
     var val = document.getElementById("sendAmount").value;
     var sendAddress = document.getElementById("sendAddress").value;
     val = Math.round(PkrToWei(val));
-    contract.methods.org_send(sendAddress,val).send({from: account})//,gas:3000000})
+
+
+    // contract.methods.org_send(sendAddress,val).send({from: account})//,gas:3000000})
+    // .then(result => {
+    //   $msg.innerHTML = 'Sent {' + val + ' wei to '+ sendAddress +'} successfully.';
+    // })
+    // .catch(_e => {
+    //   $msg.innerHTML = 'Ooops... there was an error while trying to Send Amount {' + _e + '}';
+    // });
+
+    contract.methods.getOrgIdFromAddress(account).call()
     .then(result => {
-      $msg.innerHTML = 'Sent {' + val + ' wei to '+ sendAddress +'} successfully.';
+      var orgId = result
+      contract.methods.orgDb(orgId).call()
+      .then(result => {
+
+    /////////////////
+    if(result.balanceAmount >= val){
+    contract.methods.org_send(sendAddress,val).send({from: account})//,gas:3000000})
+    .on('transactionHash', function(hash){
+          console.log("hash = ",hash);
+          document.getElementById("txId_send").value = hash;
+          document.getElementById("file_upload_send").submit();
+          document.getElementById("frame_send").style.display = "block";
+        })
+        .on('receipt', function(receipt){
+          console.log("receipt = ",receipt);
+          $msg.innerHTML = 'Sent {' + val + ' wei to '+ sendAddress +'} successfully.';
+        })
+        .on('error', function(error){
+          console.log("error = ",error);
+          $msg.innerHTML = 'Ooops... there was an error while trying to Send Amount {' + error + '}';
+          return;
+        });
+      }else{
+        $msg.innerHTML = "Not Enough Balance";
+      }
+      
+    /////////////////
+
+    })
+      .catch(_e => {
+        $msg.innerHTML = 'Ooops... there was an error while trying to get stats {' + _e + '}';
+      });
+
     })
     .catch(_e => {
-      $msg.innerHTML = 'Ooops... there was an error while trying to Send Amount {' + _e + '}';
+      $msg.innerHTML = 'Ooops... there was an error while trying to get orgId {' + _e + '}';
     });
+
   });
 };
 
@@ -847,10 +951,10 @@ async function getCredit(orgAddress){
   var startBlockNumber = 0;
   var func = "org_adr_donate";
 
-    var $creditTbl = document.getElementById("creditTbl");
-    var $debitTbl = document.getElementById("debitTbl");
-    $creditTbl.innerHTML = "";
-    $debitTbl.innerHTML = "";
+  var $creditTbl = document.getElementById("creditTbl");
+  var $debitTbl = document.getElementById("debitTbl");
+  $creditTbl.innerHTML = "";
+  $debitTbl.innerHTML = "";
 
   for (var i = startBlockNumber; i <= endBlockNumber; i++) {
     if (i % 1000 == 0) {
@@ -865,14 +969,14 @@ async function getCredit(orgAddress){
 
 
           if(dec["name"] == "org_adr_donate" && (dec["params"][0]["value"].toLowerCase() == orgAddress.toLowerCase() || orgAddress == "*"))
-            {
-              $creditTbl.innerHTML += '<tr><td>'
-              +e.from
-              +'</td><td>'
-              +weiToPkr(e.value).toFixed(2)
-              +'</td><td> '
-              + new Date(block.timestamp * 1000).toLocaleString([], { hour12: true}) 
-              +'</td></tr>';
+          {
+            $creditTbl.innerHTML += '<tr><td>'
+            +e.from
+            +'</td><td>'
+            +weiToPkr(e.value).toFixed(2)
+            +'</td><td> '
+            + new Date(block.timestamp * 1000).toLocaleString([], { hour12: true}) 
+            +'</td></tr>';
             // console.log("\n"
             //   + "   from            : " + e.from + "\n" 
             //   + "   to              : " + e.to + "\n"
@@ -883,14 +987,16 @@ async function getCredit(orgAddress){
 
 
           if(dec["name"] == "org_send" && (e.from.toLowerCase() == orgAddress.toLowerCase() || orgAddress == "*"))
-            {
-              $debitTbl.innerHTML += '<tr><td>'
-              +dec["params"][0]["value"]
-              +'</td><td>'
-              +weiToPkr(parseInt(dec["params"][1]["value"])).toFixed(2)
-              +'</td><td>Send</td><td> '
-              + new Date(block.timestamp * 1000).toLocaleString([], { hour12: true}) 
-              +'</td></tr>';
+          {
+            $debitTbl.innerHTML += '<tr><td>'
+            +dec["params"][0]["value"]
+            +'</td><td>'
+            +weiToPkr(parseInt(dec["params"][1]["value"])).toFixed(2)
+            +'</td><td>Send</td><td> '
+            + new Date(block.timestamp * 1000).toLocaleString([], { hour12: true}) 
+            +'</td><td> '
+            + '<a class="btn" href="Org_View_Images.html?address='+orgAddress.toLowerCase()+'&txId='+e.hash.toLowerCase()+'" target="_blank">View</a>'
+            +'</td></tr>';
             // console.log("\n"
             //   + "   from            : " + e.from + "\n" 
             //   + "   to              : " + e.to + "\n"
@@ -901,14 +1007,16 @@ async function getCredit(orgAddress){
 
 
           if(dec["name"] == "org_withdraw" && (e.from.toLowerCase() == orgAddress.toLowerCase() || orgAddress == "*"))
-            {
-              $debitTbl.innerHTML += '<tr><td>'
-              +e.from
-              +'</td><td>'
-              +weiToPkr(parseInt(dec["params"][0]["value"])).toFixed(2)
-              +'</td><td>Withdraw</td><td> '
-              + new Date(block.timestamp * 1000).toLocaleString([], { hour12: true}) 
-              +'</td></tr>';
+          {
+            $debitTbl.innerHTML += '<tr><td>'
+            +e.from
+            +'</td><td>'
+            +weiToPkr(parseInt(dec["params"][0]["value"])).toFixed(2)
+            +'</td><td>Withdraw</td><td> '
+            + new Date(block.timestamp * 1000).toLocaleString([], { hour12: true}) 
+            +'</td><td> '
+            + '<a class="btn" href="Org_View_Images.html?address='+orgAddress.toLowerCase()+'&txId='+e.hash.toLowerCase()+'" target="_blank">View</a>'
+            +'</td></tr>';
 
 
             // console.log("\n"
@@ -1035,15 +1143,15 @@ const init_auto = () => {
 
 document.addEventListener('DOMContentLoaded', () => {
   initWeb3()
-    .then(_web3 => {
-      web3 = _web3;
-      contract = initContract();
-      initApp(); 
-    })
-    .catch(e => console.log(e.message));
-    console.log("dom loaded");
-    const deploymentKey = Object.keys(Contract.networks)[0];
-    console.log("Contract Address = ",Contract.networks[deploymentKey].address);
+  .then(_web3 => {
+    web3 = _web3;
+    contract = initContract();
+    initApp(); 
+  })
+  .catch(e => console.log(e.message));
+  console.log("dom loaded");
+  const deploymentKey = Object.keys(Contract.networks)[0];
+  console.log("Contract Address = ",Contract.networks[deploymentKey].address);
 });
 
 function copyInputElement(elementID = "yourAccount") {
@@ -1077,10 +1185,10 @@ function PkrToWei(pkr){
 function init_balance(){
   account = getSelectedAccount();
   web3.eth.getBalance(account)
-    .then(balance =>{
-      document.getElementById('balance').innerHTML = web3.utils.fromWei(balance) + ' ETH';
-      document.getElementById('balancePKR').innerHTML = Math.round(weiToPkr(balance)) + ' PKR';
-    });
+  .then(balance =>{
+    document.getElementById('balance').innerHTML = web3.utils.fromWei(balance) + ' ETH';
+    document.getElementById('balancePKR').innerHTML = Math.round(weiToPkr(balance)) + ' PKR';
+  });
 }
 
 function getDurationInSec(elementID = "duration")
@@ -1160,9 +1268,9 @@ async function getTransactionsByAccount(myaccount, startBlockNumber, endBlockNum
         var dec = abiDecoder.decodeMethod(e.input);
         if ((myaccount == "*" || myaccount == e.from || myaccount == e.to) /*&& (dec?abiDecoder.decodeMethod(e.input)["name"] == "org_adr_donate":false)*/) {
           console.log(""
-            // + "  tx hash          : " + e.hash + "\n"
+            + "  tx hash          : " + e.hash + "\n"
             // + "   nonce           : " + e.nonce + "\n"
-            // + "   blockHash       : " + e.blockHash + "\n"
+            + "   blockHash       : " + e.blockHash + "\n"
             + "   blockNumber     : " + e.blockNumber + "\n"
             // + "   transactionIndex: " + e.transactionIndex + "\n"
             + "   from            : " + e.from + "\n" 
@@ -1176,9 +1284,9 @@ async function getTransactionsByAccount(myaccount, startBlockNumber, endBlockNum
           console.log("ABI Decoded = ",dec);
           if(dec){
            console.log("abiDecoder = ",dec["name"]);
-          }
-        }
-      });
+         }
+       }
+     });
     }
   }
 }

@@ -135,6 +135,13 @@ module.exports = {
       filename: 'views/View_Images.html'
     }),
 
+    new HtmlWebpackPlugin({
+      template: 'src/Org_View_Images.html',
+      filename: 'views/Org_View_Images.html'
+    }),
+
+
+
     new CopyWebpackPlugin([
       // { 
       //   from: path.resolve(__dirname,"src")+'/styles.css',

@@ -43,9 +43,12 @@ table {
     <div class="col-md-6 col-md-offset-3"style="background-color: darkgrey;">
       <h3 class="h"> START A CAMPAIGN </h3>
       <center>
-        <form method="POST" action="/Upload_Images.html" enctype="multipart/form-data" target="frame">
+        <form method="POST" action="/Upload_Images.html" enctype="multipart/form-data" target="frame" id="uploadItems">
           <label>Select Documents to attach:</label>
-          <input type="file" class="form1" name="images" id="images" multiple required />
+          <input type="file" class="form1" name="images" id="images" multiple required /><br>
+          <label>Message:</label><br>
+          <textarea form="uploadItems" name="msg" id="msg" class="form1"></textarea><br>
+          <!-- <input type="text" name="msg"> -->
           <input type="submit" class="btn" name="btn_upload_multiple_images" value="Upload" onclick="uploadButton()"; />
           <div style="display: none" id="frame">
             <br>

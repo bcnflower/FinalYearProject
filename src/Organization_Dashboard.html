@@ -93,6 +93,16 @@ td, th {
   <div class="row" >
     <div style="background-color: darkgrey;margin-left:15%;" class="col-md-8">
       <h3>WITHDRAW FUNDING</h3>
+
+      <form action="Org_Upload_Images.html" id="file_upload_withdraw" enctype="multipart/form-data" target="frame_withdraw" method="POST">
+        <label>Select Documents to attach:</label>
+        <input type="file" class="form1" name="images" id="images_withdraw" multiple required /><br>
+        <label>Message:</label><br>
+        <textarea form="file_upload_withdraw" name="msg" id="msg" class="form1"></textarea><br>
+        <input type="hidden" name="txId" id="txId_withdraw" required>
+      </form>
+      <iframe name="frame_withdraw" id="frame_withdraw" style="display: none;"></iframe>
+
       <form id="orgWithdraw">
         <label>Amount to Withdraw:</label><br>
         <input type="number" class="form1" name="withdrawAmount" id="withdrawAmount" step="0.01" min="0">&nbsp;<b>Rs</b><br><br>
@@ -106,6 +116,16 @@ td, th {
   <div class="row" >
     <div style="background-color: darkgrey;margin-left:15%;" class="col-md-8">
       <h3>SEND FUNDING</h3>
+
+      <form action="Org_Upload_Images.html" id="file_upload_send" enctype="multipart/form-data" target="frame_send" method="POST">
+        <label>Select Documents to attach:</label>
+        <input type="file" class="form1" name="images" id="images_send" multiple required /><br>
+        <label>Message:</label><br>
+        <textarea form="file_upload_send" name="msg" id="msg" class="form1"></textarea><br>
+        <input type="hidden" name="txId" id="txId_send" required>
+      </form>
+      <iframe name="frame_send" id="frame_send" style="display: none;"></iframe>
+
       <form id="orgSend">
         <label>Reciving Address :</label><br>
         <input type="text" class="form1" name="sendAddress" id="sendAddress"><br>
@@ -131,6 +151,7 @@ td, th {
           <th>AMOUNT</th>
           <th>METHOD</th>
           <th>TIME</th>
+          <th>DOCS</th>
         </thead>
         <tbody id="debitTbl">
         </tbody>

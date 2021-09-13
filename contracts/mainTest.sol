@@ -81,7 +81,7 @@ contract mainTest{
     
     function vote(address votingId,bool doYouAgree) public {
         require(votingId != msg.sender,"Admin Cannot Vote!");
-        // require (orgIdxDb[msg.sender] > 0,"Only Organizations can Vote!");
+        require (orgIdxDb[msg.sender] > 0,"Only Organizations can Vote!");
         uint id = votingIdxDb[votingId] - 1;
         require(votingDb[id].votingDeadline>now,"Voting deadline over!");
         require(votingDb[id].votersIdx[msg.sender] == false,"Already Voted!");
