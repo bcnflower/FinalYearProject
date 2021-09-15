@@ -35,11 +35,11 @@ table {
 <div class="container text-center">
 
   <div class="row">
-    <div class="col-md-6 col-md-offset-3"style="background-color: darkgrey;">
-      <h3>CAMPAIGN STATUS</h3>
+    <div class="col-md-6 col-md-offset-3"style="background-color: lightgrey;">
+      <h3 class="h">CAMPAIGN STATUS</h3>
       <form id="updateCfStats">
         <label for="cfAddress">Address:</label> <br>
-        <input type="text" class="form1" id="CFAddress" name="cfAddress" value="" required disabled><br><br>
+        <input type="text" class="form1 bod" style="background-color: #fff" id="CFAddress" name="cfAddress" value="" required disabled><br><br>
         <table >
           <tr>
             <td class="form1"><label>Cause :</label></td><td id="cf_cause" class="form1">-</td>
@@ -58,15 +58,19 @@ table {
           </tr>
         </table><br>
         <input type="submit" class="btn" value="Get Campaign Status"> <br><br>
-        <div class="bod" id="cfStatus_msg"><br></div><br></center>
+        <div class="bod" style="background-color: #fff" id="cfStatus_msg"><br></div><br></center>
       </form>
+
+      <form id="viewDocs">
+          <input type="submit" class="btn" value="View Documents"> <br><br>
+        </form>
       <br>
     </div>
   </div>
 
   <div class="row" id="contribute_div" style="display: none">
-    <div class="col-md-6 col-md-offset-3"style="background-color: darkgrey;">
-      <h3>CONTRIBUTE TO FUNDRAISING</h3>
+    <div class="col-md-6 col-md-offset-3"style="background-color: lightgrey;">
+      <h3 class="h">CONTRIBUTE TO FUNDRAISING</h3>
       <form id="CFcontribute">
         <label>Amount:</label><br>
         <input type="number" class="form1" name="CFcontributeAmount" id="CFcontributeAmount" step="0.01"><br><br>
@@ -78,22 +82,22 @@ table {
   </div>
 
   <div class="row" id="refund_div" style="display: none">
-    <div class="col-md-6 col-md-offset-3"style="background-color: darkgrey;">
-      <h3>GET REFUND</h3>
+    <div class="col-md-6 col-md-offset-3"style="background-color: lightgrey;">
+      <h3 class="h">GET REFUND</h3>
       <form id="CFgetRefund">
         <input type="submit" class="btn" value="Get Refund"> <br><br>
-        <center><div class="bod" id="CFgetRefund_msg"><br></div><br></center>
+        <center><div class="bod" style="background-color: #fff" id="CFgetRefund_msg"><br></div><br></center>
       </form>
       <br>
     </div>
   </div>
 
   <div class="row" id="withdraw_div" style="display: none">
-    <div class="col-md-6 col-md-offset-3"style="background-color: darkgrey;">
-      <h3>WITHDRAW FUNDING</h3>
+    <div class="col-md-6 col-md-offset-3"style="background-color: lightgrey;">
+      <h3 class="h">WITHDRAW FUNDING</h3>
       <form id="CFwithdrawFunding">
         <input type="submit" class="btn" value="Withdraw Funding"> <br><br>
-        <center><div class="bod" id="CFwithdrawFunding_msg"><br></div><br></center>
+        <center><div class="bod" style="background-color: #fff" id="CFwithdrawFunding_msg"><br></div><br></center>
       </form>
       <br>
     </div>
@@ -111,6 +115,14 @@ table {
   function presets(){
 
   }
+
+  document.getElementById("viewDocs").addEventListener('submit', (e) =>{
+    e.preventDefault();
+    var addr = document.getElementById("CFAddress").value;
+    if(addr.length >= 42){
+      window.open("View_Images.html?address="+addr, '_blank').focus();
+    }
+  });
 
 </script>
 </html>

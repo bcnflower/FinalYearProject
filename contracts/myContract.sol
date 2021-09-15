@@ -3,7 +3,7 @@ pragma solidity >=0.4.22 <0.9.0;
 
 // pragma solidity >=0.4.22 <0.6.0;
 
-contract mainTest{   
+contract myContract{   
     
     address payable public contractAdmin;
     constructor() public {
@@ -130,7 +130,7 @@ contract mainTest{
         //Some logic
         uint id = votingIdxDb[votingId] - 1;
         // return (votingDb[id].positiveVotes > votingDb[id].negativeVotes);
-        return (votingDb[id].positiveVotes >= 3);
+        return (votingDb[id].positiveVotes >= votingDb[id].negativeVotes + 3);
     }
     
     

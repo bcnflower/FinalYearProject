@@ -1,7 +1,7 @@
 {
-  "name": "boilerplate",
+  "name": "University_FYP_Project",
   "version": "1.0.0",
-  "description": "Boilerplate setup with webpack, express, babel, eslint, jest",
+  "description": "A University Final Year Project, Project Members FA17-CSE-043,FA17-CSE-011,FA17-CSE-051,FA17-CSE-025",
   "private": true,
   "main": "server.js",
   "browser": "./dist/index.html",
@@ -22,7 +22,7 @@
     "type": "git",
     "url": "https://github.com/patrickfrank1/express-webpack-boilerplate"
   },
-  "author": "Patrick Frank",
+  "author": "Muhammmad Faizan Saeed (FA17-CSE-043)",
   "license": "MIT",
   "devDependencies": {
     "@babel/core": "^7.8.4",

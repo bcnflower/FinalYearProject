@@ -47,7 +47,7 @@ var web3Address = "http://" + ip + ':' + port;
 console.log("web3Address = ",web3Address);
 
 const Web3 = require('web3');
-const Contract = require('./build/contracts/mainTest.json');
+const Contract = require('./build/contracts/myContract.json');
 const deploymentKey = Object.keys(Contract.networks)[0];
 // const web3 = new Web3('http://localhost:9545');
 const web3 = new Web3(web3Address);

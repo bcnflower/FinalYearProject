@@ -45,7 +45,7 @@ td, th {
   <input type="hidden" name="orgAddress" id="orgAddress" value="<%= orgAddress %>">
   <div class="container text-center" style="margin-top: 60px;">
     <div class="row ">
-      <div class="col-md-6 col-md-offset-3 " style=" background-color: darkgrey;">
+      <div class="col-md-6 col-md-offset-3 " style=" background-color: lightgrey;">
         <h4 class="h"> DONATE TO ORGNAIZATION </h4>
         <label for="amount">Enter Amount:</label><br>
         <input type="number" class="form1" id="orgContributeAmount" step="0.01" min="0" name="amount" value="<%= amount %>" required><br><br>
@@ -66,7 +66,7 @@ td, th {
 
     <br>
     <div class="row" >
-      <div style="background-color: darkgrey;margin-left:15%;" class="col-md-8">
+      <div style="background-color: lightgrey" class="col-md-offset-2 col-md-8">
         <h2 class="h" id="org_name">-</h2>
 
         <form class="form-inline">
@@ -74,12 +74,16 @@ td, th {
             <tr>
               <td><label>TOTAL COLLECTED:</label></td>
               <td><input style="background-color: #fff" class="bod" type="number" placeholder="" name="amount" id="org_totalCollected" disabled></td>
+            </tr>
+            <tr>
               <td><label>TOTAL DISTRIBUTED:</label></td>
               <td><input style="background-color: #fff" class="bod" type="number" placeholder="" name="amount" id="org_totalDistributed" disabled></td>
             </tr>
             <tr>
               <td><label>BALANCE:</label></td>
               <td><input style="background-color: #fff" class="bod" type="number" placeholder="" name="amount" id="org_balanceAmount" disabled></td>
+            </tr>
+            <tr>
               <td><label>ADDRESS:</label></td>
               <td><input style="background-color: #fff" class="bod" type="text" placeholder="" name="amount" id="org_address" disabled></td>
             </tr>
@@ -97,9 +101,9 @@ td, th {
 
     <br>
 
-    <div style="margin-left:14%;width:102.7%;" class="row"> 
+    <div class="row"> 
 
-      <div style="background-color: darkgrey;" class="col-md-8">
+      <div style="background-color: lightgrey;" class="col-md-offset-2 col-md-8">
         <h4 class="h32">DEBIT</h4>
         <table>
           <thead>
@@ -116,8 +120,8 @@ td, th {
       </div>
     </div>
 
-    <div style="margin-left:14%;width:102.7%;" class="row"> 
-      <div class="col-md-8" style="background-color: darkgrey;">
+    <div class="row"> 
+      <div class="col-md-offset-2 col-md-8" style="background-color: lightgrey;">
         <h4 class="h22">CREDIT</h4>
         <table>
           <thead>
@@ -149,6 +153,13 @@ td, th {
   function presets(){
 
   }
+
+  document.getElementById("orgsList").addEventListener('change', (e) =>{
+    const event = document.createEvent('Event');
+    event.initEvent('submit', true, true);
+    document.getElementById("populateOrgs").dispatchEvent(event);
+    document.getElementById("updateWalletStats").dispatchEvent(event);
+  });
 
 </script>
 </html>

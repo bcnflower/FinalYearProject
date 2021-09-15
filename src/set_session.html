@@ -20,8 +20,8 @@ table {
 	border-collapse: collapse;
 }
 .form1{
-	width: 60%;
-	height: 35px;
+  width: 60%;
+  height: 35px;
 }
 .btn{
 	background-color: green;
@@ -39,7 +39,7 @@ table {
 <body>
 	<%- include('./header'); %>
 	<div class="container text-center">
-		<div style = "background-color: darkgrey;margin-left:25%;" class="col-md-6" >
+		<div style = "background-color: lightgrey;" class="col-md-offset-3 col-md-6" >
 			<center>
 				<h3 class="h">Select Your Account</h3>
 				<select class="form1" id="selectAccount" >
@@ -47,7 +47,7 @@ table {
 				<br>
 				<h3 id="YAHead">Your Account</h3>
 				<form action="set_session" method="POST">
-					<input type="text" class="form1" name="yourAccount" id="yourAccount" style="width: 390px"><br><br>
+					<input type="text" class="form1" name="yourAccount" id="yourAccount"><br><br>
 					<input type="submit" class="btn" name="submit" value="Select" autofocus>
 				</form>
 				<br>

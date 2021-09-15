@@ -1,10 +1,13 @@
 // import Web3 from '../ext/web3';
 // import Web3 from '../ext/web3.min.js';
-import Contract from '../../build/contracts/mainTest.json';
+import Contract from '../../build/contracts/myContract.json';
 import config from '../../myConfig.json';
 
-// import './bootstrap.bundle.min.js'
-// import '../css/bootstrap.min.css'
+// import './bootstrap3.bundle.min.js'
+// import '../css/bootstrap3.min.css'
+// import '../css/font-awesome.min.css'
+// import './jquery.min.js'
+
 // import '../css/myCss.css'
 
 import "./html-duration-picker.min.js"
@@ -215,7 +218,7 @@ const init_getVotingStats = (elementID = "currentAccount") => {
       return;
     }
     contract.methods.getVotingStatus(acc).call()
-    .then(result => {
+    .then(async(result) => {
         // console.log("addr = ",addr);
         // console.log("Result = ",result);
         $positiveVotes.innerHTML = result.positiveVotes;
@@ -225,7 +228,13 @@ const init_getVotingStats = (elementID = "currentAccount") => {
         document.getElementById("VSamount").innerHTML = Math.round(weiToPkr(result.amount));  
         document.getElementById("VScause").innerHTML = getCause(result.catagory);
         // $VSDeadline.innerHTML = new Date((result.deadline*1000 - Date.now())).toISOString().substr(11, 8) ;
-        $VSDeadline.innerHTML = (d<0?"Time Over":new Date(d * 1000).toISOString().substr(11, 8))
+        var cfid = 0;
+        try{
+          cfid = await contract.methods.getCfIdFromAddress(acc).call();
+        }catch(e){
+          console.log("e=",e);
+        }
+        $VSDeadline.innerHTML = (d<0?(cfid?"Deployed":"Time Over"):new Date(d * 1000).toISOString().substr(11, 8))
       })
     .catch(_e => {
       $msg.innerHTML = 'Ooops... there was an error while getting stats {' + _e + '}';
@@ -260,7 +269,8 @@ const init_doVote = () => {
       $msg.innerHTML = 'Voted successfully. {' + result + '}';
     })
     .catch(_e => {
-      $msg.innerHTML = 'Ooops... there was an error while Voting {' + _e + '}';
+      $msg.innerHTML = 'Ooops... there was an error while Voting ; // {' + _e + '}';
+      console.log("error =",_e);
     });
   });
 };
@@ -289,7 +299,7 @@ const init_getVotingList = async () => {
           var d = parseInt(result.votingDeadline) - Date.now()/1000;
           // console.log("result.votingDeadline = ",result.votingDeadline);
           // console.log("i = ",i,", d =",d);
-          if(d>0){
+          if(d>0 && result.admin != account){
             row += '<option value="'+result.admin+'">'+result.admin+'</option>'
             votingList.innerHTML+= row;
           }

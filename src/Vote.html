@@ -40,7 +40,7 @@ table {
 
 <div class="container text-center">
   <div class="row">
-    <div class="col-md-6 col-md-offset-3"style="background-color: darkgrey;">
+    <div class="col-md-6 col-md-offset-3"style="background-color: lightgrey;">
       <h3 class="h"> VOTE FOR CAMPAIGN </h3>
      
         <label for="canidateAddress">Address:</label> <br>
@@ -70,7 +70,7 @@ table {
   </div>
 
   <div class="row">
-    <div class="col-md-6 col-md-offset-3"style="background-color: darkgrey;">
+    <div class="col-md-6 col-md-offset-3"style="background-color: lightgrey;">
       <h3 class="h">CAMPAIGN STATUS</h3>
       <form id="getVotingStatus">
         <table>
@@ -109,7 +109,7 @@ table {
         init_doVote();
         init_getVotingList();
         init_getVotingStats("canidateAddress");
-         const event = document.createEvent('Event');
+        const event = document.createEvent('Event');
       event.initEvent('submit', true, true);
       document.getElementById("populateVotingList").dispatchEvent(event);
       };
