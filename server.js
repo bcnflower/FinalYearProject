@@ -509,7 +509,7 @@ const req = https.request(options, res => {
     console.log('price = ',price);
     ratePerRupee = (1e18)/price[0][1];
     console.log('rate (WeiPerRupee) = ',ratePerRupee);
-
+    
     config["rate"] = ratePerRupee;
     let data = JSON.stringify(config);
     fs.writeFileSync('myConfig.json', data);
