@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>ECHARITY</title>
+	<%- include('./head'); %>
+</head>
+<style>
+.fot{
+	color: white;
+}
+.bod{
+	border: 2px solid;
+}
+table, td, th {
+	border: 1px solid black;
+}
+
+table {
+	width: 100%;
+	border-collapse: collapse;
+}
+.form1{
+  width: 60%;
+  height: 35px;
+}
+.btn{
+	background-color: green;
+	color: white;
+	padding: 7px 35px;
+}
+
+.h{
+ background-color: blue;
+ color: white;
+ padding: 11px 45px;
+ text-align: center;
+ text-decoration: none;
+}
+</style>
+<body>
+	<%- include('./header'); %>
+	<div class="container text-center">
+		<div style = "background-color: lightgrey;" class="col-md-offset-3 col-md-6" >
+			<center>
+				<h3 class="h">Select Your Account</h3>
+				<select class="form1" id="selectAccount" >
+				</select>
+				<br>
+				<h3 id="YAHead">Your Account</h3>
+				<form action="set_session" method="POST">
+					<input type="text" class="form1" name="yourAccount" id="yourAccount"><br><br>
+					<input type="submit" class="btn" name="submit" value="Select" autofocus>
+				</form>
+				<br>
+				<div class="bod" style="background-color: #fff">Balance: <span id="balance"></span> ETH</div>
+				<br>
+				<div class="bod" style="background-color: #fff">Balance: <span id="balancePKR"></span> PKR</div>
+				<br>
+			</div>
+		</div>
+	</center>
+
+	<script type="text/javascript">
+		function presets() {
+			accountSelectorEnabled = false;
+		};
+		function features() {
+			
+		};
+	</script>
+	
+</body>
+<%- include('./footer'); %>
+</html>

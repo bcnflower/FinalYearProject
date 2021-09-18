@@ -1,42 +1,58 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>START A CAMPAIGN</title>
+  <title>ECHARITY</title>
   <%- include('./head'); %>
 </head>
 <style>
 .fot{
   color: white;
 }
-
+.bod{
+  border: 2px solid;
+}
 table, td, th {
   border: 1px solid black;
 }
-
+.h{
+ background-color: blue;
+ color: white;
+ padding: 11px 45px;
+ text-align: center;
+ text-decoration: none;
+}
 table {
   width: 100%;
   border-collapse: collapse;
 }
-
+.form1{
+  width: 60%;
+  height: 35px;
+}
+.btn{
+  background-color: green;
+  color: white;
+  padding: 7px 35px;
+}
 </style>
 <body>
 <%- include('./header'); %>
 
 <div class="container text-center">
-
-    <div class="col-md-6 myForm">
+  <div class="row">
+    <div class="col-md-6 col-md-offset-3"style="background-color: lightgrey;">
       <h3 class="h"> START A CAMPAIGN </h3>
       <center>
         <form method="POST" action="/Upload_Images.html" enctype="multipart/form-data" target="frame" id="uploadItems">
           <label>Select Documents to attach:</label>
-          <input type="file" class="form-control" name="images" id="images" multiple required /><br>
+          <input type="file" class="form1" name="images" id="images" multiple required /><br>
           <label>Message:</label><br>
-          <textarea form="uploadItems" name="msg" id="msg" class="form-control"></textarea><br>
+          <textarea form="uploadItems" name="msg" id="msg" class="form1"></textarea><br>
           <!-- <input type="text" name="msg"> -->
-          <input type="submit" class="btn btn-primary" name="btn_upload_multiple_images" value="Upload" onclick="uploadButton()"; />
+          <input type="submit" class="btn" name="btn_upload_multiple_images" value="Upload" onclick="uploadButton()"; />
           <div style="display: none" id="frame">
             <br>
-            <iframe name="frame" class="myForm" style="background-color: efefef;box-shadow: none;"></iframe>
+            <iframe name="frame"></iframe>
             <br>
           </div>
         </form>
@@ -44,7 +60,7 @@ table {
         <br>
       <form id="createVoting">
         <label for="cause">Cause OF Fundraise:</label> <br>
-        <select name="cause"class="form-control" id="cause">
+        <select name="cause"class="form1" id="cause">
           <option value="1">Education</option>
           <option value="2">Medical</option>
           <option value="3">Financial</option>
@@ -53,20 +69,22 @@ table {
           <option value="6">Food</option>
         </select><br>
         <label for="amount">Amount Required:</label><br>
-        <input type="number" class="form-control" id="amount" step="0.01" min="0" name="amount" value="" required><br>
+        <input type="number" class="form1" id="amount" step="0.01" min="0" name="amount" value="" required><br>
         <label for="appt">DURATION IN HOURS(For Voting):</label> <BR>
-        <input class="html-duration-picker form-control" id="Vduration"><br>
+        <input class="html-duration-picker form1" id="Vduration"><br>
         <label for="appt">DURATION IN HOURS(For Funding):</label> <BR>
-        <input class="html-duration-picker form-control" id="CFduration"><br><br>
-        <input type="submit" id="submitRequst" class="btn btn-primary" value="Submit Your Request" disabled> <br><br>
-        <div class="alert-info form-control" id="createVoting_msg"><br></div><br></center>
+        <input class="html-duration-picker form1" id="CFduration"><br>
+        <label for="appt">UPLOAD DOCUMENTS:</label> <BR>
+        <!-- <center><input type="file" id="myFile" name="filename"><BR> -->
+        <input type="submit" id="submitRequst" class="btn" value="Submit Your Request" disabled> <br><br>
+        <div class="bod" style="background-color: #fff" id="createVoting_msg"><br></div><br></center>
       </form>
       <br>
     </div>
+  </div>
 
-<br>
-
-    <div class="col-md-6 myForm">
+  <div class="row">
+    <div class="col-md-6 col-md-offset-3"style="background-color: lightgrey;">
       <h3 class="h">CAMPAIGN STATUS</h3>
       <form id="getVotingStatus">
         <table>
@@ -89,12 +107,12 @@ table {
             </tr>
           </tbody>
         </table><br>
-        <input type="submit" class="btn btn-primary" value="Get Status"> <br><br>
-        <center><div class="alert-info form-control" id="getVotingStatus_msg"><br></div><br></center>
+        <input type="submit" class="btn" value="Get Status"> <br><br>
+        <center><div class="bod" id="getVotingStatus_msg"><br></div><br></center>
       </form>
       <br>
     </div>
-
+  </div>
 
 
 </div>

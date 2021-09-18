@@ -1,12 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>ACTIVE CAMPAIGNS</title>
+  <title>ECHARITY</title>
   <%- include('./head'); %>
 </head>
 <style>
 .fot{
   color: white;
+}
+.bod{
+  border: 2px solid;
 }
 
 table, td, th {
@@ -17,9 +20,38 @@ table {
   width: 100%;
   border-collapse: collapse;
 }
+.form1{
+  width: 60%;
+  height: 35px;
+}
+.btn{
+  background-color: green;
+  color: white;
+  padding: 7px 35px;
+}
+
+/*body{
+ background:#a5b5c5;
+ background:lightblue !important;
+}*/
+
+.box {
+ background: #fff;
+ border-radius: 4px;
+ padding: 5px ;
+ width: min-content;
+}
 
 .col-lg-2 {
  margin: 5px !important;
+}
+
+.h{
+ background-color: blue;
+ color: white;
+ padding: 11px 45px;
+ text-align: center;
+ text-decoration: none;
 }
 
 </style>
@@ -28,12 +60,11 @@ table {
   <%- include('./header'); %>
 
 
-  <div class="container text-center">
-    
-    <div class="col-md-6 myForm">
+<div class="container text-center">
+  <div class="row">
+    <div class="col-md-6 col-md-offset-3"style="background-color: lightgrey;">
       <h3 class="h">ACTIVE CAMPAIGNS</h3>
       <div id="active_div" style="display: none">
-      <!-- <div id="active_diva"> -->
         <h3> ACTIVE </h3>
         <BR>
         <DIV CLASS ="row" id="active_rows">
@@ -62,15 +93,19 @@ table {
       </div>
 
 
-      <form id="getCurrentCFs">
-        <input type="submit" class="btn btn-primary" value="Get Active Campaigns"> <br><br>
-        <center><div class="alert-info form-control" id="getCurrentCFs_msg"><br></div><br></center>
-      </form>
-      <br>
+      <div class="row">
+        <div class="col-md-6 col-md-offset-3"style="background-color: lightgrey;">
+          <form id="getCurrentCFs">
+            <input type="submit" class="btn" value="Get Active Campaigns"> <br><br>
+            <center><div class="bod"  style="background-color: #fff" id="getVotingStatus_msg"><br></div><br></center>
+          </form>
+          <br>
+        </div>
+      </div>
       
     </div>
-
   </div>
+</div>
 </body>
 <%- include('./footer'); %>
 <script type="text/javascript">

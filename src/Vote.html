@@ -1,84 +1,67 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>ECHARITY</title>
+  <title>VOTE</title>
   <%- include('./head'); %>
 </head>
 <style>
 .fot{
   color: white;
 }
-.bod{
-  border: 2px solid;
-}
+
 table, td, th {
   border: 1px solid black;
 }
-.h{
- background-color: blue;
- color: white;
- padding: 11px 45px;
- text-align: center;
- text-decoration: none;
-}
+
 table {
   width: 100%;
   border-collapse: collapse;
 }
-.form1{
-  width: 60%;
-  height: 35px;
-}
-.btn{
-  background-color: green;
-  color: white;
-  padding: 7px 35px;
-}
+
 </style>
 <body>
-<%- include('./header'); %>
+  <%- include('./header'); %>
 
-<div class="container text-center">
-  <div class="row">
-    <div class="col-md-6 col-md-offset-3"style="background-color: lightgrey;">
+  <div class="container text-center">
+    <div class="col-md-6 myForm">
       <h3 class="h"> VOTE FOR CAMPAIGN </h3>
-     
-        <label for="canidateAddress">Address:</label> <br>
-        <input type="text" class="form1" id="canidateAddress" name="canidateAddress" value="<%= canidateAddress %>" required><br>
-        <label>All Voting List:</label> <br>
-        <select name="votingList"class="form1" id="votingList">
-        </select><br><br>
-        <form id="populateVotingList">
-          <input type="submit" class="btn" value="Populate Voting List"> <br>
-        </form>
-        <br>
-        <form id="viewDocs">
-          <input type="submit" class="btn" value="View Documents"> <br><br>
-        </form>
-        <label for="appt">Your Choice:</label> <BR>
-        <label>Yes:</label>
-        <input type="radio" name="voteAgree" id="voteAgree" value="1" checked>
-        <label>No:</label>
-        <input type="radio" name="voteAgree" id="voteAgree" value="0">
-        <br>
-         <form id="doVote">
-        <input type="submit" class="btn" value="Submit Your Choice"> <br><br>
-        <center><div class="bod" style="background-color: #fff" id="doVote_msg"><br></div><br></center></center>
+
+      <label for="canidateAddress">Address:</label> <br>
+      <input type="text" class="form-control" id="canidateAddress" name="canidateAddress" value="<%= canidateAddress %>" required><br>
+      <label>All Voting List:</label> <br>
+      <select name="votingList"class="form-control" id="votingList">
+      </select><br><br>
+      <form id="populateVotingList">
+        <input type="submit" class="btn btn-primary" value="Populate Voting List"> <br>
+      </form>
+      <br>
+      <form id="viewDocs">
+        <input type="submit" class="btn btn-primary" value="View Documents"> <br><br>
+      </form>
+      <label for="appt"><b>Your Choice:</b></label> <BR>
+      <label>Yes:</label>
+      <input type="radio" name="voteAgree" id="voteAgree" value="1" checked>
+      <label>No:</label>
+      <input type="radio" name="voteAgree" id="voteAgree" value="0">
+      <br>
+      <form id="doVote">
+        <input type="submit" class="btn btn-primary" value="Submit Your Choice"> <br><br>
+        <center><div class="alert-info form-control" id="doVote_msg"><br></div><br></center></center>
       </form>
       <br>
     </div>
-  </div>
 
-  <div class="row">
-    <div class="col-md-6 col-md-offset-3"style="background-color: lightgrey;">
-      <h3 class="h">CAMPAIGN STATUS</h3>
-      <form id="getVotingStatus">
-        <table>
-          <colgroup>
-           <col span="1" style="width: 50%;">
-           <col span="1" style="width: 50%;">
-          </colgroup>
-          <tbody>
+    <br>
+
+      <div class="col-md-6 myForm">
+        <h3 class="h">CAMPAIGN STATUS</h3>
+        <form id="getVotingStatus">
+          <table>
+            <colgroup>
+             <col span="1" style="width: 50%;">
+             <col span="1" style="width: 50%;">
+           </colgroup>
+           <tbody>
             <tr>
               <td>Votes:</td><td id="positiveVotes">-</td>
             </tr>
@@ -93,26 +76,24 @@ table {
             </tr>
           </tbody>
         </table><br>
-        <input type="submit" class="btn" value="Get Status"> <br><br>
-        <center><div class="bod" id="getVotingStatus_msg"><br></div><br></center>
+        <input type="submit" class="btn btn-primary" value="Get Status"> <br><br>
+        <center><div class="alert-info form-control" id="getVotingStatus_msg"><br></div><br></center>
       </form>
       <br>
     </div>
-  </div>
-
 
 </div>
 </body>
 <%- include('./footer'); %>
 <script type="text/javascript">
   function features() {
-        init_doVote();
-        init_getVotingList();
-        init_getVotingStats("canidateAddress");
-        const event = document.createEvent('Event');
-      event.initEvent('submit', true, true);
-      document.getElementById("populateVotingList").dispatchEvent(event);
-      };
+    init_doVote();
+    init_getVotingList();
+    init_getVotingStats("canidateAddress");
+    const event = document.createEvent('Event');
+    event.initEvent('submit', true, true);
+    document.getElementById("populateVotingList").dispatchEvent(event);
+  };
   function presets(){
 
   }

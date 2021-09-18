@@ -1,46 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>ECHARITY</title>
+  <title>DASHBOARD</title>
   <%- include('./head'); %>
 </head>
 <style>
 .fot{
   color: white;
 }
-.bod{
-  border: 2px solid;
-}
-.h{
- background-color: blue;
- color: white;
- padding: 11px 45px;
- text-align: center;
- text-decoration: none;
-}
-.h32{
- background-color: GREEN;
- color: white;
- padding: 11px 45px;
- text-align: center;
- text-decoration: none;
-}
-.h22{
- background-color: blue;
- color: white;
- padding: 11px 45px;
- text-align: center;
- text-decoration: none;
-}
-.form1{
-  width: 60%;
-  height: 35px;
-}
-.btn{
-  background-color: green;
-  color: white;
-  padding: 7px 35px;
-}
+
 table {
   font-family: arial, sans-serif;
   border-collapse: collapse;
@@ -60,127 +28,122 @@ td, th {
 
 <div class="container text-center">
 
-  <div class="row" >
-    <div style="background-color: lightgrey" class="col-md-offset-2 col-md-8">
+  <div class="mt-2 mb-2">
+    <center>
       <h2 class="h" id="org_name">-</h2>
+    </center>
+  </div>
 
+  <br>
+
+    <div class="col-md-6  myForm">
+      <h3 class="h">WITHDRAW FUNDING</h3>
+      <form action="Org_Upload_Images.html" id="file_upload_withdraw" enctype="multipart/form-data" target="frame_withdraw" method="POST">
+        <label>Select Documents to attach:</label>
+        <input type="file" class="form-control" name="images" id="images_withdraw" multiple required /><br>
+        <label>Message:</label><br>
+        <textarea form="file_upload_withdraw" name="msg" id="msg" class="form-control"></textarea><br>
+        <input type="hidden" name="txId" id="txId_withdraw" required>
+      </form>
+      <iframe name="frame_withdraw" id="frame_withdraw" style="display: none; background-color: efefef;box-shadow: none;"></iframe>
+
+      <form id="orgWithdraw">
+        <label>Amount to Withdraw (<b>Rs</b>):</label><br>
+        <input type="number" class="form-control" name="withdrawAmount" id="withdrawAmount" step="0.01" min="0"><br><br>
+        <input type="submit" class="btn btn-primary" value="Withdraw Funding"> <br><br>
+        <center><div class="alert-info form-control" id="orgWithdraw_msg"><br></div><br></center>
+      </form>
+    </div>
+
+  <br>
+
+    <div class="col-md-6  myForm">
+      <h3 class="h">SEND FUNDING</h3>
+      <form action="Org_Upload_Images.html" id="file_upload_send" enctype="multipart/form-data" target="frame_send" method="POST">
+        <label>Select Documents to attach:</label>
+        <input type="file" class="form-control" name="images" id="images_send" multiple required /><br>
+        <label>Message:</label><br>
+        <textarea form="file_upload_send" name="msg" id="msg" class="form-control"></textarea><br>
+        <input type="hidden" name="txId" id="txId_send" required>
+      </form>
+      <iframe name="frame_send" id="frame_send" style="display: none; background-color: efefef;box-shadow: none;"></iframe>
+
+      <form id="orgSend">
+        <label>Reciving Address :</label><br>
+        <input type="text" class="form-control" name="sendAddress" id="sendAddress"><br>
+        <label>Amount to Send (<b>Rs</b>):</label><br>
+        <input type="number" class="form-control" name="sendAmount" id="sendAmount" step="0.01" min="0"><br><br>
+        <input type="submit" class="btn btn-primary" value="Send Funding"> <br><br>
+        <center><div class="alert-info form-control" id="orgSend_msg"><br></div><br></center>
+      </form>
+    </div>
+
+
+  <br>
+
+      <div class="col-md-6 myForm">
       <form class="form-inline">
+        <h3 class="h">STATS</h3>
         <table>
           <tr>
             <td><label>TOTAL COLLECTED:</label></td>
-            <td><input style="background-color: #fff" class="bod" type="number" placeholder="" name="amount" id="org_totalCollected" disabled></td>
+            <td><input class="alert-info form-control" type="number" placeholder="" name="amount" id="org_totalCollected" disabled></td>
           </tr>
           <tr>
             <td><label>TOTAL DISTRIBUTED:</label></td>
-            <td><input style="background-color: #fff" class="bod" type="number" placeholder="" name="amount" id="org_totalDistributed" disabled></td>
+            <td><input class="alert-info form-control" type="number" placeholder="" name="amount" id="org_totalDistributed" disabled></td>
           </tr>
           <tr>
             <td><label>BALANCE:</label></td>
-            <td><input style="background-color: #fff" class="bod" type="number" placeholder="" name="amount" id="org_balanceAmount" disabled></td>
+            <td><input class="alert-info form-control" type="number" placeholder="" name="amount" id="org_balanceAmount" disabled></td>
           </tr>
           <tr>
             <td><label>ADDRESS:</label></td>
-            <td><input style="background-color: #fff" class="bod" type="text" placeholder="" name="amount" id="org_address" disabled></td>
+            <td><input class="alert-info form-control" type="text" placeholder="" name="amount" id="org_address" disabled></td>
           </tr>
         </table>
       </form> 
       <br>
       <form id="updateWalletStats">
-        <input type="submit" class="btn" value="Update Stats"> <br><br>
-        <center><div class="bod" style="background-color: #fff" id="wallet_msg"><br></div><br></center>
+        <input type="submit" class="btn btn-primary" value="Update Stats"> <br><br>
+        <center><div class="alert-info form-control" id="wallet_msg"><br></div><br></center>
       </form>
     </div>
+
+<br>
+
+  <div class="col-md-6 myForm">
+    <h4 class="h">CREDIT</h4>
+    <table class="table table-bordered table-striped table-hover">
+      <thead>
+        <th>FROM</th>
+        <th>AMOUNT</th>
+        <th>TIME</th>
+      </thead>
+      <tbody id="creditTbl">
+      </tbody>
+    </table>
+    <BR>
   </div>
 
   <br>
-  <center>
-  <div class="row" >
-    <div style="background-color: lightgrey;" class="col-md-offset-2 col-md-8">
-      <h3 class="h">WITHDRAW FUNDING</h3>
 
-      <form action="Org_Upload_Images.html" id="file_upload_withdraw" enctype="multipart/form-data" target="frame_withdraw" method="POST">
-        <label>Select Documents to attach:</label>
-        <input type="file" class="form1" name="images" id="images_withdraw" multiple required /><br>
-        <label>Message:</label><br>
-        <textarea form="file_upload_withdraw" name="msg" id="msg" class="form1"></textarea><br>
-        <input type="hidden" name="txId" id="txId_withdraw" required>
-      </form>
-      <iframe name="frame_withdraw" id="frame_withdraw" style="display: none;"></iframe>
-
-      <form id="orgWithdraw">
-        <label>Amount to Withdraw (<b>Rs</b>):</label><br>
-        <input type="number" class="form1" name="withdrawAmount" id="withdrawAmount" step="0.01" min="0"><br><br>
-        <input type="submit" class="btn" value="Withdraw Funding"> <br><br>
-        <center><div class="bod" style="background-color: #fff" id="orgWithdraw_msg"><br></div><br></center>
-      </form>
-      <br>
-    </div>
+  <div class="col-md-8 myForm">
+    <h4 class="h">DEBIT</h4>
+    <table class="table table-bordered table-striped table-hover">
+      <thead>
+        <th>TO</th>
+        <th>AMOUNT</th>
+        <th>METHOD</th>
+        <th>TIME</th>
+        <th>DOCS</th>
+      </thead>
+      <tbody id="debitTbl">
+      </tbody>
+    </table>
+    <BR>
   </div>
-  <br>
-  <div class="row" >
-    <div style="background-color: lightgrey" class="col-md-offset-2 col-md-8">
-      <h3 class="h">SEND FUNDING</h3>
 
-      <form action="Org_Upload_Images.html" id="file_upload_send" enctype="multipart/form-data" target="frame_send" method="POST">
-        <label>Select Documents to attach:</label>
-        <input type="file" class="form1" name="images" id="images_send" multiple required /><br>
-        <label>Message:</label><br>
-        <textarea form="file_upload_send" name="msg" id="msg" class="form1"></textarea><br>
-        <input type="hidden" name="txId" id="txId_send" required>
-      </form>
-      <iframe name="frame_send" id="frame_send" style="display: none;"></iframe>
-
-      <form id="orgSend">
-        <label>Reciving Address :</label><br>
-        <input type="text" class="form1" name="sendAddress" id="sendAddress"><br>
-        <label>Amount to Send (<b>Rs</b>):</label><br>
-        <input type="number" class="form1" name="sendAmount" id="sendAmount" step="0.01" min="0"><br><br>
-        <input type="submit" class="btn" value="Send Funding"> <br><br>
-        <center><div style="background-color: #fff" class="bod" id="orgSend_msg"><br></div><br></center>
-      </form>
-      <br>
-    </div>
-  </div>
-  </center>
-
-  <br>
-
-  <div class="row"> 
-
-    <div style="background-color: lightgrey;" class="col-md-offset-2 col-md-8">
-      <h4 class="h32">DEBIT</h4>
-      <table>
-        <thead>
-          <th>TO</th>
-          <th>AMOUNT</th>
-          <th>METHOD</th>
-          <th>TIME</th>
-          <th>DOCS</th>
-        </thead>
-        <tbody id="debitTbl">
-        </tbody>
-      </table>
-      <BR>
-    </div>
-
-</div>
-  <div class="row"> 
-
-
-    <div class="col-md-offset-2 col-md-8" style="background-color: lightgrey;">
-      <h4 class="h22">CREDIT</h4>
-      <table>
-        <thead>
-          <th>FROM</th>
-          <th>AMOUNT</th>
-          <th>TIME</th>
-        </thead>
-        <tbody id="creditTbl">
-        </tbody>
-      </table>
-      <BR>
-    </div>
-  </div>
 
 </div>
 <%- include('./footer'); %>

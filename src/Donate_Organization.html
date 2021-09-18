@@ -1,32 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>Donate</title>
+  <title>DONATE TO ORGNAIZATION</title>
   <%- include('./head'); %>
 </head>
 <style>
 .fot{
   color: white;
 }
-.bod{
-  border: 2px solid;
-}
-.h{
- background-color: blue;
- color: white;
- padding: 11px 45px;
- text-align: center;
- text-decoration: none;
-}
-.form1{
-  width: 60%;
-  height: 35px;
-}
-.btn{
-  background-color: green;
-  color: white;
-  padding: 7px 42px;
-}
+
 table {
   font-family: arial, sans-serif;
   border-collapse: collapse;
@@ -43,68 +25,80 @@ td, th {
 <body>
   <%- include('./header'); %>
   <input type="hidden" name="orgAddress" id="orgAddress" value="<%= orgAddress %>">
-  <div class="container text-center" style="margin-top: 60px;">
-    <div class="row ">
-      <div class="col-md-6 col-md-offset-3 " style=" background-color: lightgrey;">
+  <div class="container text-center">
+
+      <div class="col-md-6 myForm">
         <h4 class="h"> DONATE TO ORGNAIZATION </h4>
         <label for="amount">Enter Amount:</label><br>
-        <input type="number" class="form1" id="orgContributeAmount" step="0.01" min="0" name="amount" value="<%= amount %>" required><br><br>
+        <input type="number" class="form-control" id="orgContributeAmount" step="0.01" min="0" name="amount" value="<%= amount %>" required><br>
         <label for="Org">Select Orgnaization:</label> <br>
-        <select name="Org"class="form1" id="orgsList">
-        </select><br><br>
+        <select name="Org"class="form-control" id="orgsList">
+        </select><br>
         <form id="populateOrgs">
-          <input type="submit" class="btn" value="Populate Orgnaization List"> <br>
+          <input type="submit" class="btn btn-primary" value="Populate Orgnaization List"> <br>
         </form>
         <br>
         <form id="orgContribute">
-          <input type="submit" class="btn" value="Donate"> <br>
+          <input type="submit" class="btn btn-primary" value="Donate"> <br>
         </form> <br>
-        <center><div class="bod" style="background-color: #fff" id="org_msg"><br></div><br></center>
+        <center><div class="alert-info form-control" id="org_msg"><br></div><br></center>
       </div>
-    </div>
+
 
 
     <br>
-    <div class="row" >
-      <div style="background-color: lightgrey" class="col-md-offset-2 col-md-8">
+
+      <div class="myForm col-md-6">
         <h2 class="h" id="org_name">-</h2>
 
         <form class="form-inline">
           <table>
             <tr>
               <td><label>TOTAL COLLECTED:</label></td>
-              <td><input style="background-color: #fff" class="bod" type="number" placeholder="" name="amount" id="org_totalCollected" disabled></td>
+              <td><input class="alert-info form-control" type="number" placeholder="" name="amount" id="org_totalCollected" disabled></td>
             </tr>
             <tr>
               <td><label>TOTAL DISTRIBUTED:</label></td>
-              <td><input style="background-color: #fff" class="bod" type="number" placeholder="" name="amount" id="org_totalDistributed" disabled></td>
+              <td><input class="alert-info form-control" type="number" placeholder="" name="amount" id="org_totalDistributed" disabled></td>
             </tr>
             <tr>
               <td><label>BALANCE:</label></td>
-              <td><input style="background-color: #fff" class="bod" type="number" placeholder="" name="amount" id="org_balanceAmount" disabled></td>
+              <td><input class="alert-info form-control" type="number" placeholder="" name="amount" id="org_balanceAmount" disabled></td>
             </tr>
             <tr>
               <td><label>ADDRESS:</label></td>
-              <td><input style="background-color: #fff" class="bod" type="text" placeholder="" name="amount" id="org_address" disabled></td>
+              <td><input class="alert-info form-control" type="text" placeholder="" name="amount" id="org_address" disabled></td>
             </tr>
           </table>
         </form> 
         <br>
         <form id="updateWalletStats">
-          <input type="submit" class="btn" value="Update Stats"> <br><br>
-          <center><div class="bod" style="background-color: #fff" id="wallet_msg"><br></div><br></center>
+          <input type="submit" class="btn btn-primary" value="Update Stats"> <br><br>
+          <center><div class="alert-info form-control" id="wallet_msg"><br></div><br></center>
         </form>
       </div>
-    </div>
+
 
     <br>
 
-    <br>
+ 
+      <div class="myForm col-md-6">
+        <h4 class="h">CREDIT</h4>
+        <table>
+          <thead>
+            <th>FROM</th>
+            <th>AMOUNT</th>
+            <th>TIME</th>
+          </thead>
+          <tbody id="creditTbl">
+          </tbody>
+        </table>
+        <BR>
+      </div>
+<br>
 
-    <div class="row"> 
-
-      <div style="background-color: lightgrey;" class="col-md-offset-2 col-md-8">
-        <h4 class="h32">DEBIT</h4>
+      <div class="myForm col-md-8">
+        <h4 class="h">DEBIT</h4>
         <table>
           <thead>
             <th>TO</th>
@@ -118,23 +112,6 @@ td, th {
         </table>
         <BR>
       </div>
-    </div>
-
-    <div class="row"> 
-      <div class="col-md-offset-2 col-md-8" style="background-color: lightgrey;">
-        <h4 class="h22">CREDIT</h4>
-        <table>
-          <thead>
-            <th>FROM</th>
-            <th>AMOUNT</th>
-            <th>TIME</th>
-          </thead>
-          <tbody id="creditTbl">
-          </tbody>
-        </table>
-        <BR>
-      </div>
-    </div>
 
 
   </div>
@@ -157,7 +134,7 @@ td, th {
   document.getElementById("orgsList").addEventListener('change', (e) =>{
     const event = document.createEvent('Event');
     event.initEvent('submit', true, true);
-    document.getElementById("populateOrgs").dispatchEvent(event);
+    // document.getElementById("populateOrgs").dispatchEvent(event);
     document.getElementById("updateWalletStats").dispatchEvent(event);
   });
 

@@ -1,0 +1,96 @@
+<style>
+.admin,.org{
+  display: none;
+}
+
+nav.navbar a {
+  color: black; 
+}
+
+.h{
+   background-color: blue;
+   color: white;
+   padding: 11px 45px;
+   text-align: center;
+   text-decoration: none;
+ }
+
+</style>
+<nav class="navbar navbar-light bg-light">
+  <div class="container-fluid"style="background: linear-gradient(to bottom,#ffffff,#c4c4c4);" >
+    <div class="navbar-header">
+      <a class="navbar-brand" href="Home.html">E-CHARITY & ZAKAKT</a>
+    </div>
+    <ul class="nav navbar-nav navbar-right">
+      <!-- <li><a href="Donate.html">DONATE</a></li> -->
+
+      <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#"> DONATE<span class="caret"></span></a>
+        <ul class="dropdown-menu">
+          <li><a href="Donate_Organization.html">DONATE TO ORGANIZATION</a></li>
+          <li><a href="Donate_Individual.html">DONATE TO INDIVIDUAL</a></li>
+        </ul>
+      </li>
+
+      <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#"> FUNDRAISING<span class="caret"></span></a>
+        <ul class="dropdown-menu">
+          <li><a href="Active_Campaigns.html">ACTIVE CAMPAIGNS</a></li>
+          <li><a href="Fundraising.html">START A CAMPAIGN</a></li>
+          <!-- <li class="org" style="display:none"><a href="Vote.html">VOTE FOR A CAMPAIGN</a></li> -->
+          <!-- <li><a href="Interact_Fundraising.html">INTREACT WITH FUNDRAISING</a></li> -->
+        </ul>
+      </li>
+      <li><a href="Zakat.html">ZAKAT</a></li>
+      <!-- <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#"> ORGNAIZATIONS<span class="caret"></span></a>
+        <ul class="dropdown-menu"> -->
+          <li><a href="Active_Organizations.html">ACTIVE ORGNAIZATIONS</a></li>
+<!--         </ul>
+      </li> -->
+      <li class="dropdown org" style="display:none"><a class="dropdown-toggle" data-toggle="dropdown" href="#"> ORGANIZATION PANEL <span class="caret"></span></a>
+        <ul class="dropdown-menu">
+          <li><a href="Organization_Dashboard.html">DASHBOARD</a></li>
+          <li><a href="Vote.html">VOTE FOR A CAMPAIGN</a></li>
+        </ul>
+      </li>
+      <li class="admin" style="display:none"><a href="Create_Organization.html">ADMIN PANEL</a></li>
+
+      <li><a href="set_session" class="glyphicon glyphicon-log-in" > SignIn</a></li>
+
+      <!-- <li class="dropdown"><a class="dropdown-toggle glyphicon glyphicon-log-in" data-toggle="dropdown" href="set_session"> SignIn<span class="caret"></span></a>
+        <ul class="dropdown-menu">
+          <li><a href="Login.html">As Organization</a></li>
+          <li><a href="Login.html">As Individual</a></li>
+        </ul>
+      </li> -->
+    </ul>
+  </div>
+</nav>
+<div>
+  <input type="hidden" name="currentAccount" id="currentAccount" value="<%= account %>">
+  <input type="hidden" name="rate" id="rate" value="<%= rate %>">
+  <input type="hidden" name="userType" id="userType" value="<%= userType %>">
+</div>
+<script type="text/javascript">
+  // <!-- document.addEventListener('DOMContentLoaded', () => { -->
+    var userType = document.getElementById("userType").value;
+    console.log("userType = ",userType);
+    var adminTags = document.getElementsByClassName("admin");
+    var orgTags = document.getElementsByClassName("org");
+
+    if(userType == 1){
+      for(var i = 0; i < orgTags.length; i++){
+        orgTags[i].style.display = "block";
+      }
+    }else if(userType == 2){
+      for(var i = 0; i < adminTags.length; i++){
+        adminTags[i].style.display = "block";
+      }
+    }else if(userType == 3){
+      for(var i = 0; i < orgTags.length; i++){
+        orgTags[i].style.display = "block";
+      }
+      for(var i = 0; i < adminTags.length; i++){
+        adminTags[i].style.display = "block";
+      }
+    }
+  // });
+</script>

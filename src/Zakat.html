@@ -1,168 +1,143 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>ECHARITY</title>
+  <title>ZAKAT CALCULATOR</title>
   <%- include('./head'); %>
 </head>
 <style>
 .fot{
   color: white;
 }
-.bod{
-  border: 2px solid;
-}
-table, td, th {
-  border: 1px solid black;
-}
-.h{
- background-color: blue;
- color: white;
- padding: 11px 45px;
- text-align: center;
- text-decoration: none;
-}
-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-.form1{
-  width: 60%;
-  height: 35px;
-}
-.btn{
-  background-color: green;
-  color: white;
-  padding: 7px 35px;
-}
+
 </style>
 <body>
-<%- include('./header'); %>
+  <%- include('./header'); %>
 
+<div class="container text-center">
+  <div class="mt-2 mb-2">
+    <center>
+      <h2 class="h">Zakat Calculator</h2>
+    </center>
+  </div>
 
-<div class="mt-2 mb-2">
-  <center>
-    <h2 class="h">Zakat Calculator</h2>
-  </center>
-</div>
-  <div class="row">
-    <div class="col-md-6 col-md-offset-3"style="background-color: lightgrey;">
+    <div class="col-md-6 myForm">
       <h3>Current Rates</h3>
-<table class="table table-hover table-bordered">
-    <thead>
-    <tr class="table-success">
-      <th scope="col">Asset Type</th>
-      <th scope="col">Rate (Rs.)</th>
-    </tr>
-    </thead>
-    <tr class="table-secondary">
-      <th>Silver Per Gram</th>
-      <td><input type="number" name="s1g" id="s1g" min="0" onchange="updateTotalAmounts();" value="122.6"></td>
-    </tr>
-    <tr>
-      <th>Silver Per Tola</th>
-      <td><input type="number" name="s1t" id="s1t" min="0" onchange="updateTotalAmounts();" value="1430"></td>
-    </tr>
-    <tr class="table-secondary">
-      <th>Gold 24K per Gram</th>
-      <td><input type="number" name="24g1g" id="24g1g" min="0" onchange="updateTotalAmounts();" value="9516.5"></td>
-    </tr>
-    <tr>
-      <th>Gold 24K per Tola</th>
-      <td><input type="number" name="24g1t" id="24g1t" min="0" onchange="updateTotalAmounts();" value="111000"></td>
-    </tr>
-    <tr class="table-secondary">
-      <th>Gold 22K per Gram</th>
-      <td><input type="number" name="22g1g" id="22g1g" min="0" onchange="updateTotalAmounts();" value="8723.4"></td>
-    </tr>
-    <tr>
-      <th>Gold 22K per Tola</th>
-      <td><input type="number" name="22g1t" id="22g1t" min="0" onchange="updateTotalAmounts();" value="101750"></td>
-    </tr>
-    <tr>
-      <td colspan="2">
-        <center>
-          <button class="btn btn-primary" type="button" id="updateBtn"  onclick="updateRates();">Update Rates</button>
-        </center>
-      </td>
-    </tr>
-  </table>
+      <table class="table table-hover table-bordered">
+        <thead>
+          <tr class="table-success">
+            <th scope="col">Asset Type</th>
+            <th scope="col">Rate (Rs.)</th>
+          </tr>
+        </thead>
+        <tr class="table-secondary">
+          <th>Silver Per Gram</th>
+          <td><input type="number" name="s1g" id="s1g" min="0" onchange="updateTotalAmounts();" value="122.6"></td>
+        </tr>
+        <tr>
+          <th>Silver Per Tola</th>
+          <td><input type="number" name="s1t" id="s1t" min="0" onchange="updateTotalAmounts();" value="1430"></td>
+        </tr>
+        <tr class="table-secondary">
+          <th>Gold 24K per Gram</th>
+          <td><input type="number" name="24g1g" id="24g1g" min="0" onchange="updateTotalAmounts();" value="9516.5"></td>
+        </tr>
+        <tr>
+          <th>Gold 24K per Tola</th>
+          <td><input type="number" name="24g1t" id="24g1t" min="0" onchange="updateTotalAmounts();" value="111000"></td>
+        </tr>
+        <tr class="table-secondary">
+          <th>Gold 22K per Gram</th>
+          <td><input type="number" name="22g1g" id="22g1g" min="0" onchange="updateTotalAmounts();" value="8723.4"></td>
+        </tr>
+        <tr>
+          <th>Gold 22K per Tola</th>
+          <td><input type="number" name="22g1t" id="22g1t" min="0" onchange="updateTotalAmounts();" value="101750"></td>
+        </tr>
+        <tr>
+          <td colspan="2">
+            <center>
+              <button class="btn btn-primary" type="button" id="updateBtn"  onclick="updateRates();">Update Rates</button>
+            </center>
+          </td>
+        </tr>
+      </table>
+    </div>
+
+  <br>
+
+    <div class="col-md-6 myForm">
+      <h3 class="h">My Assets</h3>
+
+      <table class="table table-hover table-bordered">
+        <tr>
+          <th>Gold Amount:</th>
+          <td><input class="w-75" type="number" name="goldAmount" id="goldAmount" min="0" onchange="updateTotalAmounts();"></td>
+          <td>
+            <select name="goldUnit" id="goldUnit" onchange="updateTotalAmounts();">
+              <option value="g">Gram</option>
+              <option value="t">Tola</option>
+            </select>
+          </td>
+          <td>
+            <select name="goldCarret" id="goldCarret" onchange="updateTotalAmounts();">
+              <option value="22K">22K</option>
+              <option value="24K">24K</option>
+            </select>
+          </td>
+        </tr>
+        <tr>
+          <th>Gold Price Total:</th>
+          <td colspan="3"><input class="w-50" type="number" name="goldPriceTotal" id="goldPriceTotal" min="0">&nbsp;<b>Rs</b></td>
+        </tr>
+        <tr>
+          <th>Silver Amount:</th>
+          <td><input class="w-75" type="number" name="silverAmount" id="silverAmount" min="0" onchange="updateTotalAmounts();"></td>
+          <td>
+            <select name="silverUnit" id="silverUnit" onchange="updateTotalAmounts();">
+              <option value="g">Gram</option>
+              <option value="t">Tola</option>
+            </select>
+          </td>
+          <td></td>
+        </tr>
+        <tr>
+          <th>Silver Price Total:</th>
+          <td colspan="3"><input class="w-50" type="number" name="silverPriceTotal" id="silverPriceTotal" min="0">&nbsp;<b>Rs</b></td>
+        </tr>
+        <tr>
+          <th>Others Amount:</th>
+          <td colspan="3"><input class="w-50" type="number" name="otherAmount" id="otherAmount" min="0" onchange="updateTotalAmounts();">&nbsp;<b>Rs</b></td>
+        </tr>
+        <tr class="table-success">
+          <th>Grand Total:</th>
+          <td colspan="3"><input class="w-50" type="number" name="grandTotal" id="grandTotal" min="0">&nbsp;<b>Rs</b></td>
+        </tr>
+        <tr>
+          <td colspan="4">
+            <center>
+              <button class="btn btn-primary" type="button" id="updateBtn"  onclick="calcZakat();">Calculate Zakat</button>
+            </center>
+          </td>
+        </tr>
+        <tr class="table-success">
+          <th>Zakat Amount:</th>
+          <td colspan="3"><input class="w-50" type="number" name="zakatAmount" id="zakatAmount" min="0">&nbsp;<b>Rs</b></td>
+        </tr>
+        <tr>
+          <td colspan="4">
+            <center>
+              <button class="btn btn-primary" type="button" id="updateBtn"  onclick="donateZakat();">Donate</button>
+            </center>
+          </td>
+        </tr>
+      </table>
+    </div>
+
 </div>
-</div>
-
-  <div class="row">
-    <div class="col-md-6 col-md-offset-3"style="background-color: lightgrey;">
-  <h3 class="h">My Assets</h3>
-
-  <table class="table table-hover">
-    <tr>
-      <th>Gold Amount:</th>
-      <td><input class="w-75" type="number" name="goldAmount" id="goldAmount" min="0" onchange="updateTotalAmounts();"></td>
-      <td>
-        <select name="goldUnit" id="goldUnit" onchange="updateTotalAmounts();">
-        <option value="g">Gram</option>
-          <option value="t">Tola</option>
-      </select>
-    </td>
-    <td>
-        <select name="goldCarret" id="goldCarret" onchange="updateTotalAmounts();">
-        <option value="22K">22K</option>
-          <option value="24K">24K</option>
-      </select>
-    </td>
-    </tr>
-    <tr>
-      <th>Gold Price Total:</th>
-      <td colspan="3"><input class="w-50" type="number" name="goldPriceTotal" id="goldPriceTotal" min="0">&nbsp;<b>Rs</b></td>
-    </tr>
-    <tr>
-      <th>Silver Amount:</th>
-      <td><input class="w-75" type="number" name="silverAmount" id="silverAmount" min="0" onchange="updateTotalAmounts();"></td>
-      <td>
-        <select name="silverUnit" id="silverUnit" onchange="updateTotalAmounts();">
-        <option value="g">Gram</option>
-          <option value="t">Tola</option>
-      </select>
-    </td>
-    <td></td>
-    </tr>
-    <tr>
-      <th>Silver Price Total:</th>
-      <td colspan="3"><input class="w-50" type="number" name="silverPriceTotal" id="silverPriceTotal" min="0">&nbsp;<b>Rs</b></td>
-    </tr>
-    <tr>
-      <th>Others Amount:</th>
-      <td colspan="3"><input class="w-50" type="number" name="otherAmount" id="otherAmount" min="0" onchange="updateTotalAmounts();">&nbsp;<b>Rs</b></td>
-    </tr>
-    <tr class="table-success">
-      <th>Grand Total:</th>
-      <td colspan="3"><input class="w-50" type="number" name="grandTotal" id="grandTotal" min="0">&nbsp;<b>Rs</b></td>
-    </tr>
-    <tr>
-      <td colspan="4">
-          <center>
-            <button class="btn btn-primary" type="button" id="updateBtn"  onclick="calcZakat();">Calculate Zakat</button>
-          </center>
-      </td>
-    </tr>
-    <tr class="table-success">
-      <th>Zakat Amount:</th>
-      <td colspan="3"><input class="w-50" type="number" name="zakatAmount" id="zakatAmount" min="0">&nbsp;<b>Rs</b></td>
-    </tr>
-    <tr>
-      <td colspan="4">
-          <center>
-            <button class="btn btn-primary" type="button" id="updateBtn"  onclick="donateZakat();">Donate</button>
-          </center>
-      </td>
-    </tr>
-  </table>
-</div>
-</div>
 
 
-
-<br>
- <%- include('./footer'); %>
+  <br>
+  <%- include('./footer'); %>
 </body>
 
 <script type="text/javascript">
@@ -199,7 +174,7 @@ table {
       const text = await response.text();
       // console.log("text = ",text);
       result = text.match(/<td class="txt_green letter_space">(.*?)<\/td>/g).map(function(val){
-      return val.replace(/<\/?td>/g,'').replace(/<\/?td class="txt_green letter_space">/g,'');
+        return val.replace(/<\/?td>/g,'').replace(/<\/?td class="txt_green letter_space">/g,'');
       });
 
       s1g.value = parseFloat(result[0].replace(/[^0-9]/g,""))/10;
@@ -220,7 +195,7 @@ table {
         val = val.replace(/<\/?td td align='center' class='letter_space txt_green'>/g,'')
         val = val.replace(/[^0-9]/g,"");
         val = parseFloat(val)
-      return val;
+        return val;
       });
 
       g24g1g.value = result[0]/10;
@@ -234,6 +209,25 @@ table {
         updateBtn.innerHTML = "Update Rates";
       }
     })();   
+  }
+
+  function checkEmptyFields(){
+    if(goldAmount.value == "")
+      goldAmount.value = 0;
+
+    if(goldPriceTotal.value == "")
+      goldPriceTotal.value = 0;
+
+    if(silverAmount.value == "")
+      silverAmount.value = 0;
+
+    if(silverPriceTotal.value == "")
+      silverPriceTotal.value = 0;
+
+    if(otherAmount.value == "")
+      otherAmount.value = 0;
+
+    updateTotalAmounts();
   }
 
   function updateTotalAmounts(){
@@ -271,6 +265,7 @@ table {
 
   function calcZakat()
   {
+    checkEmptyFields();
     zakatAmount.value = (parseFloat(grandTotal.value) * 0.025).toFixed(2);
   }
 

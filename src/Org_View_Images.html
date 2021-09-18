@@ -1,39 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>ECHARITY</title>
+  <title>VIEW DOCUMENTS</title>
   <%- include('./head'); %>
 </head>
 <style>
 .fot{
   color: white;
 }
-.bod{
-  border: 2px solid;
-}
-
-table, td, th {
-  border: 1px solid black;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-.form1{
-  width: 60%;
-  height: 35px;
-}
-.btn{
-  background-color: green;
-  color: white;
-  padding: 7px 35px;
-}
-
-/*body{
- background:#a5b5c5;
- background:lightblue !important;
- }*/
 
  .box {
    background: #fff;
@@ -42,17 +16,6 @@ table {
    width: min-content;
  }
 
- .col-lg-2 {
-   margin: 5px !important;
- }
-
- .h{
-   background-color: blue;
-   color: white;
-   padding: 11px 45px;
-   text-align: center;
-   text-decoration: none;
- }
 
 </style>
 <body>
@@ -61,15 +24,13 @@ table {
 
 
   <div class="container text-center">
-    <div class="row">
-      <div class="col-md-6 col-md-offset-3"style="background-color: lightgrey;">
+      <div class="col-md-6 myForm" style="background-color: #efefef">
         <h3 class="h">UPLOADED DOCUMENTS</h3>
         <center>
           <div><%- images %></div>
           <br>
         </center>
       </div>
-    </div>
   </div>
 </body>
 <%- include('./footer'); %>

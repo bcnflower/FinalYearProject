@@ -1,28 +1,51 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>ORGANIZATIONS</title>
+  <title>ECHARITY</title>
   <%- include('./head'); %>
 </head>
 <style>
 .fot{
   color: white;
 }
+.bod{
+  border: 2px solid;
+}
+.h{
+ background-color: blue;
+ color: white;
+ padding: 11px 45px;
+ text-align: center;
+ text-decoration: none;
+}
+.form1{
+  width: 60%;
+  height: 35px;
+}
+.btn{
+  background-color: green;
+  color: white;
+  width: 70%;
+}
 
+.btnSmall{
+  background-color: green;
+  color: white;
+  padding: 7px 35px;
+}
 </style>
 <body>
 
   <%- include('./header'); %>
 
   <div class="container text-center">
-    <div class="myForm col-md-6" >
+    <div style = "background-color: lightgrey;" class="col-md-offset-3 col-md-6" >
       <h3 class="h"> ORGANIZATIONS </h3> 
       <div id="orgsRows">
       </div>
-      <br>
      <form id="getCurrentOrgs">
-      <input type="submit" class="btn btn-primary" value="List All Organizations"> <br><br>
-      <div class="alert-info form-control" id="getCurrentOrgs_msg"><br></div><br> 
+      <input type="submit" class="btnSmall" value="List All Organizations"> <br><br>
+      <div class="bod" style="background-color: #fff" id="getCurrentOrgs_msg"><br></div><br> 
      </form>
    </div>
  </div>

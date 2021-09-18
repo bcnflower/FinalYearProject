@@ -1,56 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>Donate</title>
+  <title>DONATE TO INDIVIDUAL</title>
   <%- include('./head'); %>
 </head>
 <style>
 .fot{
   color: white;
 }
-.bod{
-  border: 2px solid;
-}
-.h{
-   background-color: blue;
-  color: white;
-  padding: 11px 45px;
-  text-align: center;
-  text-decoration: none;
-}
-.form1{
-width: 60%;
-height: 35px;
-}
-.btn{
-  background-color: green;
-    color: white;
-    padding: 7px 62px;
-}
 </style>
 
 <body>
 <%- include('./header'); %>
-<div class="container text-center" style="margin-top: 60px;">
-  <div class="row ">
-    <div class="col-md-6 col-md-offset-3" style=" background-color: lightgrey;">
+<div class="container text-center">
+    <div class="col-md-6 myForm" >
        <h4 class="h"> DONATE TO INDIVIDUAL</h4>
        <form id="donateToIndividual">
         <label for="amount">Enter Amount:</label><br>
-        <input type="number" class="form1" id="amount" step="0.01" min="0" name="amount" value=""><br><br>
+        <input type="number" class="form-control" id="amount" step="0.01" min="0" name="amount" value=""><br>
         <label for="amount">Account No</label><br>
-        <input type="text" class="form1" id="account" name="account" value=""><br>
-       <label for="Org">Donation Cause:</label> <br>
-<!--         <select name="Org" class="form1" id="cars">
-          <option value="1">1</option>
-          <option value="2">2</option>
-          <option value="3">3</option>
-        </select><br><br> -->
-        <input type="submit" class="btn" value="Submit"> <br>
+        <input type="text" class="form-control" id="account" name="account" value=""><br>
+        <input type="submit" class="btn btn-primary" value="Submit"> <br>
       </form> <br>
-      <center><div class="bod" style="background-color: #fff" id="msg"><br></div><br></center>
+      <center><div class="alert-info form-control" id="msg"><br></div><br></center>
     </div>
-  </div>
+
 </div>
 <br>
 </body>

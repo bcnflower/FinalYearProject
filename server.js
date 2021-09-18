@@ -261,7 +261,7 @@ app.get('/View_Images.html', checkUserSession, async function(req,res) {//, chec
         });
         // console.log(result);
         result+= "</center>"
-        +'<center><br><br><div style="background-color: #fff" class="bod" >'+message+'</div><br></center>';
+        +'<center><br><br><div class="alert-info form-control" >'+message+'</div><br></center>';
 
             // var styling = req.query.styling;
             // if(styling.length){
@@ -373,7 +373,7 @@ app.get('/Org_View_Images.html', checkUserSession, async function(req,res) {//, 
         });
         // console.log(result);
         result+= "</center>"
-        +'<center><br><br><div style="background-color: #fff" class="bod" >'+message+'</div><br></center>';
+        +'<center><br><br><div class="alert-info form-control" >'+message+'</div><br></center>';
 
             // var styling = req.query.styling;
             // if(styling.length){

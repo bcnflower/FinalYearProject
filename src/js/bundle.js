@@ -21,6 +21,8 @@ let accounts = [];
 let account = '';
 let accountSelectorEnabled = true;
 
+var gasLim = 3000000;
+
   //Manually added.............
   const $selectAccount = document.getElementById( "selectAccount" );
 
@@ -194,13 +196,16 @@ const init_applyVoting = (inputIndex = 0) => {
       console.log(amount);
       var Vduration = getDurationInSec("Vduration");
       var CFduration = getDurationInSec("CFduration");
+      msgWrn($msg);
       $msg.innerHTML = "Please wait....";
-      contract.methods.createVoting(Vduration,CFduration,amount,cause).send({from:account,gas:3000000})
+      contract.methods.createVoting(Vduration,CFduration,amount,cause).send({from:account,gas:gasLim })
       .then(result => {
+        msgOk($msg);
         $msg.innerHTML = 'Created Voting successfully. ';
         $msg.innerHTML+= '<a href="./Vote.html?canidateAddress='+account+'" target="_blank" >Voting Link</a>';
       })
       .catch(_e => {e.target.elements[0].value;
+        msgErr($msg);
         $msg.innerHTML = 'Ooops... there was an error while creating Voting {' + _e + '}';
       });
     });
@@ -211,9 +216,11 @@ const init_getVotingStats = (elementID = "currentAccount") => {
   $getVotingStatus.addEventListener('submit', (e) =>{
     e.preventDefault();
     const $msg = document.getElementById('getVotingStatus_msg');
-    $msg.innerHTML = "";
+    msgWrn($msg);
+    $msg.innerHTML = "Please wait ...";
     var acc = document.getElementById(elementID).value;
     if(acc.length < 42){
+      msgErr($msg);
       $msg.innerHTML = 'Address not Valid!';
       return;
     }
@@ -223,20 +230,43 @@ const init_getVotingStats = (elementID = "currentAccount") => {
         // console.log("Result = ",result);
         $positiveVotes.innerHTML = result.positiveVotes;
         // $negativeVotes.innerHTML = result.negativeVotes;
-        var d = parseInt(result.deadline) - Date.now()/1000
+        var d = parseInt(result.deadline) - Date.now()/1000;
         d = Math.floor(d);
         document.getElementById("VSamount").innerHTML = Math.round(weiToPkr(result.amount));  
         document.getElementById("VScause").innerHTML = getCause(result.catagory);
         // $VSDeadline.innerHTML = new Date((result.deadline*1000 - Date.now())).toISOString().substr(11, 8) ;
-        var cfid = 0;
+        var cfid = -1;
+        var cfd = Date.now()/1000;
+        var timeOutput = "";
+
         try{
           cfid = await contract.methods.getCfIdFromAddress(acc).call();
+          cfd = await contract.methods.cfDb(cfid).call();
+          cfd = parseInt(cfd["deadline"]) - Date.now()/1000;
+          cfd = Math.floor(cfd);
         }catch(e){
           console.log("e=",e);
         }
-        $VSDeadline.innerHTML = (d<0?(cfid?"Deployed":"Time Over"):new Date(d * 1000).toISOString().substr(11, 8))
+
+        console.log("cfid =",cfid );
+        console.log("cfd =",cfd );
+
+        if(d>0){
+          timeOutput = "Voting ends in: " + new Date(d * 1000).toISOString().substr(11, 8);
+        }else if(cfd>0){
+          timeOutput = "Funding ends in: " + new Date(cfd * 1000).toISOString().substr(11, 8);
+        }else{
+          timeOutput = "Time Over";
+        }
+        
+        $VSDeadline.innerHTML = timeOutput;
+
+        // $VSDeadline.innerHTML = (d<0?(cfid?"Deployed":"Time Over"):new Date(d * 1000).toISOString().substr(11, 8))
+        msgOk($msg);
+        $msg.innerHTML = 'Stats Updated.';
       })
     .catch(_e => {
+      msgErr($msg);
       $msg.innerHTML = 'Ooops... there was an error while getting stats {' + _e + '}';
     });
   });
@@ -249,6 +279,7 @@ const init_doVote = () => {
     e.preventDefault();
     account = getSelectedAccount();
     const $msg = document.getElementById('doVote_msg');
+    msgWrn($msg);
     $msg.innerHTML = "Please wait....";
     // const addr = e.target.elements[0].value;
     // const vote = e.target.elements[1].value;
@@ -264,12 +295,14 @@ const init_doVote = () => {
       }
     }
     // console.log("vote = ",vote," = ",Boolean(vote));
-    contract.methods.vote(addr,Boolean(vote)).send({from:account,gas:3000000})
+    contract.methods.vote(addr,Boolean(vote)).send({from:account,gas:gasLim })
     .then(result => {
+      msgOk($msg);
       $msg.innerHTML = 'Voted successfully. {' + result + '}';
     })
     .catch(_e => {
-      $msg.innerHTML = 'Ooops... there was an error while Voting ; // {' + _e + '}';
+      msgErr($msg);
+      $msg.innerHTML = 'Ooops... there was an error while Voting {' + _e + '}';
       console.log("error =",_e);
     });
   });
@@ -281,6 +314,7 @@ const init_getVotingList = async () => {
     e.preventDefault();
     account = getSelectedAccount();
     const $msg = document.getElementById('doVote_msg');
+    msgWrn($msg);
     $msg.innerHTML = "Please wait....";
     var votingList = document.getElementById("votingList");
 
@@ -289,7 +323,7 @@ const init_getVotingList = async () => {
     .then(async (result) => {
       noVoting = parseInt(result);
       // $currentOrgs.innerHTML = 'No of Orgs = ' + noOfOrgs + '<br>';
-      votingList.innerHTML ="";
+      votingList.innerHTML ="<br>";
       for (var i = noVoting-1; i>=0; i--) {
         // console.log('i = ',i);
         await contract.methods.votingDb(i.toString()).call()
@@ -305,6 +339,7 @@ const init_getVotingList = async () => {
           }
         })
         .catch(_e => {
+          msgErr($msg);
           $msg.innerHTML = 'Ooops... there was an error while getting Voting at index= {' + i + '} Error= {' + _e + '}';
         });
       }
@@ -317,9 +352,11 @@ const init_getVotingList = async () => {
         }
       })
     .catch(_e => {
+      msgErr($msg);
       $msg.innerHTML = 'Ooops... there was an error while getting Voting Count {' + _e + '}';
     });
-    $msg.innerHTML = "<br>";
+    msgOk($msg);
+    $msg.innerHTML = "Voting list populated.";
   });
 };
 
@@ -328,14 +365,17 @@ const init_createCF = () => {
     e.preventDefault();
     account = getSelectedAccount();
     const $msg = document.getElementById('createCF_msg');
+    msgWrn($msg);
     $msg.innerHTML = "Please wait....";
     const d = e.target.elements[0].value;
     const t = e.target.elements[1].value;
-    contract.methods.createCrowdFund(d,t).send({from:account,gas:3000000})
+    contract.methods.createCrowdFund(d,t).send({from:account,gas:gasLim })
     .then(result => {
+      msgOk($msg);
       $msg.innerHTML = 'Created CF successfully.';
     })
     .catch(_e => {
+      msgErr($msg);
       $msg.innerHTML = 'Ooops... there was an error while creating CF {' + _e + '}';
     });
 
@@ -361,12 +401,13 @@ const init_currentCFs = () => {
 
   document.getElementById("getCurrentCFs").addEventListener('submit', (e) =>{
     e.preventDefault();
-    const $msg = document.getElementById('msg');
-    // $msg.innerHTML = "Please wait....";
+    const $msg = document.getElementById('getCurrentCFs_msg');
+    msgWrn($msg);
+    $msg.innerHTML = "Please wait....";
     var noOfCFs = 0;
     // var tbl;
     // const $currentCFs = document.getElementById('currentCFs');
-    // $currentCFs.innerHTML = "";
+    // $currentCFs.innerHTML = "<br>";
     contract.methods.getCfDbCount().call()
     .then( async (result) => {
       noOfCFs = parseInt(result);
@@ -376,16 +417,16 @@ const init_currentCFs = () => {
       refund_div.style.display = "none";
       withdraw_div.style.display = "none";
 
-      active_rows.innerHTML = "";
-      ended_rows.innerHTML = "";
-      refund_rows.innerHTML = "";
-      withdraw_rows.innerHTML = "";
+      active_rows.innerHTML = "<br>";
+      ended_rows.innerHTML = "<br>";
+      refund_rows.innerHTML = "<br>";
+      withdraw_rows.innerHTML = "<br>";
 
       for (var i = noOfCFs-1; i>=0; i--) {
         console.log('i = ',i);
         await contract.methods.cfDb(i.toString()).call()
         .then(result => {
-          var tbl = "";
+          var tbl = "<br>";
           var d = parseInt(result.deadline) - Date.now()/1000
           d = Math.floor(d);
           var percent = (result.raisedAmount*100) / result.goal;
@@ -393,7 +434,7 @@ const init_currentCFs = () => {
           tbl+= "<h4><b>"+getCause(result.catagory)+"</b></h4>";
           tbl+= "Collected: "+percent.toFixed(2)+"%"
           tbl+= "<br>";
-          tbl+= (d<0?"":"Time Left: "+new Date(d * 1000).toISOString().substr(11, 8));
+          tbl+= (d<0?"<br>":"Time Left: "+new Date(d * 1000).toISOString().substr(11, 8));
           tbl+= "<br>";
 
 
@@ -431,11 +472,15 @@ const init_currentCFs = () => {
           }
         })
         .catch(_e => {
+          msgErr($msg);
           $msg.innerHTML = 'Ooops... there was an error while getting CFs at index= {' + i + '} Error= {' + _e + '}';
         });
       }
+      msgOk($msg);
+      $msg.innerHTML = 'List Updated.';
     })
     .catch(_e => {
+      msgErr($msg);
       $msg.innerHTML = 'Ooops... there was an error while getting CFs count {' + _e + '}';
     });
   });
@@ -451,6 +496,8 @@ const init_interactWithCFs = () => {
   $updateCfStats.addEventListener('submit', (e) => {
     e.preventDefault();
     var $msg = document.getElementById("cfStatus_msg");
+    msgWrn($msg);
+    $msg.innerHTML = 'Please wait ...';
     var addr = $CFAddress.value;
     var cfId;
     console.log("addr= ",addr);
@@ -481,8 +528,11 @@ const init_interactWithCFs = () => {
         }else if(result.admin == getSelectedAccount()){
           withdraw_div.style.display = "block";
         }
+        msgOk($msg);
+        $msg.innerHTML = 'Stats updated.';
       })
       .catch(_e => {
+        msgErr($msg);
         $msg.innerHTML = 'Ooops... there was an error while trying to get stats {' + _e + '}';
       });
 
@@ -506,11 +556,13 @@ const init_interactWithCFs = () => {
       cfId = parseInt($cfId.value);
       var val = $CFcontributeAmount.value;
       val = Math.round(PkrToWei(val));
-      contract.methods.cf_contribute(cfId).send({from: account,value:val,gas:3000000})
+      contract.methods.cf_contribute(cfId).send({from: account,value:val,gas:gasLim })
       .then(result => {
+        msgOk($msg);
         $msg.innerHTML = 'Contributed {'+val+' wei} successfully.';
       })
       .catch(_e => {
+        msgErr($msg);
         $msg.innerHTML = 'Ooops... there was an error while trying to Contribute {' + _e + '}';
       });
     // })
@@ -532,9 +584,11 @@ const init_interactWithCFs = () => {
     var val = $CFcontributeAmount.value;
     contract.methods.cf_getRefund(cfId).send({from: account})
     .then(result => {
+      msgOk($msg);
       $msg.innerHTML = 'Refunded successfully.';
     })
     .catch(_e => {
+      msgErr($msg);
       $msg.innerHTML = 'Ooops... there was an error while trying to Refund {' + _e + '}';
     });
 
@@ -556,10 +610,12 @@ const init_interactWithCFs = () => {
     var val = $CFcontributeAmount.value;
     contract.methods.cf_withdrawFunding(cfId).send({from: account})
     .then(result => {
-      $msg.innerHTML = 'Refunded successfully.';
+      msgOk($msg);
+      $msg.innerHTML = 'Witdraw Funding successfull.';
     })
     .catch(_e => {
-      $msg.innerHTML = 'Ooops... there was an error while trying to Refund {' + _e + '}';
+      msgErr($msg);
+      $msg.innerHTML = 'Ooops... there was an error while trying to Withdraw {' + _e + '}';
     });
     // })
     // .catch(_e => {
@@ -591,16 +647,19 @@ const init_createOrg = () => {
     var orgAddress = document.getElementById("orgAddress").value;
 
     if(orgAddress.length < 42){
+      msgErr($msg);
       $msg.innerHTML = 'Address not Valid!';
       return;
     }
 
-    // contract.methods.createOrganization(Boolean(orgZakat),orgName).send({from:account,gas:3000000})
-    contract.methods.createOrganization(orgAddress,orgName).send({from:account,gas:3000000})
+    // contract.methods.createOrganization(Boolean(orgZakat),orgName).send({from:account,gas:gasLim })
+    contract.methods.createOrganization(orgAddress,orgName).send({from:account,gas:gasLim })
     .then(result => {
+      msgOk($msg);
       $msg.innerHTML = 'Created Organization successfully.';
     })
     .catch(_e => {
+      msgErr($msg);
       $msg.innerHTML = 'Ooops... there was an error while creating Organization {' + _e + '}';
     });
 
@@ -621,6 +680,7 @@ const init_currentOrgs = () => {
     e.preventDefault();
     account = getSelectedAccount();
     const $msg = document.getElementById('getCurrentOrgs_msg');
+    msgWrn($msg);
     $msg.innerHTML = "Please wait...";
     var noOfOrgs = 0;
     // var tbl;
@@ -630,7 +690,7 @@ const init_currentOrgs = () => {
     .then(result => {
       noOfOrgs = parseInt(result);
       // $currentOrgs.innerHTML = 'No of Orgs = ' + noOfOrgs + '<br>';
-      document.getElementById("orgsRows").innerHTML ="";
+      document.getElementById("orgsRows").innerHTML ="<br>";
       for (var i = noOfOrgs-1; i>=0; i--) {
         console.log('i = ',i);
         contract.methods.orgDb(i.toString()).call()
@@ -645,18 +705,22 @@ const init_currentOrgs = () => {
           // tbl += "<td scope=\"row\">"+Math.round(weiToPkr(result.balanceAmount))+" PKR</td>";
           // tbl += "</tr>";
           var row = "";
-          row += '<a href="Donate_Organization.html?orgAddress='+result.admin+'" class=" btn" target="_blank">' + result.name + '</a> <BR> <BR>'
+          row += '<a href="Donate_Organization.html?orgAddress='+result.admin+'" class=" btn btn-info" target="_blank">' + result.name + '</a><BR><BR>'
           document.getElementById("orgsRows").innerHTML+= row;
+          
         })
         .catch(_e => {
+          msgErr($msg);
           $msg.innerHTML = 'Ooops... there was an error while getting Orgs at index= {' + i + '} Error= {' + _e + '}';
         });
       }
+      msgOk($msg);
+      $msg.innerHTML = "List Updated...";
     })
     .catch(_e => {
+      msgErr($msg);
       $msg.innerHTML = 'Ooops... there was an error while getting Orgs count {' + _e + '}';
     });
-    $msg.innerHTML = "<br>";
   });
 };
 
@@ -666,51 +730,61 @@ const init_donateToOrg = () => {
   $populateOrgs.addEventListener('submit', (e) =>{
     e.preventDefault();
     const $msg = document.getElementById('org_msg');
+    msgWrn($msg);
     $msg.innerHTML = "Please wait...";
     var noOfOrgs = 0;
     contract.methods.getOrgDbCount().call()
     .then(result => {
       noOfOrgs = parseInt(result);
       // $currentOrgs.innerHTML = 'No of Orgs = ' + noOfOrgs + '<br>';
-      document.getElementById("orgsList").innerHTML ="";
+      document.getElementById("orgsList").innerHTML ="<br>";
       for (var i = noOfOrgs-1; i>=0; i--) {
         // console.log('i = ',i);
         contract.methods.orgDb(i.toString()).call()
         .then(result => {
-          var row = "";
+          var row = "<br>";
           row += '<option value="'+result.admin+'">'+result.name+'</option>'
           document.getElementById("orgsList").innerHTML+= row;
           var orgAdr = document.getElementById("orgAddress").value;
           if(orgAdr.length >= 42){
             document.getElementById("orgsList").value = orgAdr;
+            const event = document.createEvent('Event');
+            event.initEvent('submit', true, true);
+            document.getElementById("updateWalletStats").dispatchEvent(event);
           }
         })
         .catch(_e => {
+          msgErr($msg);
           $msg.innerHTML = 'Ooops... there was an error while getting Orgs at index= {' + i + '} Error= {' + _e + '}';
         });
       }
     })
     .catch(_e => {
+      msgErr($msg);
       $msg.innerHTML = 'Ooops... there was an error while getting Orgs count {' + _e + '}';
     });
-    $msg.innerHTML = "<br>";
+    msgOk($msg);
+    $msg.innerHTML = "Organization List loaded successfully.";
   });
 
   $orgContribute.addEventListener('submit', (e) =>{
     e.preventDefault();
     account = getSelectedAccount();
     const $msg = document.getElementById('org_msg');
+    msgWrn($msg);
     $msg.innerHTML = "Please wait...";
     // var addr = $orgAddress.value;
     var addr = document.getElementById("orgsList").value;
     var val = $orgContributeAmount.value;
     console.log("addr = ",addr);
-    val = Math.round(PkrToWei(val));
-    contract.methods.org_adr_donate(addr).send({from: account,value:val,gas:3000000})
+    val = Math.round(PkrToWei(val)).toString();
+    contract.methods.org_adr_donate(addr).send({from: account,value:val,gas:gasLim })
     .then(result => {
+      msgOk($msg);
       $msg.innerHTML = 'Contributed {'+val+' wei} successfully.';
     })
     .catch(_e => {
+      msgErr($msg);
       $msg.innerHTML = 'Ooops... there was an error while trying to Contribute {' + _e + '}';
     });
 
@@ -723,16 +797,24 @@ const init_donateToIndividual = () => {
     e.preventDefault();
     account = getSelectedAccount();
     const $msg = document.getElementById('msg');
+    msgWrn($msg);
     $msg.innerHTML = "Please wait...";
     var addr = document.getElementById('account').value;
     var val = document.getElementById('amount').value;
+    if(addr.length < 42){
+      msgErr($msg);
+      $msg.innerHTML = "Invalid Address";
+      return;
+    }
     val = Math.round(PkrToWei(val));
-    // contract.methods.org_adr_donate(addr).send({from: account,value:val,gas:3000000})
+    // contract.methods.org_adr_donate(addr).send({from: account,value:val,gas:gasLim })
     web3.eth.sendTransaction({to:addr, from:account, value:val})
     .then(result => {
+      msgOk($msg);
       $msg.innerHTML = 'Donated {'+val+' wei} successfully.';
     })
     .catch(_e => {
+      msgErr($msg);
       $msg.innerHTML = 'Ooops... there was an error while trying to Donate {' + _e + '}';
     });
     $msg = "<br>";
@@ -745,11 +827,13 @@ const init_updateTransactionStats = () =>{
   document.getElementById("updateWalletStats").addEventListener('submit', (e) =>{
     e.preventDefault();
     const $msg = document.getElementById('wallet_msg');
+    msgWrn($msg);
     $msg.innerHTML = "Please wait...";
     // var addr = $orgAddress.value;
     // var addr = getSelectedAccount();
     var addr = document.getElementById("orgsList").value;
     if(addr.length < 42){
+      msgErr($msg);
       $msg.innerHTML = "Invalid Address";
       return;
     }
@@ -768,16 +852,19 @@ const init_updateTransactionStats = () =>{
          // $msg.innerHTML = "Done...";
        })
       .catch(_e => {
+        msgErr($msg);
         $msg.innerHTML = 'Ooops... there was an error while trying to get stats {' + _e + '}';
       });
 
     })
     .catch(_e => {
+      msgErr($msg);
       $msg.innerHTML = 'Ooops... there was an error while trying to get orgId {' + _e + '}';
     });
     getCredit(addr)
     .then(() =>{
-      $msg.innerHTML = "Done...";
+      msgOk($msg);
+      $msg.innerHTML = "Stats Updated.";
     });
   });
 
@@ -799,7 +886,7 @@ const init_wallet = () => {
     const $msg = document.getElementById('orgWithdraw_msg'); 
     var val = document.getElementById("withdrawAmount").value;
     val = Math.round(PkrToWei(val));
-    // contract.methods.org_withdraw(val).send({from: account})//,gas:3000000})
+    // contract.methods.org_withdraw(val).send({from: account})//,gas:gasLim })
     // .then(result => {
     //   $msg.innerHTML = 'Withdraw {' + val + ' wei} successfully.';
     // })
@@ -814,7 +901,7 @@ const init_wallet = () => {
       .then(result => {
         ////////
         if(result.balanceAmount >= val){
-        contract.methods.org_withdraw(val).send({from: account})//,gas:3000000})
+        contract.methods.org_withdraw(val).send({from: account})//,gas:gasLim })
         .on('transactionHash', function(hash){
           console.log("hash = ",hash);
           document.getElementById("txId_withdraw").value = hash;
@@ -823,6 +910,7 @@ const init_wallet = () => {
         })
         .on('receipt', function(receipt){
           console.log("receipt = ",receipt);
+          msgOk($msg);
           $msg.innerHTML = 'Withdraw {' + val + ' wei} successfully.';
         })
         .on('error', function(error){
@@ -830,32 +918,29 @@ const init_wallet = () => {
           return;
         });
       }else{
+        msgErr($msg);
         $msg.innerHTML = "Not Enough Balance";
       }
         /////////
       
       })
       .catch(_e => {
+        msgErr($msg);
         $msg.innerHTML = 'Ooops... there was an error while trying to get stats {' + _e + '}';
       });
 
     })
     .catch(_e => {
+      msgErr($msg);
       $msg.innerHTML = 'Ooops... there was an error while trying to get orgId {' + _e + '}';
     });
-
-
-
-
-
-
-
   });
 
 
   document.getElementById("updateWalletStats").addEventListener('submit', (e) =>{
     e.preventDefault();
     const $msg = document.getElementById('wallet_msg');
+    msgWrn($msg);
     $msg.innerHTML = "Please wait...";
     // var addr = $orgAddress.value;
     var addr = getSelectedAccount();
@@ -874,16 +959,19 @@ const init_wallet = () => {
          // $msg.innerHTML = "Done...";
        })
       .catch(_e => {
+        msgErr($msg);
         $msg.innerHTML = 'Ooops... there was an error while trying to get stats {' + _e + '}';
       });
 
     })
     .catch(_e => {
+      msgErr($msg);
       $msg.innerHTML = 'Ooops... there was an error while trying to get orgId {' + _e + '}';
     });
     getCredit(getSelectedAccount())
     .then(() =>{
-      $msg.innerHTML = "Done...";
+      msgOk($msg);
+      $msg.innerHTML = "Stats Updated.";
     });
   });
 
@@ -905,7 +993,7 @@ const init_wallet = () => {
     val = Math.round(PkrToWei(val));
 
 
-    // contract.methods.org_send(sendAddress,val).send({from: account})//,gas:3000000})
+    // contract.methods.org_send(sendAddress,val).send({from: account})//,gas:gasLim })
     // .then(result => {
     //   $msg.innerHTML = 'Sent {' + val + ' wei to '+ sendAddress +'} successfully.';
     // })
@@ -921,7 +1009,7 @@ const init_wallet = () => {
 
     /////////////////
     if(result.balanceAmount >= val){
-    contract.methods.org_send(sendAddress,val).send({from: account})//,gas:3000000})
+    contract.methods.org_send(sendAddress,val).send({from: account})//,gas:gasLim })
     .on('transactionHash', function(hash){
           console.log("hash = ",hash);
           document.getElementById("txId_send").value = hash;
@@ -930,14 +1018,17 @@ const init_wallet = () => {
         })
         .on('receipt', function(receipt){
           console.log("receipt = ",receipt);
+          msgOk($msg);
           $msg.innerHTML = 'Sent {' + val + ' wei to '+ sendAddress +'} successfully.';
         })
         .on('error', function(error){
           console.log("error = ",error);
+          msgErr($msg);
           $msg.innerHTML = 'Ooops... there was an error while trying to Send Amount {' + error + '}';
           return;
         });
       }else{
+        msgErr($msg);
         $msg.innerHTML = "Not Enough Balance";
       }
       
@@ -945,11 +1036,13 @@ const init_wallet = () => {
 
     })
       .catch(_e => {
+        msgErr($msg);
         $msg.innerHTML = 'Ooops... there was an error while trying to get stats {' + _e + '}';
       });
 
     })
     .catch(_e => {
+      msgErr($msg);
       $msg.innerHTML = 'Ooops... there was an error while trying to get orgId {' + _e + '}';
     });
 
@@ -963,10 +1056,11 @@ async function getCredit(orgAddress){
 
   var $creditTbl = document.getElementById("creditTbl");
   var $debitTbl = document.getElementById("debitTbl");
-  $creditTbl.innerHTML = "";
-  $debitTbl.innerHTML = "";
+  $creditTbl.innerHTML = "<br>";
+  $debitTbl.innerHTML = "<br>";
 
-  for (var i = startBlockNumber; i <= endBlockNumber; i++) {
+  // for (var i = startBlockNumber; i <= endBlockNumber; i++) {
+  for (var i = endBlockNumber; i >= startBlockNumber; i--) {
     if (i % 1000 == 0) {
       console.log("Searching block " + i);
     }
@@ -1005,7 +1099,7 @@ async function getCredit(orgAddress){
             +'</td><td>Send</td><td> '
             + new Date(block.timestamp * 1000).toLocaleString([], { hour12: true}) 
             +'</td><td> '
-            + '<a class="btn" href="Org_View_Images.html?address='+orgAddress.toLowerCase()+'&txId='+e.hash.toLowerCase()+'" target="_blank">View</a>'
+            + '<a class="btn btn-info" href="Org_View_Images.html?address='+orgAddress.toLowerCase()+'&txId='+e.hash.toLowerCase()+'" target="_blank">View</a>'
             +'</td></tr>';
             // console.log("\n"
             //   + "   from            : " + e.from + "\n" 
@@ -1025,7 +1119,7 @@ async function getCredit(orgAddress){
             +'</td><td>Withdraw</td><td> '
             + new Date(block.timestamp * 1000).toLocaleString([], { hour12: true}) 
             +'</td><td> '
-            + '<a class="btn" href="Org_View_Images.html?address='+orgAddress.toLowerCase()+'&txId='+e.hash.toLowerCase()+'" target="_blank">View</a>'
+            + '<a class="btn btn-info" href="Org_View_Images.html?address='+orgAddress.toLowerCase()+'&txId='+e.hash.toLowerCase()+'" target="_blank">View</a>'
             +'</td></tr>';
 
 
@@ -1041,105 +1135,6 @@ async function getCredit(orgAddress){
     }
   }
 }
-
-// const init_interactWithOrgs = () => {
-
-//   $populateOrgs.addEventListener('submit', (e) =>{
-//     e.preventDefault();
-//     const $msg = document.getElementById('org_msg');
-//     $msg.innerHTML = "Please wait...";
-//     var noOfOrgs = 0;
-//     contract.methods.getOrgDbCount().call()
-//     .then(result => {
-//       noOfOrgs = parseInt(result);
-//       // $currentOrgs.innerHTML = 'No of Orgs = ' + noOfOrgs + '<br>';
-//       document.getElementById("orgsList").innerHTML ="";
-//       for (var i = noOfOrgs-1; i>=0; i--) {
-//         // console.log('i = ',i);
-//         contract.methods.orgDb(i.toString()).call()
-//         .then(result => {
-//           var row = "";
-//           row += '<option value="'+result.admin+'">'+result.name+'</option>'
-//           document.getElementById("orgsList").innerHTML+= row;
-//           document.getElementById("orgsList").value = document.getElementById("orgAddress").value;
-//         })
-//         .catch(_e => {
-//           $msg.innerHTML = 'Ooops... there was an error while getting Orgs at index= {' + i + '} Error= {' + _e + '}';
-//         });
-//       }
-//     })
-//     .catch(_e => {
-//       $msg.innerHTML = 'Ooops... there was an error while getting Orgs count {' + _e + '}';
-//     });
-//     $msg.innerHTML = "";
-//   });
-
-//   // $updateOrgStats.addEventListener('submit', (e) => {
-//   //   e.preventDefault();
-//   //   const $msg = document.getElementById('interactWithOrgs_msg');
-//   //   $msg.innerHTML = "Please wait...";
-//   //   var addr = $orgAddress.value;
-//   //   var orgId;
-//   //   contract.methods.getOrgIdFromAddress(addr).call()
-//   //   .then(result => {
-//   //     orgId = result
-//   //     // $cf_deadline.innerHTML = cfId;
-
-//   //     contract.methods.orgDb(orgId).call()
-//   //     .then(result => {
-//   //       $org_name.innerHTML = result.name;
-//   //       $org_zakat.innerHTML = result.acceptingZakat;
-//   //       $org_balanceAmount.innerHTML = Math.round(weiToPkr(result.balanceAmount)) + " PKR";
-//   //        $msg.innerHTML = "Done...";
-//   //     })
-//   //     .catch(_e => {
-//   //       $msg.innerHTML = 'Ooops... there was an error while trying to get stats {' + _e + '}';
-//   //     });
-
-//   //   })
-//   //   .catch(_e => {
-//   //     $msg.innerHTML = 'Ooops... there was an error while trying to get orgId {' + _e + '}';
-//   //   });
-
-//   // });
-
-
-//   $orgContribute.addEventListener('submit', (e) =>{
-//     e.preventDefault();
-//     account = getSelectedAccount();
-//     const $msg = document.getElementById('org_msg');
-//     $msg.innerHTML = "Please wait...";
-//     var addr = $orgAddress.value;
-//     var val = $orgContributeAmount.value;
-//     val = Math.round(PkrToWei(val));
-//     contract.methods.org_adr_donate(addr).send({from: account,value:val,gas:3000000})
-//     .then(result => {
-//       $msg.innerHTML = 'Contributed {'+val+'} successfully.';
-//     })
-//     .catch(_e => {
-//       $msg.innerHTML = 'Ooops... there was an error while trying to Contribute {' + _e + '}';
-//     });
-
-//   });
-
-
-//   // $orgWithdraw.addEventListener('submit', (e) =>{
-//   //   e.preventDefault();
-//   //   account = getSelectedAccount();
-//   //   const $msg = document.getElementById('orgWithdraw_msg'); 
-//   //   var addr = $orgAddress.value;
-//   //   var val = $withdrawAmount.value;
-//   //   val = Math.round(PkrToWei(val));
-//   //   contract.methods.org_withdraw(val).send({from: account})//,gas:3000000})
-//   //   .then(result => {
-//   //     $msg.innerHTML = 'Refunded successfully.';
-//   //   })
-//   //   .catch(_e => {
-//   //     $msg.innerHTML = 'Ooops... there was an error while trying to Refund {' + _e + '}';
-//   //   });
-//   // });
-// };
-
 
 
 const init_auto = () => {
@@ -1215,7 +1210,7 @@ function getDurationInSec(elementID = "duration")
 
 function getCause (c) {
   c = parseInt(c);
-  var r = "";
+  var r = ""  ;
   switch(c){
     case 1:
     r = "Education";
@@ -1246,13 +1241,35 @@ function id(elementID) {
   return document.getElementById(elementID);
 }
 
+function msgOk(msg) {
+  msg.classList.remove("alert-danger");
+  msg.classList.remove("alert-info");
+  msg.classList.remove("alert-warning");
+  msg.classList.add("alert-success");
+  msg.classList.remove("is-invalid");
+  msg.classList.add("is-valid");
+}
+
+function msgWrn(msg) {
+  msg.classList.remove("alert-success");
+  msg.classList.remove("alert-info");
+  msg.classList.remove("alert-danger");
+  msg.classList.add("alert-warning");
+  msg.classList.remove("is-valid");
+  msg.classList.remove("is-invalid");
+}
+
+function msgErr(msg) {
+  msg.classList.remove("alert-success");
+  msg.classList.remove("alert-info");
+  msg.classList.remove("alert-warning");
+  msg.classList.add("alert-danger");
+  msg.classList.remove("is-valid");
+  msg.classList.add("is-invalid");
+}
+
 
 // =X=X=X=X=X=X=X=X=X=X=X=X=X=X=X=X=X=X=X=X=X Testing =X=X=X=X=X=X=X=X=X=X=X=X=X=X=X=X=X=X=X=X=X=X
-
-
-const testData = "0xf63b649d000000000000000000000000bab5a2cc2eae8f2cb1fe1069d1311bca23fcadb6";
-
-
 
 
 async function getTransactionsByAccount(myaccount, startBlockNumber, endBlockNumber) {
@@ -1332,6 +1349,10 @@ window.init_donateToIndividual = init_donateToIndividual;
 window.init_balance = init_balance;
 window.init_wallet = init_wallet;
 window.init_updateTransactionStats = init_updateTransactionStats;
+
+window.msgOk = msgOk;
+window.msgWrn = msgWrn;
+window.msgErr = msgErr;
 
 window.init_getVotingList = init_getVotingList;
 
