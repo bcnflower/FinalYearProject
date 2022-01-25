@@ -148,11 +148,11 @@ module.exports = {
       //   to: './views/styles.css',
       //   toType: 'file'
       // },
-      { 
-        from: path.resolve(__dirname,"src/ext")+'/web3.js',
-        to: './ext/web3.js',
-        toType: 'file'
-      },
+      // { 
+      //   from: path.resolve(__dirname,"src/ext")+'/web3.js',
+      //   to: './ext/web3.js',
+      //   toType: 'file'
+      // },
 
       { 
         from: path.resolve(__dirname,"src/ext")+'/web3.min.js',

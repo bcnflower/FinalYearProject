@@ -18,11 +18,7 @@
 
 .myForm{
     background: #fff;
-   /* background: rgb(34,195,54);
-background: radial-gradient(circle, rgba(34,195,54,0.10213592272846639) 0%, rgba(45,186,253,0.10213592272846639) 100%);*/
     padding: 2em 1.5em 1em;
-/*    margin-top: 2em;
-    margin-bottom: 3em;*/
     border: 1px solid #55c5c5;
     border-radius: 4px;
     box-shadow: 0 4px 8px 0 rgb(0 0 0 / 20%), 0 6px 20px 0 rgb(0 0 0 / 19%);
@@ -122,13 +118,11 @@ a{
   </div>
 </nav>
 <div>
-  <!-- <input type="hidden" name="currentAccount" id="currentAccount" value="<%= account %>"> -->
   <input type="hidden" name="rate" id="rate" value="<%= rate %>">
   <input type="hidden" name="userType" id="userType" value="<%= userType %>">
 </div>
 <br><br><br><br>
 <script type="text/javascript">
-  // <!-- document.addEventListener('DOMContentLoaded', () => { -->
     var userType = document.getElementById("userType").value;
     console.log("userType = ",userType);
     var adminTags = document.getElementsByClassName("admin");
@@ -157,5 +151,4 @@ a{
     }else{
       userTypeText.innerHTML = "User";
     }
-  // });
 </script>

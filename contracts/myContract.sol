@@ -1,18 +1,11 @@
-// SPDX-License-Identifier: MIT
+// Smart Contract by Muhammad Fizan Saeed
 pragma solidity >=0.4.22 <0.9.0;
-
-// pragma solidity >=0.4.22 <0.6.0;
-
 contract myContract{   
     
     address payable public contractAdmin;
     constructor() public {
         contractAdmin = msg.sender;
     }
-    
-    // function getContractAdmin() public view returns(address){
-    //     return contractAdmin;
-    // }
     
     function getAddrStatus(address addr) view public 
     returns(
@@ -26,28 +19,18 @@ contract myContract{
             votingIdxDb[addr]
         );
     }
-
-
 // ######################### Voting #########################
     
     struct voting{
         mapping(address=>bool) votersIdx;
-        // bool[] alreadyVoted;
         uint votingDeadline;
         uint cfDeadline;
         uint positiveVotes;
         uint negativeVotes;
-        // bool valid;
         uint amount;
         uint8 catagory;
         address admin;
     }
-    
-    // voting[] public votingDb;
-    // mapping(address=>voting) votingDb;
-    
-    // uind id = votingIdxDb[Address] - 1;
-    // votingDb[id];
     
     voting[] public votingDb;
     mapping (address => uint) votingIdxDb;
@@ -62,7 +45,6 @@ contract myContract{
         if(votingIdxDb[msg.sender] > 0){
             require(votingDb[votingIdxDb[msg.sender] - 1].votingDeadline < now,"Deadline not over yet.");
         }
-        // require(votingIdxDb[msg.sender] == 0,"Voting Already Exists.");
         if(cfIdxDb[msg.sender]>0){
             require(cfDb[cfIdxDb[msg.sender] - 1].deadline<now,"Crowdfunding Exists and deadline not over yet.");
         }
@@ -71,7 +53,6 @@ contract myContract{
         v.negativeVotes = 0;
         v.votingDeadline = deadline + now;
         v.cfDeadline = cfDeadline;
-        // v.valid = true;
         v.amount = _amount;
         v.catagory = _catagory;
         v.admin = msg.sender;
@@ -87,14 +68,6 @@ contract myContract{
         require(votingDb[id].votersIdx[msg.sender] == false,"Already Voted!");
         votingDb[id].votersIdx[msg.sender] = true;
         
-        // uint idx = votingDb[id].votersIdx[msg.sender];
-        // if(idx+1 > votingDb[id].alreadyVoted.length){
-        //     votingDb[id].alreadyVoted.push(true);
-        //     votingDb[id].votersIdx[msg.sender] = votingDb[id].alreadyVoted.length - 1;
-        // }else{
-        //     require(votingDb[id].alreadyVoted[idx] == false,"Already Voted!");
-        // }
-        
         if(doYouAgree){
             votingDb[id].positiveVotes++;
         }else{
@@ -106,7 +79,6 @@ contract myContract{
         }
         
     }
-
     function getVotingStatus(address votingId) view public returns(
             uint positiveVotes,
             uint negativeVotes,
@@ -127,29 +99,10 @@ contract myContract{
     
     
     function isEligible(address votingId) view public returns(bool) {
-        //Some logic
         uint id = votingIdxDb[votingId] - 1;
-        // return (votingDb[id].positiveVotes > votingDb[id].negativeVotes);
         return (votingDb[id].positiveVotes >= votingDb[id].negativeVotes + 3);
     }
     
-    
-        
-    
-    
-    // function vote(address votingId,bool doYouAgree) public{
-    //     uint vIdx = votingDb[votingId].votersIdx[msg.sender];
-        
-    //     require(votingDb[votingId].votersChoice[vIdx] == false,"Already Voted!");
-    //     uint idx = votingDb[msg.sender].index;
-    //     if(doYouAgree){
-    //         votingDb[votingId].positiveVotes++;
-    //     }else{
-    //         votingDb[votingId].negativeVotes++;
-    //     }
-    //     votingDb[votingId].voters[msg.sender] = true;
-    // }
-
 // X-X-X-X-X-X-X-X-X-X-X-X-X Voting X-X-X-X-X-X-X-X-X-X-X-X-X
     
     
@@ -171,15 +124,6 @@ contract myContract{
     function getCfDbCount() view public returns(uint){
         return cfDb.length;
     }
-    
-    // function getCfIdFromAddress(address cfAddress) view public returns(uint){
-    //     for(uint i=0;i<cfDb.length;i++){
-    //         if(cfDb[i].admin == cfAddress){
-    //             return i;
-    //         }
-    //     }
-    // }
-
     function getCfIdFromAddress(address cfAddress) view public returns(uint){
         require(cfIdxDb[cfAddress] > 0,"CrowdFunding does not exists on this address!");
         return (cfIdxDb[cfAddress] - 1);
@@ -188,39 +132,16 @@ contract myContract{
         function createCrowdFund(address addr) public{//uint _deadlineSecs
         uint id = votingIdxDb[addr] - 1;
         require(votingIdxDb[addr] != 0,"Not Valid. First Apply for voting.");
-        // require(votingDb[id].valid,"Not Valid. First Apply for voting.!");
         require(isEligible(addr),"Not Eligible. No enough votes.");
-        // require(votingDb[id].votingDeadline < now,"Voting deadline not over yet!");
         votingDb[id].votingDeadline = now;
         crowdFund memory cf;
-        // cf.deadline= now + _deadlineSecs;
         cf.deadline = votingDb[id].cfDeadline + now;
         cf.goal= votingDb[id].amount;
         cf.catagory = votingDb[id].catagory;
         cf.admin = address(uint160(addr));
         cfDb.push(cf);
-        // votingDb[id].valid = false;
-        // votingIdxDb[addr] = 0;
         cfIdxDb[addr] = cfDb.length;
     }
-    
-    // function createCrowdFund() public{//uint _deadlineSecs
-    //     uint id = votingIdxDb[msg.sender] - 1;
-    //     require(votingIdxDb[msg.sender] != 0,"Not Valid. First Apply for voting.");
-    //     // require(votingDb[id].valid,"Not Valid. First Apply for voting.!");
-    //     require(isEligible(msg.sender),"Not Eligible. No enough votes.");
-    //     require(votingDb[id].votingDeadline < now,"Voting deadline not over yet!");
-    //     crowdFund memory cf;
-    //     // cf.deadline= now + _deadlineSecs;
-    //     cf.deadline = votingDb[id].cfDeadline + now;
-    //     cf.goal= votingDb[id].amount;
-    //     cf.catagory = votingDb[id].catagory;
-    //     cf.admin = msg.sender;
-    //     cfDb.push(cf);
-    //     // votingDb[id].valid = false;
-    //     votingIdxDb[msg.sender] = 0;
-    //     cfIdxDb[msg.sender] = cfDb.length;
-    // }
     
     function cf_contribute(uint cfId) public payable {
         require(now < cfDb[cfId].deadline,"Time is Over!");
@@ -248,13 +169,8 @@ contract myContract{
         cfDb[cfId].admin.transfer(cfDb[cfId].raisedAmount);
     }
     
-    // function cf_getRemainingTime(uint cfId) view public returns(uint) {
-    //    return cfDb[cfId].deadline - now;
-    // }
 // X-X-X-X-X-X-X-X-X-X-X-X-X Crowd Funding X-X-X-X-X-X-X-X-X-X-X-X-X
-
 // ######################### Organization #########################
-
     struct organization{
         address payable admin;
         string name;
@@ -271,7 +187,6 @@ contract myContract{
     function getOrgDbCount() view public returns(uint){
         return orgDb.length;
     }
-
     function getOrgIdFromAddress(address orgAddress) view public returns(uint){
         require (orgIdxDb[orgAddress] > 0,"Organization Does Not Exists.");
         return (orgIdxDb[orgAddress] - 1);
@@ -285,23 +200,18 @@ contract myContract{
         organization memory org;
         org.admin = addr;
         org.name = orgName;
-        // org.acceptingZakat = _acceptingZakat;
         orgDb.push(org);
         orgIdxDb[addr] = orgDb.length;
     }
-
     function org_id_donate(uint orgId) public payable {
         require (orgId > 0,"Organization Does Not Exists.");
         orgDb[orgId].balanceAmount += msg.value;
         orgDb[orgId].donateTotal += msg.value;
-        // emit Deposit(msg.sender, msg.value);
     }
-
     function org_adr_donate(address orgAdr) public payable {
         require (orgIdxDb[orgAdr] > 0,"Organization Does Not Exists.");
         orgDb[orgIdxDb[orgAdr]-1].balanceAmount += msg.value;
         orgDb[orgIdxDb[orgAdr]-1].donateTotal += msg.value;
-        // emit Deposit(msg.sender, msg.value);
     }
     
     function org_withdraw(uint amount) public {
@@ -324,63 +234,5 @@ contract myContract{
         orgDb[id].withdrawTotal += amount;
     }
     
-    // function org_donate(uint orgId) public payable {
-    //     orgDb[orgId].balanceAmount += msg.value;
-    //     emit Deposit(msg.sender, msg.value);
-    // }
-    
-    // function org_withdraw(uint amount,uint orgId) public {
-    //     require(msg.sender == orgDb[orgId].admin,"Only Admin is allowed!");
-    //     orgDb[orgId].admin.transfer(amount);
-    // }
 // X-X-X-X-X-X-X-X-X-X-X-X-X Ororganization X-X-X-X-X-X-X-X-X-X-X-X-X
-    
-    
-    
-
-
-
-
-
-
-
-
-
-// ######################### Main #########################
-
-// X-X-X-X-X-X-X-X-X-X-X-X-X Main X-X-X-X-X-X-X-X-X-X-X-X-X
-
 }
-
-// contract main{
-//     address[] public contracts;
-//     function createCrowdFund (uint _deadlineSecs,uint _goal) 
-//     public 
-//     returns(address newContract){
-//         crowdFund cf = new crowdFund(_deadlineSecs,_goal);
-//         contracts.push(address(cf));
-//         return address(cf);
-//     }
-    
-//     function getNow(uint id) view public returns(uint) {
-//         uint n = crowdFund(contracts[id]).getNow();
-//         return n;
-//     }
-// }
-
-
-
-
-    // bool[] public tst;
-    
-    // function pushTst(bool val) public{
-    //     tst.push(val);
-    // }
-    
-    // function lenTst() view public returns(uint){
-    //     return tst.length;
-    // }
-    
-    // function delTst() public{
-    //     delete tst;
-    // }
